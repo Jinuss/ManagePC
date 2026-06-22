@@ -1,10 +1,8 @@
 <template>
   <div class="disk-usage">
     <div class="header">
-      <h2 class="section-title">💾 磁盘使用情况</h2>
-      <button class="refresh-btn" @click="fetchDiskUsage">
-        🔄 刷新
-      </button>
+      <h2 class="section-title">💾 {{ t('disk.usage') }}</h2>
+      <button class="refresh-btn" @click="fetchDiskUsage">🔄 {{ t('common.refresh') }}</button>
     </div>
 
     <div class="disk-list" v-if="diskList.length > 0">
@@ -15,25 +13,28 @@
             {{ disk.percentage.toFixed(1) }}%
           </span>
         </div>
-        
+
         <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            :style="{ width: disk.percentage + '%', background: getProgressColor(disk.percentage) }"
+          <div
+            class="progress-fill"
+            :style="{
+              width: disk.percentage + '%',
+              background: getProgressColor(disk.percentage),
+            }"
           ></div>
         </div>
-        
+
         <div class="disk-info">
           <div class="info-item">
-            <span class="label">总容量:</span>
+            <span class="label">{{ t('disk.totalSize') }}:</span>
             <span class="value">{{ disk.total }}</span>
           </div>
           <div class="info-item">
-            <span class="label">已使用:</span>
+            <span class="label">{{ t('disk.used') }}:</span>
             <span class="value used">{{ disk.used }}</span>
           </div>
           <div class="info-item">
-            <span class="label">可用:</span>
+            <span class="label">{{ t('disk.free') }}:</span>
             <span class="value free">{{ disk.free }}</span>
           </div>
         </div>
@@ -42,43 +43,46 @@
 
     <div class="empty-state" v-else>
       <div class="empty-icon">📁</div>
-      <p>未检测到磁盘信息</p>
+      <p>{{ t('disk.noDisk') }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
+import { useI18n } from 'vue-i18n'
 
-const { ipcRenderer } = window.require('electron')
+const { t } = useI18n()
 
-const diskList = ref([])
+const { ipcRenderer } = window.require("electron");
+
+const diskList = ref([]);
 
 const fetchDiskUsage = async () => {
   try {
-    const disks = await ipcRenderer.invoke('get-disk-usage')
-    diskList.value = disks
+    const diskInfo = await ipcRenderer.invoke("get-disk-usage");
+    diskList.value = diskInfo;
   } catch (error) {
-    console.error('获取磁盘信息失败:', error)
-    diskList.value = []
+    console.error("获取磁盘信息失败:", error);
+    diskList.value = [];
   }
-}
+};
 
 const getStatusClass = (percentage) => {
-  if (percentage >= 90) return 'danger'
-  if (percentage >= 70) return 'warning'
-  return 'normal'
-}
+  if (percentage >= 90) return "danger";
+  if (percentage >= 70) return "warning";
+  return "normal";
+};
 
 const getProgressColor = (percentage) => {
-  if (percentage >= 90) return 'linear-gradient(90deg, #dc3545, #ff6b6b)'
-  if (percentage >= 70) return 'linear-gradient(90deg, #ffc107, #ffec8b)'
-  return 'linear-gradient(90deg, #28a745, #98fb98)'
-}
+  if (percentage >= 90) return "linear-gradient(90deg, #dc3545, #ff6b6b)";
+  if (percentage >= 70) return "linear-gradient(90deg, #ffc107, #ffec8b)";
+  return "linear-gradient(90deg, #28a745, #98fb98)";
+};
 
 onMounted(() => {
-  fetchDiskUsage()
-})
+  fetchDiskUsage();
+});
 </script>
 
 <style scoped>
@@ -198,7 +202,7 @@ onMounted(() => {
 }
 
 .value {
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: "Consolas", "Monaco", monospace;
   font-weight: 500;
   color: #333;
 }

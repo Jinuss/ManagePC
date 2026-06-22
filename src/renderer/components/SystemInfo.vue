@@ -1,85 +1,104 @@
 <template>
   <div class="system-info">
-    <h2 class="section-title">📡 网络信息</h2>
+    <h2 class="section-title">📡 {{ t('networkInfo.title') }}</h2>
     <div class="network-cards">
-      <div class="network-card" v-for="(info, index) in networkInfo" :key="index">
+      <div
+        class="network-card"
+        v-for="(info, index) in networkInfo"
+        :key="index"
+      >
         <div class="card-header">
           <span class="interface-name">{{ info.interface }}</span>
         </div>
         <div class="card-body">
           <div class="info-item">
-            <span class="label">IP 地址:</span>
+            <span class="label">{{ t('networkInfo.ip') }}:</span>
             <span class="value ip-value">{{ info.ipAddress }}</span>
           </div>
           <div class="info-item">
-            <span class="label">MAC 地址:</span>
+            <span class="label">{{ t('networkInfo.mac') }}:</span>
             <span class="value mac-value">{{ info.macAddress }}</span>
           </div>
           <div class="info-item">
-            <span class="label">子网掩码:</span>
+            <span class="label">{{ t('networkInfo.subnetMask') }}:</span>
             <span class="value">{{ info.netmask }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">{{ t('networkInfo.dhcp') }}:</span>
+            <span class="value">{{ info.dhcp ? t('common.yes') : t('common.no') }}</span>
           </div>
         </div>
       </div>
     </div>
 
-    <h2 class="section-title">🔑 SSH 公钥</h2>
+    <h2 class="section-title">🔑 {{ t('ssh.title') }}</h2>
     <div class="ssh-card">
       <div class="ssh-content">
         <pre class="ssh-key">{{ sshKey }}</pre>
       </div>
       <button class="copy-btn" @click="copySSHKey">
-        {{ copied ? '✓ 已复制' : '📋 复制' }}
+        {{ copied ? t('common.copied') : t('common.copy') }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
+import { useI18n } from 'vue-i18n'
 
-const { ipcRenderer } = window.require('electron')
+const { t } = useI18n()
 
-const networkInfo = ref([])
-const sshKey = ref('')
-const copied = ref(false)
+const { ipcRenderer } = window.require("electron");
+
+const networkInfo = ref([]);
+const sshKey = ref("");
+const copied = ref(false);
 
 const fetchNetworkInfo = async () => {
   try {
-    const info = await ipcRenderer.invoke('get-network-info')
-    networkInfo.value = info
+    const info = await ipcRenderer.invoke("get-network-info");
+    console.log("🚀 ~ fetchNetworkInfo ~ info:", info);
+    networkInfo.value = info;
   } catch (error) {
-    console.error('获取网络信息失败:', error)
-    networkInfo.value = [{ interface: 'Error', ipAddress: '获取失败', macAddress: '-', netmask: '-' }]
+    console.error("获取网络信息失败:", error);
+    networkInfo.value = [
+      {
+        interface: t('error.title'),
+        ipAddress: t('common.fetchFailed'),
+        macAddress: "-",
+        netmask: "-",
+      },
+    ];
   }
-}
+};
 
 const fetchSSHKey = async () => {
   try {
-    const key = await ipcRenderer.invoke('get-ssh-key')
-    sshKey.value = key
+    const key = await ipcRenderer.invoke("get-ssh-key");
+    sshKey.value = key;
   } catch (error) {
-    console.error('获取 SSH key 失败:', error)
-    sshKey.value = '获取失败'
+    console.error("获取 SSH key 失败:", error);
+    sshKey.value = "获取失败";
   }
-}
+};
 
 const copySSHKey = async () => {
   try {
-    await navigator.clipboard.writeText(sshKey.value)
-    copied.value = true
+    await navigator.clipboard.writeText(sshKey.value);
+    copied.value = true;
     setTimeout(() => {
-      copied.value = false
-    }, 2000)
+      copied.value = false;
+    }, 2000);
   } catch (error) {
-    console.error('复制失败:', error)
+    console.error("复制失败:", error);
   }
-}
+};
 
 onMounted(() => {
-  fetchNetworkInfo()
-  fetchSSHKey()
-})
+  fetchNetworkInfo();
+  fetchSSHKey();
+});
 </script>
 
 <style scoped>
@@ -137,7 +156,7 @@ onMounted(() => {
 .value {
   color: #333;
   font-weight: 500;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: "Consolas", "Monaco", monospace;
 }
 
 .ip-value {
@@ -165,7 +184,7 @@ onMounted(() => {
 
 .ssh-key {
   color: #e0e0e0;
-  font-family: 'Consolas', 'Monaco', monospace;
+  font-family: "Consolas", "Monaco", monospace;
   font-size: 0.85rem;
   line-height: 1.5;
   white-space: pre-wrap;

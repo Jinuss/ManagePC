@@ -5,7 +5,12 @@ export default {
     cancel: 'Cancel',
     loading: 'Loading...',
     unknown: 'Unknown',
-    empty: 'Empty'
+    empty: 'Empty',
+    yes: 'Yes',
+    no: 'No',
+    copy: '📋 Copy',
+    copied: '✓ Copied',
+    fetchFailed: 'Fetch failed'
   },
   header: {
     title: 'System Monitor',
@@ -43,14 +48,19 @@ export default {
     free: 'Free',
     type: 'Type',
     local: 'Local Disk',
-    network: 'Network Location'
+    network: 'Network Location',
+    usage: 'Disk Usage',
+    totalSize: 'Total Size',
+    noDisk: 'No disk information detected'
   },
   networkInfo: {
-    title: 'Network Interfaces',
+    title: 'Network Information',
     ip: 'IP Address',
     mac: 'MAC Address',
     interface: 'Interface Name',
-    status: 'Status'
+    status: 'Status',
+    subnetMask: 'Subnet Mask',
+    dhcp: 'DHCP'
   },
   system: {
     title: 'System Information',
@@ -64,6 +74,30 @@ export default {
     ssh: 'SSH Key',
     platform: 'Platform',
     arch: 'Architecture'
+  },
+  ssh: {
+    title: 'SSH Public Key',
+    copySuccess: 'Copied successfully',
+    copyFailed: 'Copy failed'
+  },
+  menu: {
+    system: 'System Info',
+    network: 'Network Info',
+    disk: 'Disk Usage',
+    battery: 'Battery',
+    monitor: 'Performance'
+  },
+  battery: {
+    title: 'Battery Status',
+    charging: 'Charging',
+    discharging: 'Discharging',
+    voltage: 'Voltage',
+    current: 'Current Capacity',
+    max: 'Max Capacity',
+    design: 'Design Capacity',
+    health: 'Battery Health',
+    noBattery: 'No battery detected',
+    calculating: 'Calculating...'
   },
   status: {
     online: 'Online',

@@ -6,17 +6,16 @@
         :memory-history="memoryHistory"
         :network-history="networkHistory"
       />
-
-      <StaticInfo :system-info="systemInfo" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, onActivated, onDeactivated } from "vue";
 import TrendCharts from "./TrendCharts.vue";
-import StaticInfo from "./StaticInfo.vue";
 import { updateHistory } from "../utils/helpers";
+
+defineOptions({ name: 'PCMonitor' });
 
 const { ipcRenderer } = window.require("electron");
 
@@ -25,8 +24,6 @@ const MAX_HISTORY = 30;
 const cpuHistory = ref([]);
 const memoryHistory = ref([]);
 const networkHistory = ref([]);
-
-const systemInfo = ref({});
 
 const targetValues = {
   cpu: 0,
@@ -108,33 +105,24 @@ const handleSystemStats = (event, data) => {
   }
 };
 
-const fetchSystemInfo = async () => {
-  try {
-    const data = await ipcRenderer.invoke("get-system-info");
-    console.log("🚀 ~ fetchSystemInfo ~ data:", data)
-    systemInfo.value = data;
-  } catch (error) {
-    console.error("获取系统信息失败:", error);
-  }
-};
-
-onMounted(async () => {
-  await fetchSystemInfo();
-
+onMounted(() => {
   ipcRenderer.on("system-stats", handleSystemStats);
+});
 
+onActivated(async () => {
   await ipcRenderer.invoke("start-monitoring", 1000);
 });
 
-onUnmounted(async () => {
-  ipcRenderer.removeListener("system-stats", handleSystemStats);
-
+onDeactivated(async () => {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
   }
-
   await ipcRenderer.invoke("stop-monitoring");
+});
+
+onUnmounted(() => {
+  ipcRenderer.removeListener("system-stats", handleSystemStats);
 });
 </script>
 

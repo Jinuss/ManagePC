@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron')
-const { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey } = require('./utils/systemInfo')
+const { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } = require('./utils/systemInfo')
 const SystemMonitor = require('./utils/SystemMonitor')
 
 let systemMonitor = null
@@ -19,6 +19,10 @@ function registerIpcHandlers() {
 
   ipcMain.handle('get-disk-usage', () => {
     return getDiskUsage()
+  })
+
+  ipcMain.handle('get-battery-info', () => {
+    return getBatteryInfo()
   })
 
   ipcMain.handle('start-monitoring', (event, intervalMs = 1000) => {

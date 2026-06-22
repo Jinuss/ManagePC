@@ -5,7 +5,12 @@ export default {
     cancel: '取消',
     loading: '加载中...',
     unknown: '未知',
-    empty: '空'
+    empty: '空',
+    yes: '是',
+    no: '否',
+    copy: '📋 复制',
+    copied: '✓ 已复制',
+    fetchFailed: '获取失败'
   },
   header: {
     title: '系统监控',
@@ -43,14 +48,19 @@ export default {
     free: '可用',
     type: '类型',
     local: '本地磁盘',
-    network: '网络位置'
+    network: '网络位置',
+    usage: '磁盘使用情况',
+    totalSize: '总容量',
+    noDisk: '未检测到磁盘信息'
   },
   networkInfo: {
-    title: '网络接口',
+    title: '网络信息',
     ip: 'IP 地址',
     mac: 'MAC 地址',
     interface: '接口名称',
-    status: '状态'
+    status: '状态',
+    subnetMask: '子网掩码',
+    dhcp: 'DHCP'
   },
   system: {
     title: '系统信息',
@@ -64,6 +74,30 @@ export default {
     ssh: 'SSH 密钥',
     platform: '平台',
     arch: '架构'
+  },
+  ssh: {
+    title: 'SSH 公钥',
+    copySuccess: '复制成功',
+    copyFailed: '复制失败'
+  },
+  menu: {
+    system: '系统信息',
+    network: '网络信息',
+    disk: '磁盘使用',
+    battery: '电池状态',
+    monitor: '性能监控'
+  },
+  battery: {
+    title: '电池状态',
+    charging: '充电中',
+    discharging: '放电中',
+    voltage: '电压',
+    current: '当前容量',
+    max: '最大容量',
+    design: '设计容量',
+    health: '电池健康度',
+    noBattery: '未检测到电池',
+    calculating: '计算中...'
   },
   status: {
     online: '在线',

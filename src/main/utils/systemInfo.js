@@ -14,70 +14,77 @@ function formatSize(bytes) {
 
 async function getDiskUsage() {
   try {
-    const disks = await si.diskLayout()
-    const diskInfo = []
-
-    for (const disk of disks) {
-      if (disk.type === 'SSD' || disk.type === 'HDD') {
-        const partitions = await si.fsSize()
-        const diskPartitions = partitions.filter(p => p.fs.startsWith(disk.name) ||
-          (p.mount && disk.name.includes('/dev/')))
-
-        let totalSize = 0
-        let usedSize = 0
-
-        for (const part of diskPartitions) {
-          if (part.size) {
-            totalSize += part.size
-            usedSize += (part.size - (part.available || 0))
+    const partitions = await si.fsSize()
+    
+    let localDrives = new Set()
+    if (process.platform === 'win32') {
+      const { execSync } = require('child_process')
+      try {
+        const output = execSync('wmic logicaldisk get caption,providername', { encoding: 'utf8' })
+        const lines = output.trim().split('\n').slice(1)
+        for (const line of lines) {
+          const parts = line.trim().split(/\s{2,}/)
+          const drive = parts[0]
+          const provider = parts[1] || ''
+          if (drive && !provider) {
+            localDrives.add(drive.toUpperCase())
           }
         }
-
-        if (totalSize === 0 && disk.size) {
-          totalSize = disk.size
-        }
-
-        const percentage = totalSize > 0 ? ((usedSize / totalSize) * 100).toFixed(1) : 0
-
-        diskInfo.push({
-          drive: disk.name,
-          name: disk.name,
-          type: disk.type,
-          total: formatSize(totalSize),
-          free: formatSize(totalSize - usedSize),
-          used: formatSize(usedSize),
-          percentage: parseFloat(percentage),
-          rawTotal: totalSize,
-          rawFree: totalSize - usedSize,
-          rawUsed: usedSize
-        })
+      } catch (e) {
+        console.error('获取本地驱动器列表失败:', e)
       }
     }
 
-    if (diskInfo.length === 0) {
-      const partitions = await si.fsSize()
-      for (const part of partitions) {
-        if (part.size && (part.fstype !== 'tmpfs' || part.size > 1024 * 1024 * 100)) {
-          const used = part.size - (part.available || 0)
-          const percentage = part.size > 0 ? ((used / part.size) * 100).toFixed(1) : 0
+    const diskList = []
 
-          diskInfo.push({
-            drive: part.mount || part.fs,
-            name: part.fs,
-            type: 'Local',
-            total: formatSize(part.size),
-            free: formatSize(part.available || 0),
-            used: formatSize(used),
-            percentage: parseFloat(percentage),
-            rawTotal: part.size,
-            rawFree: part.available || 0,
-            rawUsed: used
-          })
+    for (const part of partitions) {
+      if (!part.size || part.size <= 0) continue
+      
+      if (part.fstype === 'tmpfs' && part.size < 1024 * 1024 * 100) continue
+
+      const used = part.size - (part.available || 0)
+      const percentage = part.size > 0 ? ((used / part.size) * 100).toFixed(1) : 0
+
+      let driveName = part.mount || part.fs
+      let isLocal = false
+
+      if (process.platform === 'win32') {
+        const driveMatch = (part.fs || '').match(/^([A-Za-z]):/) || (part.mount || '').match(/^([A-Za-z]):/)
+        if (driveMatch) {
+          driveName = driveMatch[1] + ':'
+          if (localDrives.has(driveName.toUpperCase())) {
+            isLocal = true
+          }
+        }
+      } else {
+        if (part.mount === '/') {
+          driveName = '/'
+          isLocal = true
         }
       }
+
+      if (!isLocal) continue
+
+      diskList.push({
+        drive: driveName,
+        name: part.fs,
+        type: 'local',
+        filesystem: part.fstype || 'unknown',
+        total: formatSize(part.size),
+        free: formatSize(part.available || 0),
+        used: formatSize(used),
+        percentage: parseFloat(percentage),
+        rawTotal: part.size,
+        rawFree: part.available || 0,
+        rawUsed: used
+      })
     }
 
-    return diskInfo.filter(d => d.rawTotal > 0)
+    const sortedList = diskList.sort((a, b) => {
+      return a.drive.localeCompare(b.drive)
+    })
+
+    return sortedList
   } catch (error) {
     console.error('获取磁盘信息失败:', error)
     return []
@@ -134,9 +141,11 @@ async function getSystemInfo() {
       si.mem()
     ])
 
+
     return {
       platform: osInfo.platform,
       arch: osInfo.arch,
+      osType: osInfo.platform === 'win32' ? 'Windows' : (osInfo.platform === 'darwin' ? 'macOS' : 'Linux'),
       osRelease: osInfo.release,
       hostname: osInfo.hostname,
       uptime: osInfo.uptime,
@@ -145,12 +154,15 @@ async function getSystemInfo() {
       cpuSpeed: cpu.speed,
       totalMemory: formatSize(mem.total),
       freeMemory: formatSize(mem.available),
+      ...osInfo
     }
   } catch (error) {
     console.error('获取系统信息失败:', error)
+    
     return {
       platform: process.platform,
       arch: process.arch,
+      osType: process.platform === 'win32' ? 'Windows' : (process.platform === 'darwin' ? 'macOS' : 'Linux'),
       osRelease: '',
       hostname: '',
       uptime: 0,
@@ -159,7 +171,6 @@ async function getSystemInfo() {
       cpuSpeed: 0,
       totalMemory: '0 B',
       freeMemory: '0 B',
-      osInfo
     }
   }
 }
@@ -168,17 +179,48 @@ async function getNetworkInfo() {
   try {
     const interfaces = await si.networkInterfaces()
 
-    return interfaces.map(iface => ({
-      interface: iface.name,
-      ipAddress: iface.ip4 || iface.ip6 || '',
-      macAddress: iface.mac || '',
-      netmask: iface.netmask4 || iface.netmask6 || '',
-      family: iface.ip4 ? 'IPv4' : 'IPv6',
-      type: iface.type
-    })).filter(iface => iface.ipAddress && !iface.internal)
+    return interfaces.filter(nic => nic.operstate === 'up' &&
+      !nic.internal &&
+      !nic.virtual &&
+      nic.ip4).map(iface => ({
+        ...iface,
+        interface: iface.iface,
+        ipAddress: iface.ip4 || iface.ip6 || '',
+        macAddress: iface.mac || '',
+        netmask: iface.ip4subnet || '',
+        family: iface.ip4 ? 'IPv4' : 'IPv6',
+        type: iface.type
+      })).filter(iface => iface.ipAddress && !iface.internal)
   } catch (error) {
     console.error('获取网络接口信息失败:', error)
     return []
+  }
+}
+
+async function getBatteryInfo() {
+  try {
+    const battery = await si.battery()
+    return {
+      ...battery,
+      hasBattery: battery.hasBattery || false,
+      percent: battery.percent || 0,
+      isCharging: battery.isCharging || false,
+      timeRemaining: battery.timeRemaining || null,
+      designedCapacity: battery.designedCapacity || null,
+      maxCapacity: battery.maxCapacity || null,
+      currentCapacity: battery.currentCapacity || null
+    }
+  } catch (error) {
+    console.error('获取电池信息失败:', error)
+    return {
+      hasBattery: false,
+      percentage: 0,
+      isCharging: false,
+      timeRemaining: null,
+      designCapacity: null,
+      maxCapacity: null,
+      currentCapacity: null
+    }
   }
 }
 
@@ -186,5 +228,6 @@ module.exports = {
   getNetworkInfo,
   getDiskUsage,
   getSystemInfo,
-  getSSHKey
+  getSSHKey,
+  getBatteryInfo
 }

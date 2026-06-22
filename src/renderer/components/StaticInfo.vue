@@ -1,6 +1,5 @@
 <template>
   <div class="static-info">
-
     <div class="monitor-card system-card">
       <div class="card-header">
         <span class="card-icon">📊</span>
@@ -10,35 +9,31 @@
         <div class="system-info">
           <div class="info-row">
             <span class="info-label">{{ t('system.hostname') }}:</span>
-            <span class="info-value">{{ systemInfo.hostname || t('common.unknown') }}</span>
+            <span class="info-value">{{ systemInfo?.hostname || t('common.unknown') }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.os') }}:</span>
-            <span class="info-value">{{ systemInfo.osType || t('common.unknown') }}</span>
+            <span class="info-value">{{ systemInfo?.distro || t('common.unknown') }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.platform') }}:</span>
-            <span class="info-value">{{ systemInfo.platform || t('common.unknown') }}</span>
+            <span class="info-value">{{ systemInfo?.platform || t('common.unknown') }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.cpu') }}:</span>
-            <span class="info-value cpu">{{ systemInfo.cpuModel || t('common.unknown') }}</span>
+            <span class="info-value cpu">{{ systemInfo?.cpuModel || t('common.unknown') }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.cores') }}:</span>
-            <span class="info-value">{{ systemInfo.cpuCores || t('common.unknown') }}</span>
+            <span class="info-value">{{ systemInfo?.cpuCores || t('common.unknown') }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.uptime') }}:</span>
-            <span class="info-value">{{ formatUptime(systemInfo.uptime) }}</span>
+            <span class="info-value">{{ formatUptime(systemInfo?.uptime) }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">{{ t('system.memory') }}:</span>
-            <span class="info-value">{{ systemInfo.totalMemory || t('common.unknown') }}</span>
-          </div>
-          <div class="info-row ssh-row">
-            <span class="info-label">{{ t('system.ssh') }}:</span>
-            <span class="info-value ssh">{{ systemInfo.sshKey || t('common.unknown') }}</span>
+            <span class="info-value">{{ systemInfo?.totalMemory || t('common.unknown') }}</span>
           </div>
         </div>
       </div>
@@ -47,16 +42,28 @@
 </template>
 
 <script setup>
+import { ref, onMounted,  } from "vue";
 import { useI18n } from 'vue-i18n'
 import { formatUptime,} from '../utils/helpers'
+const { ipcRenderer } = window.require("electron");
 
 const { t } = useI18n()
 
-defineProps({
-  systemInfo: {
-    type: Object,
-    required: true
+const systemInfo = ref({});
+
+
+const fetchSystemInfo = async () => {
+  try {
+    const data = await ipcRenderer.invoke("get-system-info");
+    console.log("🚀 ~ fetchSystemInfo ~ data:", data)
+    systemInfo.value = data;
+  } catch (error) {
+    console.error("获取系统信息失败:", error);
   }
+};
+
+onMounted(async () => {
+  await fetchSystemInfo();
 })
 
 </script>
