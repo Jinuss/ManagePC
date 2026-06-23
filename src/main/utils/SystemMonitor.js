@@ -1,4 +1,4 @@
-const si = require('systeminformation')
+import si from 'systeminformation'
 
 class SystemMonitor {
   constructor() {
@@ -92,4 +92,4 @@ class SystemMonitor {
   }
 }
 
-module.exports = SystemMonitor
+export default SystemMonitor

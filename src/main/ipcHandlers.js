@@ -1,10 +1,10 @@
-const { ipcMain } = require('electron')
-const { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } = require('./utils/systemInfo')
-const SystemMonitor = require('./utils/SystemMonitor')
+import { ipcMain } from 'electron'
+import { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } from './utils/systemInfo.js'
+import SystemMonitor from './utils/SystemMonitor.js'
 
 let systemMonitor = null
 
-function registerIpcHandlers() {
+export function registerIpcHandlers() {
   ipcMain.handle('get-ssh-key', () => {
     return getSSHKey()
   })
@@ -47,7 +47,6 @@ function registerIpcHandlers() {
   })
 }
 
-module.exports = {
-  registerIpcHandlers,
-  getSystemMonitor: () => systemMonitor
+export function getSystemMonitor() {
+  return systemMonitor
 }

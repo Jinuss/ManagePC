@@ -1,6 +1,6 @@
-const { app } = require('electron')
-const WindowManager = require('./src/main/windowManager')
-const { registerIpcHandlers } = require('./src/main/ipcHandlers')
+import { app } from 'electron'
+import WindowManager from './windowManager.js'
+import { registerIpcHandlers } from './ipcHandlers.js'
 
 const windowManager = new WindowManager()
 

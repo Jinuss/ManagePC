@@ -1,0 +1,123 @@
+
+.disk-usage[data-v-38c9c627] {
+  padding: 20px;
+}
+.header[data-v-38c9c627] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.section-title[data-v-38c9c627] {
+  font-size: 1.4rem;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.refresh-btn[data-v-38c9c627] {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.refresh-btn[data-v-38c9c627]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+.disk-list[data-v-38c9c627] {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.disk-card[data-v-38c9c627] {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.disk-header[data-v-38c9c627] {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+.disk-name[data-v-38c9c627] {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+}
+.status[data-v-38c9c627] {
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+.status.normal[data-v-38c9c627] {
+  background: #d4edda;
+  color: #155724;
+}
+.status.warning[data-v-38c9c627] {
+  background: #fff3cd;
+  color: #856404;
+}
+.status.danger[data-v-38c9c627] {
+  background: #f8d7da;
+  color: #721c24;
+}
+.progress-bar[data-v-38c9c627] {
+  height: 12px;
+  background: #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.progress-fill[data-v-38c9c627] {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+.disk-info[data-v-38c9c627] {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.info-item[data-v-38c9c627] {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.label[data-v-38c9c627] {
+  font-size: 0.8rem;
+  color: #666;
+}
+.value[data-v-38c9c627] {
+  font-family: "Consolas", "Monaco", monospace;
+  font-weight: 500;
+  color: #333;
+}
+.value.used[data-v-38c9c627] {
+  color: #dc3545;
+}
+.value.free[data-v-38c9c627] {
+  color: #28a745;
+}
+.empty-state[data-v-38c9c627] {
+  text-align: center;
+  padding: 40px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+.empty-icon[data-v-38c9c627] {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+.empty-state p[data-v-38c9c627] {
+  color: #666;
+  font-size: 1rem;
+}

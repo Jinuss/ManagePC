@@ -1,24 +1,15 @@
-const si = require('systeminformation')
-const fs = require('fs')
-const path = require('path')
+import si from 'systeminformation'
+import fs from 'fs'
+import path from 'path'
+import { execSync } from 'child_process'
+import { isWindows, isMac, formatSize } from './helps.js'
 
-function formatSize(bytes) {
-  if (bytes === 0 || !bytes) return '0 B'
-
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-}
-
-async function getDiskUsage() {
+export async function getDiskUsage() {
   try {
     const partitions = await si.fsSize()
     
     let localDrives = new Set()
-    if (process.platform === 'win32') {
-      const { execSync } = require('child_process')
+    if (isWindows()) {
       try {
         const output = execSync('wmic logicaldisk get caption,providername', { encoding: 'utf8' })
         const lines = output.trim().split('\n').slice(1)
@@ -48,7 +39,7 @@ async function getDiskUsage() {
       let driveName = part.mount || part.fs
       let isLocal = false
 
-      if (process.platform === 'win32') {
+      if (isWindows()) {
         const driveMatch = (part.fs || '').match(/^([A-Za-z]):/) || (part.mount || '').match(/^([A-Za-z]):/)
         if (driveMatch) {
           driveName = driveMatch[1] + ':'
@@ -91,11 +82,11 @@ async function getDiskUsage() {
   }
 }
 
-function getSSHKey() {
+export function getSSHKey() {
   try {
     let sshDir = ''
 
-    if (process.platform === 'win32') {
+    if (isWindows()) {
       sshDir = path.join(process.env.USERPROFILE, '.ssh')
     } else {
       sshDir = path.join(process.env.HOME, '.ssh')
@@ -133,7 +124,7 @@ function getSSHKey() {
   }
 }
 
-async function getSystemInfo() {
+export async function getSystemInfo() {
   try {
     const [osInfo, cpu, mem] = await Promise.all([
       si.osInfo(),
@@ -175,7 +166,7 @@ async function getSystemInfo() {
   }
 }
 
-async function getNetworkInfo() {
+export async function getNetworkInfo() {
   try {
     const interfaces = await si.networkInterfaces()
 
@@ -197,7 +188,7 @@ async function getNetworkInfo() {
   }
 }
 
-async function getBatteryInfo() {
+export async function getBatteryInfo() {
   try {
     const battery = await si.battery()
     return {
@@ -222,12 +213,4 @@ async function getBatteryInfo() {
       currentCapacity: null
     }
   }
-}
-
-module.exports = {
-  getNetworkInfo,
-  getDiskUsage,
-  getSystemInfo,
-  getSSHKey,
-  getBatteryInfo
 }

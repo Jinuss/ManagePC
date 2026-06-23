@@ -1,5 +1,5 @@
-const { BrowserWindow } = require('electron')
-const path = require('path')
+import { BrowserWindow } from 'electron'
+import path from 'path'
 
 class WindowManager {
   constructor() {
@@ -14,19 +14,19 @@ class WindowManager {
         backgroundThrottling: false,
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, 'preload.js')
+        preload: path.join(__dirname, '../preload/index.js')
       }
     })
 
     const isDev = process.env.NODE_ENV === 'development'
-    
+
     if (isDev) {
-      this.mainWindow.loadURL('http://localhost:5500')
+      this.mainWindow.loadURL('http://localhost:5173')
     } else {
-      this.mainWindow.loadFile(path.join(__dirname, '../../dist/index.html'))
+      this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
     }
-    
-    this.mainWindow.webContents.openDevTools()
+
+    // this.mainWindow.webContents.openDevTools()
 
     this.mainWindow.on('closed', () => {
       this.mainWindow = null
@@ -38,4 +38,4 @@ class WindowManager {
   }
 }
 
-module.exports = WindowManager
+export default WindowManager

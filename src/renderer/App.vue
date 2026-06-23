@@ -1,24 +1,6 @@
 <template>
   <ElConfigProvider>
     <div class="app-container">
-      <header class="app-header">
-        <div class="header-content">
-          <h1>{{ t('header.title') }}</h1>
-          <p>{{ t('header.subtitle') }}</p>
-        </div>
-        <div class="language-switcher">
-          <el-button 
-            v-for="lang in languages" 
-            :key="lang.code"
-            @click="switchLanguage(lang.code)"
-            :type="currentLocale === lang.code ? 'primary' : 'default'"
-            size="small"
-          >
-            {{ lang.name }}
-          </el-button>
-        </div>
-      </header>
-
       <div class="app-body">
         <aside class="sidebar">
           <el-menu
@@ -30,27 +12,27 @@
             <el-sub-menu index="monitoring">
               <template #title>
                 <span class="menu-icon">🔧</span>
-                <span>{{ t('menu.monitoring') }}</span>
+                <span>{{ t("menu.monitoring") }}</span>
               </template>
               <el-menu-item index="system">
                 <span class="menu-icon">📊</span>
-                <span>{{ t('menu.system') }}</span>
+                <span>{{ t("menu.system") }}</span>
               </el-menu-item>
               <el-menu-item index="network">
                 <span class="menu-icon">📡</span>
-                <span>{{ t('menu.network') }}</span>
+                <span>{{ t("menu.network") }}</span>
               </el-menu-item>
               <el-menu-item index="disk">
                 <span class="menu-icon">💾</span>
-                <span>{{ t('menu.disk') }}</span>
+                <span>{{ t("menu.disk") }}</span>
               </el-menu-item>
               <el-menu-item index="battery">
                 <span class="menu-icon">🔋</span>
-                <span>{{ t('menu.battery') }}</span>
+                <span>{{ t("menu.battery") }}</span>
               </el-menu-item>
               <el-menu-item index="monitor">
                 <span class="menu-icon">📈</span>
-                <span>{{ t('menu.monitor') }}</span>
+                <span>{{ t("menu.monitor") }}</span>
               </el-menu-item>
             </el-sub-menu>
           </el-menu>
@@ -69,63 +51,63 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineAsyncComponent } from 'vue'
-import { useI18n } from 'vue-i18n'
-import ElConfigProvider from './components/ElConfigProvider.vue'
+import { ref, onMounted, computed, defineAsyncComponent } from "vue";
+import { useI18n } from "vue-i18n";
+import ElConfigProvider from "./components/ElConfigProvider.vue";
 
-const { t, locale } = useI18n()
+const { t, locale } = useI18n();
 
-const nodeVersion = ref('')
-const electronVersion = ref('')
-const chromeVersion = ref('')
+const nodeVersion = ref("");
+const electronVersion = ref("");
+const chromeVersion = ref("");
 
 const languages = [
-  { code: 'zh', name: '中文' },
-  { code: 'en', name: 'English' }
-]
+  { code: "zh", name: "中文" },
+  { code: "en", name: "English" },
+];
 
-const currentLocale = computed(() => locale.value)
+const currentLocale = computed(() => locale.value);
 
 const switchLanguage = (code) => {
-  locale.value = code
-}
+  locale.value = code;
+};
 
-const activeTab = ref('system')
+const activeTab = ref("system");
 
-const systemInfo = ref({})
+const systemInfo = ref({});
 
 const handleMenuSelect = (index) => {
-  activeTab.value = index
-}
+  activeTab.value = index;
+};
 
 const componentMap = {
-  system: defineAsyncComponent(() => import('./components/StaticInfo.vue')),
-  network: defineAsyncComponent(() => import('./components/SystemInfo.vue')),
-  disk: defineAsyncComponent(() => import('./components/DiskUsage.vue')),
-  battery: defineAsyncComponent(() => import('./components/BatteryStatus.vue')),
-  monitor: defineAsyncComponent(() => import('./components/PCMonitor.vue'))
-}
+  system: defineAsyncComponent(() => import("./components/StaticInfo.vue")),
+  network: defineAsyncComponent(() => import("./components/SystemInfo.vue")),
+  disk: defineAsyncComponent(() => import("./components/DiskUsage.vue")),
+  battery: defineAsyncComponent(() => import("./components/BatteryStatus.vue")),
+  monitor: defineAsyncComponent(() => import("./components/PCMonitor.vue")),
+};
 
 const currentComponent = computed(() => {
-  return componentMap[activeTab.value] || componentMap.system
-})
+  return componentMap[activeTab.value] || componentMap.system;
+});
 
 const fetchSystemInfo = async () => {
   try {
-    const data = await window.electronAPI.getSystemInfo()
-    systemInfo.value = data
+    const data = await window.electronAPI.getSystemInfo();
+    systemInfo.value = data;
   } catch (error) {
-    console.error('获取系统信息失败:', error)
+    console.error("获取系统信息失败:", error);
   }
-}
+};
 
 onMounted(() => {
-  const versions = window.electronAPI.getVersions()
-  nodeVersion.value = versions.node
-  electronVersion.value = versions.electron
-  chromeVersion.value = versions.chrome
-  fetchSystemInfo()
-})
+  const versions = window.electronAPI.getVersions();
+  nodeVersion.value = versions.node;
+  electronVersion.value = versions.electron;
+  chromeVersion.value = versions.chrome;
+  fetchSystemInfo();
+});
 </script>
 
 <style>
@@ -136,7 +118,9 @@ onMounted(() => {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
 }
@@ -229,34 +213,34 @@ body {
   .app-body {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
     padding-top: 10px;
   }
-  
+
   .sidebar-menu {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .sidebar-menu .el-menu-item {
     width: calc(33.33% - 16px);
     text-align: center;
     padding: 0 10px;
   }
-  
+
   .menu-icon {
     display: block;
     margin-right: 0;
     margin-bottom: 4px;
   }
-  
+
   .sidebar-menu .el-menu-item span:last-child {
     font-size: 0.75rem;
   }
-  
+
   .main-content {
     padding: 10px;
   }
