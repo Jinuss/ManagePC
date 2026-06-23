@@ -81,6 +81,7 @@ export default {
     copyFailed: 'Copy failed'
   },
   menu: {
+    monitoring: 'System Monitor',
     system: 'System Info',
     network: 'Network Info',
     disk: 'Disk Usage',

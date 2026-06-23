@@ -42,19 +42,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted,  } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from 'vue-i18n'
-import { formatUptime,} from '../utils/helpers'
-const { ipcRenderer } = window.require("electron");
+import { formatUptime } from '../utils/helpers'
 
 const { t } = useI18n()
 
 const systemInfo = ref({});
 
-
 const fetchSystemInfo = async () => {
   try {
-    const data = await ipcRenderer.invoke("get-system-info");
+    const data = await window.electronAPI.getSystemInfo();
     console.log("🚀 ~ fetchSystemInfo ~ data:", data)
     systemInfo.value = data;
   } catch (error) {

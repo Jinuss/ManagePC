@@ -57,8 +57,6 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const { ipcRenderer } = window.require("electron")
-
 const batteryInfo = ref({
   hasBattery: false,
   percent: 0,
@@ -71,7 +69,7 @@ const batteryInfo = ref({
 
 const fetchBatteryInfo = async () => {
   try {
-    const info = await ipcRenderer.invoke('get-battery-info')
+    const info = await window.electronAPI.getBatteryInfo()
     console.log("🚀 ~ fetchBatteryInfo ~ info:", info)
     batteryInfo.value = info
   } catch (error) {

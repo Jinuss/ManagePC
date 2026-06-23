@@ -81,6 +81,7 @@ export default {
     copyFailed: '复制失败'
   },
   menu: {
+    monitoring: '系统监控',
     system: '系统信息',
     network: '网络信息',
     disk: '磁盘使用',

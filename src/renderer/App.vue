@@ -27,26 +27,32 @@
             mode="vertical"
             @select="handleMenuSelect"
           >
-            <el-menu-item index="system">
-              <span class="menu-icon">📊</span>
-              <span>{{ t('menu.system') }}</span>
-            </el-menu-item>
-            <el-menu-item index="network">
-              <span class="menu-icon">📡</span>
-              <span>{{ t('menu.network') }}</span>
-            </el-menu-item>
-            <el-menu-item index="disk">
-              <span class="menu-icon">💾</span>
-              <span>{{ t('menu.disk') }}</span>
-            </el-menu-item>
-            <el-menu-item index="battery">
-              <span class="menu-icon">🔋</span>
-              <span>{{ t('menu.battery') }}</span>
-            </el-menu-item>
-            <el-menu-item index="monitor">
-              <span class="menu-icon">📈</span>
-              <span>{{ t('menu.monitor') }}</span>
-            </el-menu-item>
+            <el-sub-menu index="monitoring">
+              <template #title>
+                <span class="menu-icon">🔧</span>
+                <span>{{ t('menu.monitoring') }}</span>
+              </template>
+              <el-menu-item index="system">
+                <span class="menu-icon">📊</span>
+                <span>{{ t('menu.system') }}</span>
+              </el-menu-item>
+              <el-menu-item index="network">
+                <span class="menu-icon">📡</span>
+                <span>{{ t('menu.network') }}</span>
+              </el-menu-item>
+              <el-menu-item index="disk">
+                <span class="menu-icon">💾</span>
+                <span>{{ t('menu.disk') }}</span>
+              </el-menu-item>
+              <el-menu-item index="battery">
+                <span class="menu-icon">🔋</span>
+                <span>{{ t('menu.battery') }}</span>
+              </el-menu-item>
+              <el-menu-item index="monitor">
+                <span class="menu-icon">📈</span>
+                <span>{{ t('menu.monitor') }}</span>
+              </el-menu-item>
+            </el-sub-menu>
           </el-menu>
         </aside>
 
@@ -105,9 +111,8 @@ const currentComponent = computed(() => {
 })
 
 const fetchSystemInfo = async () => {
-  const { ipcRenderer } = window.require('electron')
   try {
-    const data = await ipcRenderer.invoke('get-system-info')
+    const data = await window.electronAPI.getSystemInfo()
     systemInfo.value = data
   } catch (error) {
     console.error('获取系统信息失败:', error)
@@ -115,9 +120,10 @@ const fetchSystemInfo = async () => {
 }
 
 onMounted(() => {
-  nodeVersion.value = process.versions.node
-  electronVersion.value = process.versions.electron
-  chromeVersion.value = process.versions.chrome
+  const versions = window.electronAPI.getVersions()
+  nodeVersion.value = versions.node
+  electronVersion.value = versions.electron
+  chromeVersion.value = versions.chrome
   fetchSystemInfo()
 })
 </script>

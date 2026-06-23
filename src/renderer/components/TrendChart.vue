@@ -117,14 +117,6 @@ const chartOption = computed(() => {
           return result
         }
       },
-      legend: {
-        data: props.seriesNames,
-        bottom: 0,
-        textStyle: {
-          color: '#666',
-          fontSize: 11
-        }
-      },
       grid: {
         left: '3%',
         right: '4%',

@@ -17,7 +17,7 @@ import { updateHistory } from "../utils/helpers";
 
 defineOptions({ name: 'PCMonitor' });
 
-const { ipcRenderer } = window.require("electron");
+const electronAPI = window.electronAPI;
 
 const MAX_HISTORY = 30;
 
@@ -105,12 +105,14 @@ const handleSystemStats = (event, data) => {
   }
 };
 
+let removeListener = null;
+
 onMounted(() => {
-  ipcRenderer.on("system-stats", handleSystemStats);
+  removeListener = electronAPI.onSystemStats(handleSystemStats);
 });
 
 onActivated(async () => {
-  await ipcRenderer.invoke("start-monitoring", 1000);
+  await electronAPI.startMonitoring(1000);
 });
 
 onDeactivated(async () => {
@@ -118,11 +120,14 @@ onDeactivated(async () => {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
   }
-  await ipcRenderer.invoke("stop-monitoring");
+  await electronAPI.stopMonitoring();
 });
 
 onUnmounted(() => {
-  ipcRenderer.removeListener("system-stats", handleSystemStats);
+  if (removeListener) {
+    removeListener();
+    removeListener = null;
+  }
 });
 </script>
 

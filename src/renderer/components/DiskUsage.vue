@@ -54,13 +54,11 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const { ipcRenderer } = window.require("electron");
-
 const diskList = ref([]);
 
 const fetchDiskUsage = async () => {
   try {
-    const diskInfo = await ipcRenderer.invoke("get-disk-usage");
+    const diskInfo = await window.electronAPI.getDiskUsage();
     diskList.value = diskInfo;
   } catch (error) {
     console.error("获取磁盘信息失败:", error);

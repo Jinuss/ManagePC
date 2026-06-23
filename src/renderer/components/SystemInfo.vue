@@ -49,15 +49,13 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const { ipcRenderer } = window.require("electron");
-
 const networkInfo = ref([]);
 const sshKey = ref("");
 const copied = ref(false);
 
 const fetchNetworkInfo = async () => {
   try {
-    const info = await ipcRenderer.invoke("get-network-info");
+    const info = await window.electronAPI.getNetworkInfo();
     console.log("🚀 ~ fetchNetworkInfo ~ info:", info);
     networkInfo.value = info;
   } catch (error) {
@@ -75,7 +73,7 @@ const fetchNetworkInfo = async () => {
 
 const fetchSSHKey = async () => {
   try {
-    const key = await ipcRenderer.invoke("get-ssh-key");
+    const key = await window.electronAPI.getSSHKey();
     sshKey.value = key;
   } catch (error) {
     console.error("获取 SSH key 失败:", error);
