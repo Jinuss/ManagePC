@@ -3,10 +3,10 @@ name: Windows Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
-  contents: write   # 必须，否则无法创建 Release
+  contents: write # 必须，否则无法创建 Release
 
 jobs:
   windows:
@@ -23,7 +23,7 @@ jobs:
       - run: npm ci
 
       - name: Build frontend
-        run: npm run build:frontend   # 没前端就删
+        run: npm run build:frontend # 没前端就删
 
       - name: Publish
         run: npm run publish
