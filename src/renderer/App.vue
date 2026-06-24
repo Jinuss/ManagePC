@@ -1,53 +1,45 @@
 <template>
-  <ElConfigProvider>
+  <NConfigProvider :theme="naiveTheme">
     <div class="app-container">
+      <CustomTitleBar />
       <div class="app-body">
+        <div class="fixed-sidebar">
+          <div class="fixed-sidebar-content">
+            <div class="fixed-sidebar-menu">
+              <NTooltip placement="right" trigger="hover">
+                <template #trigger>
+                <span class="menu-icon">🔧</span>
+                </template>
+                <span>{{ t('menu.monitoring') }}</span>
+              </NTooltip>
+            </div>
+          </div>
+        </div>
         <aside class="sidebar">
-          <el-menu
-            :default-active="activeTab"
+          <NMenu
+            :value="activeTab"
+            :options="menuOptions"
             class="sidebar-menu"
             mode="vertical"
-            @select="handleMenuSelect"
-          >
-            <el-sub-menu index="monitoring">
-              <template #title>
-                <span class="menu-icon">🔧</span>
-                <span>{{ t("menu.monitoring") }}</span>
-              </template>
-              <el-menu-item index="system">
-                <span class="menu-icon">📊</span>
-                <span>{{ t("menu.system") }}</span>
-              </el-menu-item>
-              <el-menu-item index="network">
-                <span class="menu-icon">📡</span>
-                <span>{{ t("menu.network") }}</span>
-              </el-menu-item>
-              <el-menu-item index="disk">
-                <span class="menu-icon">💾</span>
-                <span>{{ t("menu.disk") }}</span>
-              </el-menu-item>
-              <el-menu-item index="battery">
-                <span class="menu-icon">🔋</span>
-                <span>{{ t("menu.battery") }}</span>
-              </el-menu-item>
-              <el-menu-item index="monitor">
-                <span class="menu-icon">📈</span>
-                <span>{{ t("menu.monitor") }}</span>
-              </el-menu-item>
-            </el-sub-menu>
-            
+            @update:value="handleMenuSelect"
+          />
+
+          <div class="sidebar-bottom">
             <div class="update-section">
-              <el-button 
-                class="update-btn" 
+              <NButton
+                class="update-btn"
                 @click="checkUpdate"
                 size="small"
                 type="primary"
                 :loading="checkingUpdate"
               >
                 🔄 {{ t("common.checkUpdate") }}
-              </el-button>
+              </NButton>
             </div>
-          </el-menu>
+            <div class="theme-section">
+              <ThemeSwitcher />
+            </div>
+          </div>
         </aside>
 
         <main class="main-content">
@@ -59,36 +51,75 @@
         </main>
       </div>
     </div>
-  </ElConfigProvider>
+  </NConfigProvider>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineAsyncComponent } from "vue";
+import { ref, onMounted, computed, defineAsyncComponent, h } from "vue";
 import { useI18n } from "vue-i18n";
-import ElConfigProvider from "./components/ElConfigProvider.vue";
-import { ElMessage } from "element-plus";
+import { NConfigProvider, NMenu, NButton, NTooltip } from "naive-ui";
+import { darkTheme } from "naive-ui";
+import {
+  useTheme,
+  initTheme,
+  setupSystemThemeListener,
+} from "./composables/useTheme";
+import CustomTitleBar from "./components/CustomTitleBar.vue";
+import ThemeSwitcher from "./components/ThemeSwitcher.vue";
 
-const { t, locale } = useI18n();
+const { t } = useI18n();
 
-const nodeVersion = ref("");
-const electronVersion = ref("");
-const chromeVersion = ref("");
+// 初始化主题
+initTheme();
+setupSystemThemeListener();
 
-const languages = [
-  { code: "zh", name: "中文" },
-  { code: "en", name: "English" },
-];
+const { theme } = useTheme();
 
-const currentLocale = computed(() => locale.value);
-
-const switchLanguage = (code) => {
-  locale.value = code;
-};
+// Naive UI 主题
+const naiveTheme = computed(() => {
+  if (theme.value === "dark") {
+    return darkTheme;
+  }
+  if (theme.value === "system") {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? darkTheme
+      : null;
+  }
+  return null;
+});
 
 const activeTab = ref("system");
 const checkingUpdate = ref(false);
 
 const systemInfo = ref({});
+
+const menuOptions = computed(() => [
+  {
+    label: t("menu.system"),
+    key: "system",
+    icon: () => h("span", { class: "menu-icon" }, "📊"),
+  },
+  {
+    label: t("menu.network"),
+    key: "network",
+    icon: () => h("span", { class: "menu-icon" }, "📡"),
+  },
+  {
+    label: t("menu.disk"),
+    key: "disk",
+    icon: () => h("span", { class: "menu-icon" }, "💾"),
+  },
+  {
+    label: t("menu.battery"),
+    key: "battery",
+    icon: () => h("span", { class: "menu-icon" }, "🔋"),
+  },
+  {
+    label: t("menu.monitor"),
+    key: "monitor",
+    icon: () => h("span", { class: "menu-icon" }, "📈"),
+  },
+]);
 
 const handleMenuSelect = (index) => {
   activeTab.value = index;
@@ -98,12 +129,12 @@ const checkUpdate = async () => {
   checkingUpdate.value = true;
   try {
     const result = await window.electronAPI.checkForUpdates();
-    if (result.status === 'no-update') {
-      ElMessage.success(result.message);
+    if (result.status === "no-update") {
+      // message.success(result.message);
     }
   } catch (error) {
-    console.error('检查更新失败:', error);
-    ElMessage.error('检查更新失败');
+    console.error("检查更新失败:", error);
+    // message.error("检查更新失败");
   } finally {
     checkingUpdate.value = false;
   }
@@ -131,57 +162,17 @@ const fetchSystemInfo = async () => {
 };
 
 onMounted(() => {
-  const versions = window.electronAPI.getVersions();
-  nodeVersion.value = versions.node;
-  electronVersion.value = versions.electron;
-  chromeVersion.value = versions.chrome;
   fetchSystemInfo();
 });
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
-    Cantarell, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-}
-
 .app-container {
-  min-height: 100vh;
+  flex: 1;
   display: flex;
   flex-direction: column;
-}
-
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  color: white;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.header-content h1 {
-  font-size: 1.5rem;
-  margin-bottom: 3px;
-}
-
-.header-content p {
-  font-size: 0.85rem;
-  opacity: 0.8;
-}
-
-.language-switcher {
-  display: flex;
-  gap: 8px;
+  min-height: 0;
+  background-color: var(--color-bg-secondary);
 }
 
 .app-body {
@@ -190,9 +181,15 @@ body {
   min-height: 0;
 }
 
+.fixed-sidebar {
+  background: var(--color-bg-primary);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
 .sidebar {
   width: 200px;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-bg-primary);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   padding-top: 20px;
 }
@@ -201,7 +198,7 @@ body {
   border-right: none;
 }
 
-.sidebar-menu .el-menu-item {
+.sidebar-menu :deep(.n-menu-item) {
   height: 48px;
   line-height: 48px;
   padding: 0 20px;
@@ -210,12 +207,16 @@ body {
   transition: all 0.2s;
 }
 
-.sidebar-menu .el-menu-item:hover {
+.sidebar-menu :deep(.n-menu-item:hover) {
   background: rgba(102, 126, 234, 0.1);
 }
 
-.sidebar-menu .el-menu-item.is-active {
+.sidebar-menu :deep(.n-menu-item.n-menu-item--active) {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.sidebar-menu :deep(.n-menu-item.n-menu-item--active .menu-icon) {
   color: white;
 }
 
@@ -224,15 +225,28 @@ body {
   font-size: 1.1rem;
 }
 
-.update-section {
+.sidebar-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 200px;
   padding: 16px;
-  border-top: 1px solid #eee;
-  margin-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+.update-section {
+  margin-bottom: 12px;
 }
 
 .update-btn {
   width: 100%;
   border-radius: 8px;
+}
+
+.theme-section {
+  display: flex;
+  justify-content: center;
 }
 
 .main-content {
@@ -243,10 +257,11 @@ body {
 
 .content-panel {
   height: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: var(--color-bg-primary);
   border-radius: 12px;
   padding: 20px;
   overflow-y: auto;
+  box-shadow: var(--shadow-md);
 }
 
 @media (max-width: 768px) {
@@ -259,30 +274,29 @@ body {
     padding-top: 10px;
   }
 
-  .sidebar-menu {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .sidebar-menu .el-menu-item {
+  .sidebar-menu :deep(.n-menu-item) {
     width: calc(33.33% - 16px);
     text-align: center;
     padding: 0 10px;
   }
 
-  .menu-icon {
+  .sidebar-menu :deep(.menu-icon) {
     display: block;
     margin-right: 0;
     margin-bottom: 4px;
   }
 
-  .sidebar-menu .el-menu-item span:last-child {
+  .sidebar-menu :deep(.n-menu-item span:last-child) {
     font-size: 0.75rem;
   }
 
   .main-content {
     padding: 10px;
+  }
+
+  .sidebar-bottom {
+    position: static;
+    width: auto;
   }
 }
 </style>

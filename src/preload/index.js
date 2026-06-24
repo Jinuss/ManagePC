@@ -43,6 +43,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     chrome: process.versions.chrome
   }),
   
+  // 获取平台信息
+  getPlatform: () => ({
+    platform: process.platform,
+    isMac: process.platform === 'darwin',
+    isWindows: process.platform === 'win32',
+    isLinux: process.platform === 'linux'
+  }),
+  
   // 检查更新
-  checkForUpdates: () => ipcRenderer.invoke('check-for-updates')
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
 })

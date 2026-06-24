@@ -29,14 +29,14 @@ export function registerIpcHandlers() {
 
   ipcMain.handle('start-monitoring', (event, intervalMs = 1000) => {
     const window = event.sender.getOwnerBrowserWindow()
-    
+
     if (systemMonitor) {
       systemMonitor.stop()
     }
-    
+
     systemMonitor = new SystemMonitor()
     systemMonitor.start(window, intervalMs)
-    
+
     return { success: true }
   })
 
@@ -52,20 +52,20 @@ export function registerIpcHandlers() {
     if (!updateManager) {
       updateManager = new UpdateManager()
     }
-    
+
     return new Promise((resolve) => {
       updateManager.autoUpdater.once('update-not-available', () => {
         resolve({ status: 'no-update', message: '当前已是最新版本' })
       })
-      
+
       updateManager.autoUpdater.once('update-available', (info) => {
-        resolve({ 
-          status: 'update-available', 
+        resolve({
+          status: 'update-available',
           version: info.version,
           message: `发现新版本 ${info.version}`
         })
       })
-      
+
       updateManager.checkForUpdates()
     })
   })

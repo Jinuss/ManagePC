@@ -4,7 +4,7 @@
   "description": "Electron + Vue 3 + Vite 应用",
   "main": "./out/main/index.js",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
     "pack:win": "npm run build && electron-builder --win --x64",
@@ -43,9 +43,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vueuse/core": "^14.3.0",
     "echarts": "^6.1.0",
     "electron-updater": "^6.8.9",
-    "element-plus": "^2.14.2",
+    "naive-ui": "^2.44.1",
     "systeminformation": "^5.31.7",
     "vue": "^3.4.21",
     "vue-echarts": "^8.0.1",
