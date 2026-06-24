@@ -10,7 +10,8 @@ export default {
     no: '否',
     copy: '📋 复制',
     copied: '✓ 已复制',
-    fetchFailed: '获取失败'
+    fetchFailed: '获取失败',
+    checkUpdate: '检查更新'
   },
   header: {
     title: '系统监控',

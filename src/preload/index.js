@@ -41,5 +41,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     node: process.versions.node,
     electron: process.versions.electron,
     chrome: process.versions.chrome
-  })
+  }),
+  
+  // 检查更新
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates')
 })

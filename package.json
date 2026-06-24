@@ -7,9 +7,10 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "pack:win": "npm run build && electron-builder --win --x64",
+    "pack:win": "npm run build && electron-builder --win --x64 --publish=always",
     "pack:mac": "npm run build && electron-builder --mac --x64",
-    "pack:all": "npm run build && electron-builder -mwl"
+    "pack:all": "npm run build && electron-builder -mwl",
+    "publish": "npm run pack:win"
   },
   "build": {
     "appId": "com.example.managepc",
@@ -20,6 +21,12 @@
     "files": [
       "out/**/*"
     ],
+    "publish": {
+      "provider": "github",
+      "repo": "ManagePC",
+      "owner": "Jinuss",
+      "releaseType": "release"
+    },
     "win": {
       "target": "nsis"
     },
@@ -37,6 +44,7 @@
   "license": "ISC",
   "dependencies": {
     "echarts": "^6.1.0",
+    "electron-updater": "^6.8.9",
     "element-plus": "^2.14.2",
     "systeminformation": "^5.31.7",
     "vue": "^3.4.21",

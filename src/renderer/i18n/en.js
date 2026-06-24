@@ -10,7 +10,8 @@ export default {
     no: 'No',
     copy: '📋 Copy',
     copied: '✓ Copied',
-    fetchFailed: 'Fetch failed'
+    fetchFailed: 'Fetch failed',
+    checkUpdate: 'Check for updates'
   },
   header: {
     title: 'System Monitor',

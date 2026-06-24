@@ -35,6 +35,18 @@
                 <span>{{ t("menu.monitor") }}</span>
               </el-menu-item>
             </el-sub-menu>
+            
+            <div class="update-section">
+              <el-button 
+                class="update-btn" 
+                @click="checkUpdate"
+                size="small"
+                type="primary"
+                :loading="checkingUpdate"
+              >
+                🔄 {{ t("common.checkUpdate") }}
+              </el-button>
+            </div>
           </el-menu>
         </aside>
 
@@ -54,6 +66,7 @@
 import { ref, onMounted, computed, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import ElConfigProvider from "./components/ElConfigProvider.vue";
+import { ElMessage } from "element-plus";
 
 const { t, locale } = useI18n();
 
@@ -73,11 +86,27 @@ const switchLanguage = (code) => {
 };
 
 const activeTab = ref("system");
+const checkingUpdate = ref(false);
 
 const systemInfo = ref({});
 
 const handleMenuSelect = (index) => {
   activeTab.value = index;
+};
+
+const checkUpdate = async () => {
+  checkingUpdate.value = true;
+  try {
+    const result = await window.electronAPI.checkForUpdates();
+    if (result.status === 'no-update') {
+      ElMessage.success(result.message);
+    }
+  } catch (error) {
+    console.error('检查更新失败:', error);
+    ElMessage.error('检查更新失败');
+  } finally {
+    checkingUpdate.value = false;
+  }
 };
 
 const componentMap = {
@@ -193,6 +222,17 @@ body {
 .menu-icon {
   margin-right: 10px;
   font-size: 1.1rem;
+}
+
+.update-section {
+  padding: 16px;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+.update-btn {
+  width: 100%;
+  border-radius: 8px;
 }
 
 .main-content {

@@ -1,8 +1,10 @@
 import { ipcMain } from 'electron'
 import { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } from './utils/systemInfo.js'
 import SystemMonitor from './utils/SystemMonitor.js'
+import UpdateManager from './updateManager.js'
 
 let systemMonitor = null
+let updateManager = null
 
 export function registerIpcHandlers() {
   ipcMain.handle('get-ssh-key', () => {
@@ -45,8 +47,34 @@ export function registerIpcHandlers() {
     }
     return { success: true }
   })
+
+  ipcMain.handle('check-for-updates', () => {
+    if (!updateManager) {
+      updateManager = new UpdateManager()
+    }
+    
+    return new Promise((resolve) => {
+      updateManager.autoUpdater.once('update-not-available', () => {
+        resolve({ status: 'no-update', message: '当前已是最新版本' })
+      })
+      
+      updateManager.autoUpdater.once('update-available', (info) => {
+        resolve({ 
+          status: 'update-available', 
+          version: info.version,
+          message: `发现新版本 ${info.version}`
+        })
+      })
+      
+      updateManager.checkForUpdates()
+    })
+  })
 }
 
 export function getSystemMonitor() {
   return systemMonitor
+}
+
+export function getUpdateManager() {
+  return updateManager
 }
