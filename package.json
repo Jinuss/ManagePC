@@ -7,10 +7,10 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "pack:win": "npm run build && electron-builder --win --x64 --publish=always",
+    "pack:win": "npm run build && electron-builder --win --x64",
     "pack:mac": "npm run build && electron-builder --mac --x64",
     "pack:all": "npm run build && electron-builder -mwl",
-    "publish": "npm run pack:win"
+    "publish": "npm run build && electron-builder --win --x64 --publish=always"
   },
   "build": {
     "appId": "com.example.managepc",
