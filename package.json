@@ -1,6 +1,6 @@
 {
   "name": "managepc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Electron + Vue 3 + Vite 应用",
   "main": "./out/main/index.js",
   "scripts": {
