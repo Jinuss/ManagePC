@@ -4,16 +4,16 @@ import { registerIpcHandlers } from './ipcHandlers.js'
 import UpdateManager from './updateManager.js'
 import TrayManager from './trayManager.js'
 
+const gotTheLock = app.requestSingleInstanceLock()
+
 let windowManager = null
 let updateManager = null
 let trayManager = null
 
-const gotTheLock = app.requestSingleInstanceLock()
-
 if (!gotTheLock) {
   app.quit()
 } else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
+  app.on('second-instance', () => {
     if (windowManager && windowManager.getMainWindow()) {
       const mainWindow = windowManager.getMainWindow()
       if (mainWindow.isMinimized()) {
@@ -56,9 +56,19 @@ if (!gotTheLock) {
 
   app.on('window-all-closed', () => {
     if (trayManager) {
-      trayManager.show()
+      trayManager?.show()
     }
   })
 }
 
-export { updateManager, trayManager }
+export function getWindowManager() {
+  return windowManager
+}
+
+export function getUpdateManager() {
+  return updateManager
+}
+
+export function getTrayManager() {
+  return trayManager
+}

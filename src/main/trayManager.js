@@ -51,6 +51,10 @@ class TrayManager {
     }
   }
 
+  show() {
+    this.showWindow()
+  }
+
   hideWindow() {
     if (this.mainWindow) {
       this.mainWindow.hide()
