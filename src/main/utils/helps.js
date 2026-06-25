@@ -1,12 +1,21 @@
-import iconPath_windows from '../../../resources/assets/icons/windows/icon.ico?asset'
-import iconPath_mac from '../../../resources/assets/icons/macos/icon.icns?asset'
+import path from 'path'
+import { app } from 'electron'
 
 export function getIconPath() {
-  if (isWindows()) {
-    return iconPath_windows
-  }
-  if (isMac()) {
-    return iconPath_mac
+  if (app.isPackaged) {
+    if (isWindows()) {
+      return path.join(process.resourcesPath, 'icons', 'windows', 'icon.ico')
+    }
+    if (isMac()) {
+      return path.join(process.resourcesPath, 'icons', 'macos', 'icon.icns')
+    }
+  }else{
+    if (isWindows()) {
+      return path.join(process.cwd(),'resources', 'assets', 'icons', 'windows', 'icon.ico')
+    }
+    if (isMac()) {
+      return path.join(process.cwd(),'resources', 'assets', 'icons', 'macos', 'icon.icns')
+    }
   }
 }
 

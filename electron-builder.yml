@@ -1,10 +1,15 @@
 appId: com.example.system-monitor
-productName: "Super System Monitor"
+productName: SuperSystemMonitor
 directories:
   output: dist
+
 files:
   - out/**/*
   - package.json
+
+extraResources:
+  - from: resources/assets/icons
+    to: icons
 
 generateUpdatesFilesForAllChannels: true
 
@@ -16,11 +21,16 @@ publish:
 
 win:
   target: nsis
+  executableName: SuperSystemMonitor
   icon: resources/assets/icons/windows/icon.ico
 
 nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
+
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+
   installerIcon: resources/assets/icons/windows/icon.ico
   uninstallerIcon: resources/assets/icons/windows/icon.ico

@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
+import log from 'electron-log'
 import { isMac, getIconPath } from './utils/helps'
 
 app.setAppUserModelId('com.example.system-monitor')
@@ -46,8 +47,14 @@ class WindowManager {
 
     // 拦截关闭事件，最小化到托盘
     this.mainWindow.on('close', (event) => {
+      log.info('mainWindow close');
+
+      log.info('trayManager exists=', !!this.trayManager);
+      log.info('tray exists=', !!this.trayManager.getTray());
       if (this.trayManager && !isMac()) {
+        log.info('isDestroyed=', this.mainWindow.isDestroyed());
         if (!this.mainWindow.isDestroyed()) {
+          log.info('close')
           event.preventDefault()
           this.mainWindow.hide()
         }

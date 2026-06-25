@@ -1,5 +1,5 @@
 {
-  "name": "system-monitor",
+  "name": "SuperSystemMonitor",
   "version": "1.0.11",
   "description": "Super System Monitor",
   "main": "./out/main/index.js",
@@ -22,6 +22,7 @@
   "dependencies": {
     "@vueuse/core": "^14.3.0",
     "echarts": "^6.1.0",
+    "electron-log": "^5.4.4",
     "electron-updater": "^6.8.9",
     "naive-ui": "^2.44.1",
     "systeminformation": "^5.31.7",

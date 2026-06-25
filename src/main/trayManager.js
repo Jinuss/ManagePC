@@ -1,5 +1,7 @@
 import { app, Tray, Menu } from 'electron'
 import { getIconPath } from './utils/helps'
+import log from 'electron-log'
+import fs from 'fs'
 
 class TrayManager {
   constructor() {
@@ -13,7 +15,15 @@ class TrayManager {
   }
 
   createTray() {
-    this.tray = new Tray(getIconPath())
+    try{
+    log.info('createTray start')
+    
+    const iconPath = getIconPath()
+
+    log.info('iconPath=', iconPath)
+
+    log.info('icon是否存在=', fs.existsSync(iconPath))
+    this.tray = new Tray(iconPath)
 
     const contextMenu = Menu.buildFromTemplate([
       {
@@ -40,6 +50,10 @@ class TrayManager {
     this.tray.on('click', () => {
       this.showWindow();
     })
+    log.info('createTray end')
+    } catch (error) {
+      log.error('createTray error', error)
+    }
   }
 
   showWindow() {
@@ -47,10 +61,6 @@ class TrayManager {
       this.mainWindow.show()
       this.mainWindow.focus()
     }
-  }
-
-  show() {
-    this.showWindow()
   }
 
   hideWindow() {
