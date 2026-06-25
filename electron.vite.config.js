@@ -1,23 +1,10 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
-import copy from 'rollup-plugin-copy'
 
 export default defineConfig({
   main: {
-    plugins: [
-      externalizeDepsPlugin(),
-      copy({
-        targets: [
-          {
-            src: resolve(__dirname, 'package.json'),
-            dest: resolve(__dirname, 'out')
-          }
-        ],
-        hook: 'buildEnd',
-        verbose: true
-      })
-    ],
+    plugins: [externalizeDepsPlugin()],
     resolve: {
       alias: {
         '@': resolve('src/main')

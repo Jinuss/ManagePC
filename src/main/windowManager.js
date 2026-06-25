@@ -1,10 +1,8 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
-import { isMac, getIconPath, getPackageConfig } from './utils/helps'
+import { isMac, getIconPath } from './utils/helps'
 
-// 从 package.json 读取 appId
-const appId = getPackageConfig('build.appId', 'com.example.managepc')
-app.setAppUserModelId(appId)
+app.setAppUserModelId('com.example.system-monitor')
 
 class WindowManager {
   constructor() {

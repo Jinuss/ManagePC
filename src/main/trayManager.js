@@ -1,4 +1,4 @@
-import { app, Tray, Menu, nativeImage } from 'electron'
+import { app, Tray, Menu } from 'electron'
 import { getIconPath } from './utils/helps'
 
 class TrayManager {

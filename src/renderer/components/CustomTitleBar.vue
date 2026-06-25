@@ -48,12 +48,12 @@ const switchLanguage = (code) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 35px;
+  height: 32px;
   background: #2f3241;
   padding: 0 8px;
   -webkit-app-region: drag;
   user-select: none;
-  margin-right: 150px;
+  margin-right: 137px;
   z-index: 1000;
 }
 
