@@ -1,23 +1,24 @@
 appId: com.example.system-monitor
-productName: Super System Monitor
+productName: "Super System Monitor"
 directories:
   output: dist
 files:
   - out/**/*
   - package.json
+
 publish:
   provider: github
   repo: ManagePC
   owner: Jinuss
   releaseType: release
-  channel: latest
-  generateUpdatesFilesForAllChannels: true
+
 win:
   target: nsis
   icon: resources/assets/icons/windows/icon.ico
+
 nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
   installerIcon: resources/assets/icons/windows/icon.ico
   uninstallerIcon: resources/assets/icons/windows/icon.ico
-mac:
-  target: dmg
-  category: public.app-category.utilities
