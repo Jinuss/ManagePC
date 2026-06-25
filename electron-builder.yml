@@ -4,11 +4,14 @@ directories:
   output: dist
 files:
   - out/**/*
+  - package.json
 publish:
   provider: github
   repo: ManagePC
   owner: Jinuss
   releaseType: release
+  channel: latest
+  generateUpdatesFilesForAllChannels: true
 win:
   target: nsis
   icon: resources/assets/icons/windows/icon.ico
