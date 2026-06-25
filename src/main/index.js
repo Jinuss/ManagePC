@@ -55,8 +55,14 @@ if (!gotTheLock) {
   })
 
   app.on('window-all-closed', () => {
-    if (trayManager) {
-      trayManager?.show()
+    if (process.platform !== 'darwin') {
+      if (trayManager) {
+        const tray = trayManager.getTray()
+        if (tray && !tray.isDestroyed()) {
+          return
+        }
+      }
+      app.quit()
     }
   })
 }

@@ -38,14 +38,12 @@ class TrayManager {
 
     // 点击托盘图标显示/隐藏窗口
     this.tray.on('click', () => {
-      // if (!this.mainWindow.isVisible()) {
-      this.showWindow()
-      // }
+      this.showWindow();
     })
   }
 
   showWindow() {
-    if (this.mainWindow) {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.show()
       this.mainWindow.focus()
     }

@@ -46,15 +46,12 @@ class WindowManager {
 
     // 拦截关闭事件，最小化到托盘
     this.mainWindow.on('close', (event) => {
-      // 如果有托盘管理器且不是 macOS（macOS 有单独的 dock 行为）
       if (this.trayManager && !isMac()) {
-        event.preventDefault()
-        this.mainWindow.hide()
+        if (!this.mainWindow.isDestroyed()) {
+          event.preventDefault()
+          this.mainWindow.hide()
+        }
       }
-    })
-
-    this.mainWindow.on('closed', () => {
-      this.mainWindow = null
     })
   }
 
