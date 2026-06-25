@@ -1,7 +1,7 @@
 {
-  "name": "managepc",
+  "name": "system-monitor",
   "version": "1.0.4",
-  "description": "Electron + Vue 3 + Vite 应用",
+  "description": "Super System Monitor",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev --watch",
@@ -13,8 +13,8 @@
     "publish": "npm run build && electron-builder --win --x64 --publish=always"
   },
   "build": {
-    "appId": "com.example.managepc",
-    "productName": "System Monitor",
+    "appId": "com.example.system-monitor",
+    "productName": "Super System Monitor",
     "directories": {
       "output": "dist"
     },
@@ -28,7 +28,12 @@
       "releaseType": "release"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "resources/assets/icons/windows/icon.ico"
+    },
+    "nsis": {
+      "installerIcon": "resources/assets/icons/windows/icon.ico",
+      "uninstallerIcon": "resources/assets/icons/windows/icon.ico"
     },
     "mac": {
       "target": "dmg",
@@ -57,6 +62,7 @@
     "electron": "^42.4.1",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
+    "rollup-plugin-copy": "^3.5.0",
     "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^32.1.0",
     "vite": "^5.2.8"

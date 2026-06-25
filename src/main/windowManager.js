@@ -1,6 +1,10 @@
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import path from 'path'
-import { isMac } from './utils/helps'
+import { isMac, getIconPath, getPackageConfig } from './utils/helps'
+
+// 从 package.json 读取 appId
+const appId = getPackageConfig('build.appId', 'com.example.managepc')
+app.setAppUserModelId(appId)
 
 class WindowManager {
   constructor() {
@@ -16,6 +20,7 @@ class WindowManager {
     this.mainWindow = new BrowserWindow({
       width: 1200,
       height: 800,
+      icon: getIconPath(),
       autoHideMenuBar: true,
       titleBarStyle: 'hidden',
       titleBarOverlay: {
@@ -39,7 +44,7 @@ class WindowManager {
       this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
     }
 
-    this.mainWindow.webContents.openDevTools()
+    // this.mainWindow.webContents.openDevTools()
 
     // 拦截关闭事件，最小化到托盘
     this.mainWindow.on('close', (event) => {

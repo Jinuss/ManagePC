@@ -4,43 +4,61 @@ import { registerIpcHandlers } from './ipcHandlers.js'
 import UpdateManager from './updateManager.js'
 import TrayManager from './trayManager.js'
 
-const windowManager = new WindowManager()
-const updateManager = new UpdateManager()
-const trayManager = new TrayManager()
+let windowManager = null
+let updateManager = null
+let trayManager = null
 
-function initApp() {
-  registerIpcHandlers()
-  windowManager.createMainWindow()
-  
-  // 初始化托盘管理器
-  trayManager.init(windowManager.getMainWindow())
-  windowManager.setTrayManager(trayManager)
-  
-  // 启动后3秒自动检查更新
-  setTimeout(() => {
-    updateManager.checkForUpdates()
-  }, 3000)
-}
+const gotTheLock = app.requestSingleInstanceLock()
 
-app.whenReady().then(() => {
-  initApp()
-
-  app.on('activate', () => {
-    if (windowManager.getMainWindow() === null) {
-      windowManager.createMainWindow()
-      trayManager.init(windowManager.getMainWindow())
-      windowManager.setTrayManager(trayManager)
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (windowManager && windowManager.getMainWindow()) {
+      const mainWindow = windowManager.getMainWindow()
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore()
+      }
+      mainWindow.focus()
     }
-    windowManager.showWindow()
   })
-})
 
-app.on('window-all-closed', () => {
-  // 在有托盘的情况下，不自动退出应用
-  // 退出由托盘菜单的"退出"选项处理
-  if (trayManager) {
-    trayManager.show()
+  function initApp() {
+    windowManager = new WindowManager()
+    updateManager = new UpdateManager()
+    trayManager = new TrayManager()
+
+    registerIpcHandlers()
+    windowManager.createMainWindow()
+    
+    trayManager.init(windowManager.getMainWindow())
+    windowManager.setTrayManager(trayManager)
+    
+    setTimeout(() => {
+      updateManager.checkForUpdates()
+    }, 3000)
   }
-})
+
+  app.whenReady().then(() => {
+    initApp()
+
+    app.on('activate', () => {
+      if (windowManager && windowManager.getMainWindow() === null) {
+        windowManager.createMainWindow()
+        trayManager.init(windowManager.getMainWindow())
+        windowManager.setTrayManager(trayManager)
+      }
+      if (windowManager) {
+        windowManager.showWindow()
+      }
+    })
+  })
+
+  app.on('window-all-closed', () => {
+    if (trayManager) {
+      trayManager.show()
+    }
+  })
+}
 
 export { updateManager, trayManager }

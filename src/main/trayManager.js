@@ -1,4 +1,5 @@
 import { app, Tray, Menu, nativeImage } from 'electron'
+import { getIconPath } from './utils/helps'
 
 class TrayManager {
   constructor() {
@@ -12,12 +13,7 @@ class TrayManager {
   }
 
   createTray() {
-    // 创建一个简单的图标（使用 base64 编码的简单图标）
-    const icon = nativeImage.createFromDataURL(
-      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAiklEQVRYR+2W0Q6AIAhEe7/1uYWFhYWFhYWFhYWFhYeHh4eHh4eHh4eHh4eHh4eHh4uLj4uLj4uLj4uLj4eHh4eHh4eHh4eHh4eHhYWFhYWFhYWFhYWFhYWBw=='.repeat(20)
-    )
-
-    this.tray = new Tray(icon)
+    this.tray = new Tray(getIconPath())
 
     const contextMenu = Menu.buildFromTemplate([
       {
