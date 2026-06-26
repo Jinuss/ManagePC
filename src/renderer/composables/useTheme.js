@@ -1,6 +1,5 @@
-import { ref, provide, watch } from 'vue'
+import { ref } from 'vue'
 
-// 主题状态
 const theme = ref('light')
 const themes = [
   { id: 'light', name: 'light', label: '亮色', icon: '☀️' },
@@ -8,7 +7,6 @@ const themes = [
   { id: 'system', name: 'system', label: '跟随系统', icon: '⚙️' }
 ]
 
-// 获取当前主题
 export function useTheme() {
   return {
     theme,
@@ -27,36 +25,29 @@ export function useTheme() {
   }
 }
 
-// 应用主题
 function applyTheme(themeId) {
   const root = document.documentElement
   
-  // 移除所有主题类
   themes.forEach(t => {
     root.classList.remove(`theme-${t.id}`)
   })
   
-  // 添加当前主题类
   root.classList.add(`theme-${themeId}`)
   
-  // 如果是系统主题，检测系统偏好
   if (themeId === 'system') {
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     root.classList.add(`theme-${systemTheme}`)
   }
   
-  // 保存到 localStorage
   localStorage.setItem('theme', themeId)
 }
 
-// 初始化主题
 export function initTheme() {
   const savedTheme = localStorage.getItem('theme') || 'system'
   theme.value = savedTheme
   applyTheme(savedTheme)
 }
 
-// 监听系统主题变化
 export function setupSystemThemeListener() {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
   
@@ -67,4 +58,13 @@ export function setupSystemThemeListener() {
       document.documentElement.classList.add(`theme-${systemTheme}`)
     }
   })
+}
+
+export function setupThemeChangeListener() {
+  if (window.electronAPI && window.electronAPI.onThemeChanged) {
+    window.electronAPI.onThemeChanged((newTheme) => {
+      theme.value = newTheme
+      applyTheme(newTheme)
+    })
+  }
 }

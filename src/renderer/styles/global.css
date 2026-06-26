@@ -25,6 +25,10 @@
   --color-error: #f5222d;
   --color-info: #1890ff;
   
+  --color-titlebar-bg: #ffffff;
+  --color-titlebar-text: #333333;
+  --color-titlebar-text-secondary: rgba(51, 51, 51, 0.8);
+  
   --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-size-xs: 12px;
   --font-size-sm: 14px;
@@ -68,6 +72,10 @@
   
   --color-accent: #818cf8;
   --color-accent-hover: #a5b4fc;
+  
+  --color-titlebar-bg: #2f3241;
+  --color-titlebar-text: #ffffff;
+  --color-titlebar-text-secondary: rgba(255, 255, 255, 0.8);
 }
 
 /* 跟随系统主题 */
@@ -87,6 +95,10 @@
     
     --color-accent: #818cf8;
     --color-accent-hover: #a5b4fc;
+    
+    --color-titlebar-bg: #2f3241;
+    --color-titlebar-text: #ffffff;
+    --color-titlebar-text-secondary: rgba(255, 255, 255, 0.8);
   }
 }
 

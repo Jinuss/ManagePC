@@ -11,7 +11,8 @@ export default {
     copy: '📋 Copy',
     copied: '✓ Copied',
     fetchFailed: 'Fetch failed',
-    checkUpdate: 'Check for updates'
+    checkUpdate: 'Check for updates',
+    settings: 'Settings'
   },
   header: {
     title: 'System Monitor',
@@ -123,5 +124,15 @@ export default {
     weeks: 'weeks',
     months: 'months',
     years: 'years'
+  },
+  settings: {
+    title: 'Settings',
+    language: 'Language',
+    theme: 'Theme',
+    update: 'Check Updates',
+    about: 'About',
+    version: 'Version',
+    noUpdate: 'You are up to date',
+    updateError: 'Failed to check for updates'
   }
 }

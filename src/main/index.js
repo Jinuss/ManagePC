@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, ipcMain, BrowserWindow } from 'electron'
 import WindowManager from './windowManager.js'
 import { registerIpcHandlers } from './ipcHandlers.js'
 import UpdateManager from './updateManager.js'
@@ -32,6 +32,43 @@ if (!gotTheLock) {
     trayManager = new TrayManager()
 
     registerIpcHandlers()
+    
+    ipcMain.handle('open-settings-window', () => {
+      windowManager.createSettingsWindow()
+      return { success: true }
+    })
+    
+    ipcMain.handle('close-settings-window', () => {
+      windowManager.closeSettingsWindow()
+      return { success: true }
+    })
+    
+    ipcMain.handle('get-app-version', () => {
+      const pkg = require('../package.json')
+      return pkg.version || '1.0.0'
+    })
+
+    ipcMain.handle('set-theme', (event, theme) => {
+      windowManager.setTheme(theme)
+      const allWindows = BrowserWindow.getAllWindows()
+      allWindows.forEach(window => {
+        if (!window.isDestroyed()) {
+          window.webContents.send('theme-changed', theme)
+        }
+      })
+      return { success: true }
+    })
+
+    ipcMain.handle('set-language', (event, language) => {
+      const allWindows = BrowserWindow.getAllWindows()
+      allWindows.forEach(window => {
+        if (!window.isDestroyed()) {
+          window.webContents.send('language-changed', language)
+        }
+      })
+      return { success: true }
+    })
+
     log.info('createMainWindow start')
     windowManager.createMainWindow()
     log.info('createMainWindow end')

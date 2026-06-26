@@ -43,6 +43,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     chrome: process.versions.chrome
   }),
   
+  // 获取应用版本
+  getAppVersion: () => ipcRenderer.invoke('get-app-version'),
+  
   // 获取平台信息
   getPlatform: () => ({
     platform: process.platform,
@@ -53,4 +56,28 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // 检查更新
   checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  
+  // 打开设置窗口
+  openSettingsWindow: () => ipcRenderer.invoke('open-settings-window'),
+  
+  // 关闭设置窗口
+  closeSettingsWindow: () => ipcRenderer.invoke('close-settings-window'),
+  
+  // 设置主题
+  setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
+  
+  // 设置语言
+  setLanguage: (language) => ipcRenderer.invoke('set-language', language),
+  
+  // 监听主题变更
+  onThemeChanged: (callback) => {
+    ipcRenderer.on('theme-changed', (event, theme) => callback(theme))
+    return () => ipcRenderer.removeListener('theme-changed', callback)
+  },
+  
+  // 监听语言变更
+  onLanguageChanged: (callback) => {
+    ipcRenderer.on('language-changed', (event, language) => callback(language))
+    return () => ipcRenderer.removeListener('language-changed', callback)
+  },
 })

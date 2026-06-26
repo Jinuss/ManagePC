@@ -11,7 +11,8 @@ export default {
     copy: '📋 复制',
     copied: '✓ 已复制',
     fetchFailed: '获取失败',
-    checkUpdate: '检查更新'
+    checkUpdate: '检查更新',
+    settings: '设置'
   },
   header: {
     title: '系统监控',
@@ -123,5 +124,15 @@ export default {
     weeks: '周',
     months: '月',
     years: '年'
+  },
+  settings: {
+    title: '设置',
+    language: '语言设置',
+    theme: '主题设置',
+    update: '检查更新',
+    about: '关于',
+    version: '版本',
+    noUpdate: '当前已是最新版本',
+    updateError: '检查更新失败'
   }
 }

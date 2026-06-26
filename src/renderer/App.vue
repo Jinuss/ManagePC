@@ -1,16 +1,33 @@
 <template>
-  <NConfigProvider :theme="naiveTheme">
+  <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
     <div class="app-container">
       <CustomTitleBar />
       <div class="app-body">
         <div class="fixed-sidebar">
-          <div class="fixed-sidebar-content">
+          <div class="fixed-sidebar-top">
             <div class="fixed-sidebar-menu">
               <NTooltip placement="right" trigger="hover">
                 <template #trigger>
-                <span class="menu-icon">🔧</span>
+                  <span class="menu-icon">🔧</span>
                 </template>
-                <span>{{ t('menu.monitoring') }}</span>
+                <span>{{ t("menu.monitoring") }}</span>
+              </NTooltip>
+            </div>
+          </div>
+          <div class="fixed-sidebar-bottom">
+            <div class="settings-section">
+              <NTooltip placement="right" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    class="settings-btn"
+                    @click="openSettings"
+                    size="small"
+                    type="text"
+                  >
+                    ⚙️
+                  </NButton>
+                </template>
+                <span>{{ t("common.settings") }}</span>
               </NTooltip>
             </div>
           </div>
@@ -23,23 +40,6 @@
             mode="vertical"
             @update:value="handleMenuSelect"
           />
-
-          <div class="sidebar-bottom">
-            <div class="update-section">
-              <NButton
-                class="update-btn"
-                @click="checkUpdate"
-                size="small"
-                type="primary"
-                :loading="checkingUpdate"
-              >
-                🔄 {{ t("common.checkUpdate") }}
-              </NButton>
-            </div>
-            <div class="theme-section">
-              <ThemeSwitcher />
-            </div>
-          </div>
         </aside>
 
         <main class="main-content">
@@ -63,15 +63,15 @@ import {
   useTheme,
   initTheme,
   setupSystemThemeListener,
+  setupThemeChangeListener,
 } from "./composables/useTheme";
 import CustomTitleBar from "./components/CustomTitleBar.vue";
-import ThemeSwitcher from "./components/ThemeSwitcher.vue";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
-// 初始化主题
 initTheme();
 setupSystemThemeListener();
+setupThemeChangeListener();
 
 const { theme } = useTheme();
 
@@ -89,7 +89,6 @@ const naiveTheme = computed(() => {
 });
 
 const activeTab = ref("system");
-const checkingUpdate = ref(false);
 
 const systemInfo = ref({});
 
@@ -125,19 +124,8 @@ const handleMenuSelect = (index) => {
   activeTab.value = index;
 };
 
-const checkUpdate = async () => {
-  checkingUpdate.value = true;
-  try {
-    const result = await window.electronAPI.checkForUpdates();
-    if (result.status === "no-update") {
-      // message.success(result.message);
-    }
-  } catch (error) {
-    console.error("检查更新失败:", error);
-    // message.error("检查更新失败");
-  } finally {
-    checkingUpdate.value = false;
-  }
+const openSettings = async () => {
+  await window.electronAPI.openSettingsWindow();
 };
 
 const componentMap = {
@@ -163,16 +151,23 @@ const fetchSystemInfo = async () => {
 
 onMounted(() => {
   fetchSystemInfo();
+  
+  if (window.electronAPI && window.electronAPI.onLanguageChanged) {
+    window.electronAPI.onLanguageChanged((language) => {
+      locale.value = language;
+    });
+  }
 });
 </script>
 
 <style>
 .app-container {
-  flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
   background-color: var(--color-bg-secondary);
+  height: 100%;
+  width: 100%;
 }
 
 .app-body {
@@ -185,6 +180,9 @@ onMounted(() => {
   background: var(--color-bg-primary);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .sidebar {
@@ -225,28 +223,19 @@ onMounted(() => {
   font-size: 1.1rem;
 }
 
-.sidebar-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 200px;
-  padding: 16px;
+.fixed-sidebar-bottom {
   border-top: 1px solid var(--color-border);
+  padding-top: 10px;
 }
 
-.update-section {
-  margin-bottom: 12px;
-}
-
-.update-btn {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.theme-section {
+.settings-section {
   display: flex;
   justify-content: center;
+}
+
+.settings-btn {
+  font-size: 1.2rem;
+  padding: 8px;
 }
 
 .main-content {
@@ -292,11 +281,6 @@ onMounted(() => {
 
   .main-content {
     padding: 10px;
-  }
-
-  .sidebar-bottom {
-    position: static;
-    width: auto;
   }
 }
 </style>
