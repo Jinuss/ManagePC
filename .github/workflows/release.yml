@@ -34,6 +34,7 @@ jobs:
 
   macos:
     runs-on: macos-latest
+    needs: windows
 
     steps:
       - uses: actions/checkout@v4
