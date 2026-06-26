@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-titlebar" :class="{ 'is-mac': isMac }">
+  <div class="custom-titlebar">
     <div class="titlebar-left">
       <div class="app-icon">⚙️</div>
       <span class="app-title">{{ t("header.title") }}</span>
@@ -46,9 +46,6 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-
-const platformInfo = window.electronAPI.getPlatform();
-const isMac = platformInfo.isMac;
 
 const isMaximized = ref(false);
 const isAlwaysOnTop = ref(false);
@@ -197,19 +194,6 @@ onUnmounted(() => {
 
 .control-btn.close-btn:hover .icon {
   color: #ffffff;
-}
-
-.is-mac .window-controls {
-  order: -1;
-}
-
-.is-mac .titlebar-left {
-  flex: 1;
-  justify-content: center;
-}
-
-.is-mac .titlebar-center {
-  display: none;
 }
 
 @media (max-width: 768px) {

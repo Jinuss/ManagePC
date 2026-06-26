@@ -1,7 +1,7 @@
 <template>
-  <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
-    <div class="app-container">
-      <CustomTitleBar />
+  <NConfigProvider :theme="naiveTheme"  style="height: 100%; width: 100%">
+    <div class="app-container" :platform="isMac?'mac':'win'">
+      <CustomTitleBar v-if="!isMac" />
       <div class="app-body">
         <div class="fixed-sidebar">
           <div class="fixed-sidebar-top">
@@ -65,11 +65,12 @@ import {
   setupSystemThemeListener,
   setupThemeChangeListener,
 } from "./composables/useTheme";
+import {usePlatform} from "./composables/usePlatform";
 import { THEME_IDS } from "./constants";
 import CustomTitleBar from "./components/CustomTitleBar.vue";
 
 const { t, locale } = useI18n();
-
+const {isMac} = usePlatform();
 initTheme();
 setupSystemThemeListener();
 setupThemeChangeListener();
@@ -177,6 +178,12 @@ onMounted(() => {
   min-height: 0;
 }
 
+.app-container[platform="mac"] {
+  .fixed-sidebar {
+    padding: 40px 18px 20px;
+  }
+}
+
 .fixed-sidebar {
   background: var(--color-titlebar-bg);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -185,6 +192,16 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
 }
+
+.fixed-sidebar-menu{
+  display: flex;
+  justify-content: center;
+}
+
+.fixed-sidebar-menu .menu-icon {
+  font-size: 24px;
+}
+
 
 .sidebar {
   width: 200px;
@@ -219,14 +236,9 @@ onMounted(() => {
   color: white;
 }
 
-.menu-icon {
-  margin-right: 10px;
-  font-size: 1.1rem;
-}
 
 .fixed-sidebar-bottom {
-  border-top: 1px solid var(--color-border);
-  padding-top: 10px 2px;
+  font-size:24px
 }
 
 .settings-section {

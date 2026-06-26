@@ -1,5 +1,5 @@
 import { app, Tray, Menu } from 'electron'
-import { getIconPath } from './utils/helps'
+import { getIconPath, isMac } from './utils/helps'
 import log from 'electron-log'
 import fs from 'fs'
 
@@ -15,42 +15,48 @@ class TrayManager {
   }
 
   createTray() {
-    try{
-    log.info('createTray start')
-    
-    const iconPath = getIconPath()
+    try {
+      log.info('createTray start')
 
-    log.info('iconPath=', iconPath)
+      const iconPath = getIconPath()
 
-    log.info('icon是否存在=', fs.existsSync(iconPath))
-    this.tray = new Tray(iconPath)
+      log.info('iconPath=', iconPath)
+      log.info('icon是否存在=', fs.existsSync(iconPath))
 
-    const contextMenu = Menu.buildFromTemplate([
-      {
-        label: '显示窗口',
-        click: () => {
+      this.tray = new Tray(iconPath)
+
+      const contextMenu = Menu.buildFromTemplate([
+        {
+          label: '显示窗口',
+          click: () => {
+            this.showWindow()
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: '退出',
+          click: () => {
+            this.quitApp()
+          }
+        }
+      ])
+
+      this.tray.setContextMenu(contextMenu)
+      this.tray.setToolTip('System Monitor')
+
+      if (isMac()) {
+        this.tray.on('double-click', () => {
           this.showWindow()
-        }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: '退出',
-        click: () => {
-          this.quitApp()
-        }
+        })
+      } else {
+        this.tray.on('click', () => {
+          this.showWindow()
+        })
       }
-    ])
 
-    this.tray.setContextMenu(contextMenu)
-    this.tray.setToolTip('System Monitor')
-
-    // 点击托盘图标显示/隐藏窗口
-    this.tray.on('click', () => {
-      this.showWindow();
-    })
-    log.info('createTray end')
+      log.info('createTray end')
     } catch (error) {
       log.error('createTray error', error)
     }

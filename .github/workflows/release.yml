@@ -1,4 +1,4 @@
-name: Windows Release
+name: Release
 
 on:
   push:
@@ -22,12 +22,34 @@ jobs:
 
       - run: npm ci
 
-      - name: Publish
-        run: npm run publish
+      - name: Publish Windows
+        run: npm run publish:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Show dist
         shell: pwsh
         run: |
-          Get-ChildItem dist   
+          Get-ChildItem dist
+
+  macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Publish macOS
+        run: npm run publish:mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show dist
+        run: |
+          ls -la dist   

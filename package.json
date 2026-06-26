@@ -10,7 +10,8 @@
     "pack:win": "npm run build && electron-builder --config electron-builder.yml --win --x64",
     "pack:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64",
     "pack:all": "npm run build && electron-builder --config electron-builder.yml -mwl",
-    "publish": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=always"
+    "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=always",
+    "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=always"
   },
   "keywords": [
     "electron",
@@ -33,7 +34,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "electron": "^42.4.1",
+    "electron": "^42.5.0",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
     "js-yaml": "^5.1.0",

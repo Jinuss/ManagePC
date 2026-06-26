@@ -3,20 +3,27 @@ import { WINDOW_DEFAULTS, THEME_DEFAULTS, LANGUAGE_DEFAULTS } from './constants'
 
 class StoreManager {
   constructor() {
-    this.store = new Store({
-      defaults: {
-        window: {
-          width: WINDOW_DEFAULTS.MAIN_WIDTH,
-          height: WINDOW_DEFAULTS.MAIN_HEIGHT,
-          x: null,
-          y: null
-        },
-        theme: THEME_DEFAULTS.DEFAULT,
-        language: LANGUAGE_DEFAULTS.DEFAULT,
-        alwaysOnTop: false,
-        autoStart: false
-      }
-    })
+    this._store = null
+  }
+
+  get store() {
+    if (!this._store) {
+      this._store = new Store({
+        defaults: {
+          window: {
+            width: WINDOW_DEFAULTS.MAIN_WIDTH,
+            height: WINDOW_DEFAULTS.MAIN_HEIGHT,
+            x: null,
+            y: null
+          },
+          theme: THEME_DEFAULTS.DEFAULT,
+          language: LANGUAGE_DEFAULTS.DEFAULT,
+          alwaysOnTop: false,
+          autoStart: false
+        }
+      })
+    }
+    return this._store
   }
 
   getWindowBounds() {

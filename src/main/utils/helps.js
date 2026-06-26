@@ -14,7 +14,7 @@ export function getIconPath() {
       return path.join(process.cwd(),'resources', 'assets', 'icons', 'windows', 'icon.ico')
     }
     if (isMac()) {
-      return path.join(process.cwd(),'resources', 'assets', 'icons', 'macos', 'icon.icns')
+      return path.join(process.cwd(),'resources', 'assets', 'icons', 'macos', '16x16.png')
     }
   }
 }

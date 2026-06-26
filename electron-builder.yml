@@ -24,6 +24,11 @@ win:
   executableName: SuperSystemMonitor
   icon: resources/assets/icons/windows/icon.ico
 
+mac:
+  target: dmg
+  category: public.app-category.utilities
+  icon: resources/assets/icons/macos/icon.icns
+
 nsis:
   oneClick: false
   perMachine: false

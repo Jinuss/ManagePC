@@ -25,12 +25,25 @@ class WindowManager {
     const savedBounds = storeManager.getWindowBounds()
     this.isAlwaysOnTop = storeManager.getAlwaysOnTop()
     
+    let baseOptions={};
+    if(isMac()){
+      baseOptions={
+        frame: true,
+        transparent: true,
+        titleBarStyle: 'hidden',
+      }
+    }else{
+      baseOptions={
+        frame: false,
+      }
+    }
+
     const windowOptions = {
+      ...baseOptions,
       width: savedBounds.width || WINDOW_DEFAULTS.MAIN_WIDTH,
       height: savedBounds.height || WINDOW_DEFAULTS.MAIN_HEIGHT,
       icon: getIconPath(),
       autoHideMenuBar: true,
-      frame: false,
       alwaysOnTop: this.isAlwaysOnTop,
       webPreferences: {
         backgroundThrottling: false,
