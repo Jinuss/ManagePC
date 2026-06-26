@@ -1,29 +1,20 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import path from 'path'
 import log from 'electron-log'
 import { isMac, getIconPath } from './utils/helps'
+import storeManager from './store'
+import { APP_USER_MODEL_ID, WINDOW_DEFAULTS, THEME_DEFAULTS } from './constants'
 
-app.setAppUserModelId('com.example.system-monitor')
-
-const titleBarThemes = {
-  light: {
-    color: '#ffffff',
-    symbolColor: '#333333',
-    height: 32
-  },
-  dark: {
-    color: '#2f3241',
-    symbolColor: '#74b1be',
-    height: 32
-  }
-}
+app.setAppUserModelId(APP_USER_MODEL_ID)
 
 class WindowManager {
   constructor() {
     this.mainWindow = null
     this.trayManager = null
     this.settingsWindow = null
-    this.currentTheme = 'system'
+    this.currentTheme = THEME_DEFAULTS.DEFAULT
+    this.isAlwaysOnTop = false
+    this.autoStart = false
   }
 
   setTrayManager(trayManager) {
@@ -31,20 +22,30 @@ class WindowManager {
   }
 
   createMainWindow() {
-    this.mainWindow = new BrowserWindow({
-      width: 1200,
-      height: 800,
+    const savedBounds = storeManager.getWindowBounds()
+    this.isAlwaysOnTop = storeManager.getAlwaysOnTop()
+    
+    const windowOptions = {
+      width: savedBounds.width || WINDOW_DEFAULTS.MAIN_WIDTH,
+      height: savedBounds.height || WINDOW_DEFAULTS.MAIN_HEIGHT,
       icon: getIconPath(),
       autoHideMenuBar: true,
-      titleBarStyle: 'hidden',
-      titleBarOverlay: titleBarThemes.dark,
+      frame: false,
+      alwaysOnTop: this.isAlwaysOnTop,
       webPreferences: {
         backgroundThrottling: false,
         nodeIntegration: false,
         contextIsolation: true,
         preload: path.join(__dirname, '../preload/index.js')
       }
-    })
+    }
+
+    if (savedBounds.x !== null && savedBounds.y !== null) {
+      windowOptions.x = savedBounds.x
+      windowOptions.y = savedBounds.y
+    }
+
+    this.mainWindow = new BrowserWindow(windowOptions)
 
     const isDev = process.env.NODE_ENV === 'development'
 
@@ -54,11 +55,25 @@ class WindowManager {
       this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
     }
 
-    // this.mainWindow.webContents.openDevTools()
+    this.mainWindow.on('resize', () => {
+      if (!this.mainWindow.isMaximized()) {
+        const bounds = this.mainWindow.getBounds()
+        storeManager.saveWindowBounds(bounds)
+      }
+    })
 
-    // 拦截关闭事件，最小化到托盘
+    this.mainWindow.on('move', () => {
+      if (!this.mainWindow.isMaximized()) {
+        const bounds = this.mainWindow.getBounds()
+        storeManager.saveWindowBounds(bounds)
+      }
+    })
+
     this.mainWindow.on('close', (event) => {
       log.info('mainWindow close');
+
+      const bounds = this.mainWindow.getBounds()
+      storeManager.saveWindowBounds(bounds)
 
       log.info('trayManager exists=', !!this.trayManager);
       log.info('tray exists=', !!this.trayManager.getTray());
@@ -69,13 +84,6 @@ class WindowManager {
           event.preventDefault()
           this.mainWindow.hide()
         }
-      }
-    })
-
-    // 监听系统主题变化
-    nativeTheme.on('updated', () => {
-      if (this.currentTheme === 'system') {
-        this.updateTitleBarTheme()
       }
     })
   }
@@ -97,11 +105,9 @@ class WindowManager {
       return
     }
 
-    const parentBounds = this.mainWindow ? this.mainWindow.getBounds() : { x: 0, y: 0 }
-
     this.settingsWindow = new BrowserWindow({
-      width: 400,
-      height: 480,
+      width: WINDOW_DEFAULTS.SETTINGS_WIDTH,
+      height: WINDOW_DEFAULTS.SETTINGS_HEIGHT,
       icon: getIconPath(),
       autoHideMenuBar: true,
       frame: false,
@@ -142,21 +148,54 @@ class WindowManager {
 
   setTheme(theme) {
     this.currentTheme = theme
-    this.updateTitleBarTheme()
   }
 
-  updateTitleBarTheme() {
-    if (!this.mainWindow || this.mainWindow.isDestroyed()) {
-      return
+  minimizeWindow() {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.minimize()
     }
+  }
 
-    let themeKey = this.currentTheme
-    if (themeKey === 'system') {
-      themeKey = nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
+  maximizeWindow() {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      if (this.mainWindow.isMaximized()) {
+        this.mainWindow.unmaximize()
+      } else {
+        this.mainWindow.maximize()
+      }
     }
+  }
 
-    const overlay = titleBarThemes[themeKey] || titleBarThemes.dark
-    this.mainWindow.setTitleBarOverlay(overlay)
+  closeWindow() {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.close()
+    }
+  }
+
+  setAlwaysOnTop(onTop) {
+    this.isAlwaysOnTop = onTop
+    storeManager.setAlwaysOnTop(onTop)
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.setAlwaysOnTop(onTop)
+    }
+    return { success: true }
+  }
+
+  getAlwaysOnTop() {
+    return this.isAlwaysOnTop
+  }
+
+  setAutoStart(autoStart) {
+    this.autoStart = autoStart
+    storeManager.setAutoStart(autoStart)
+    app.setLoginItemSettings({
+      openAtLogin: autoStart
+    })
+    return { success: true }
+  }
+
+  getAutoStart() {
+    return this.autoStart
   }
 }
 

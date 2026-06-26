@@ -1,9 +1,12 @@
 import { app, ipcMain, BrowserWindow } from 'electron'
+import path from 'path'
 import WindowManager from './windowManager.js'
 import { registerIpcHandlers } from './ipcHandlers.js'
 import UpdateManager from './updateManager.js'
 import TrayManager from './trayManager.js'
+import storeManager from './store.js'
 import log from 'electron-log'
+import { IPC_CHANNELS } from './constants'
 
 log.initialize()
 
@@ -33,41 +36,124 @@ if (!gotTheLock) {
 
     registerIpcHandlers()
     
-    ipcMain.handle('open-settings-window', () => {
+    ipcMain.handle(IPC_CHANNELS.OPEN_SETTINGS_WINDOW, () => {
       windowManager.createSettingsWindow()
       return { success: true }
     })
     
-    ipcMain.handle('close-settings-window', () => {
+    ipcMain.handle(IPC_CHANNELS.CLOSE_SETTINGS_WINDOW, () => {
       windowManager.closeSettingsWindow()
       return { success: true }
     })
     
-    ipcMain.handle('get-app-version', () => {
-      const pkg = require('../package.json')
+    ipcMain.handle(IPC_CHANNELS.GET_APP_VERSION, () => {
+      const pkgPath = path.join(app.getAppPath(), 'package.json')
+      const pkg = require(pkgPath)
       return pkg.version || '1.0.0'
     })
 
-    ipcMain.handle('set-theme', (event, theme) => {
+    ipcMain.handle(IPC_CHANNELS.SET_THEME, (event, theme) => {
+      storeManager.setTheme(theme)
       windowManager.setTheme(theme)
       const allWindows = BrowserWindow.getAllWindows()
       allWindows.forEach(window => {
         if (!window.isDestroyed()) {
-          window.webContents.send('theme-changed', theme)
+          window.webContents.send(IPC_CHANNELS.THEME_CHANGED, theme)
         }
       })
       return { success: true }
     })
 
-    ipcMain.handle('set-language', (event, language) => {
+    ipcMain.handle(IPC_CHANNELS.SET_LANGUAGE, (event, language) => {
+      storeManager.setLanguage(language)
       const allWindows = BrowserWindow.getAllWindows()
       allWindows.forEach(window => {
         if (!window.isDestroyed()) {
-          window.webContents.send('language-changed', language)
+          window.webContents.send(IPC_CHANNELS.LANGUAGE_CHANGED, language)
         }
       })
       return { success: true }
     })
+
+    ipcMain.handle(IPC_CHANNELS.GET_SAVED_THEME, () => {
+      return { theme: storeManager.getTheme() }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.GET_SAVED_LANGUAGE, () => {
+      return { language: storeManager.getLanguage() }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.MINIMIZE_WINDOW, () => {
+      if (windowManager) {
+        const window = windowManager.getMainWindow()
+        if (window && !window.isDestroyed()) {
+          window.minimize()
+        }
+      }
+      return { success: true }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.MAXIMIZE_WINDOW, () => {
+      if (windowManager) {
+        const window = windowManager.getMainWindow()
+        if (window && !window.isDestroyed()) {
+          if (window.isMaximized()) {
+            window.unmaximize()
+          } else {
+            window.maximize()
+          }
+        }
+      }
+      return { success: true }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.CLOSE_WINDOW, () => {
+      if (windowManager) {
+        const window = windowManager.getMainWindow()
+        if (window && !window.isDestroyed()) {
+          window.close()
+        }
+      }
+      return { success: true }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.IS_WINDOW_MAXIMIZED, () => {
+      if (windowManager) {
+        const window = windowManager.getMainWindow()
+        if (window && !window.isDestroyed()) {
+          return { maximized: window.isMaximized() }
+        }
+      }
+      return { maximized: false }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.SET_ALWAYS_ON_TOP, (event, onTop) => {
+      if (windowManager) {
+        return windowManager.setAlwaysOnTop(onTop)
+      }
+      return { success: false }
+    })
+
+    ipcMain.handle(IPC_CHANNELS.GET_ALWAYS_ON_TOP, () => {
+  if (windowManager) {
+    return { alwaysOnTop: windowManager.getAlwaysOnTop() }
+  }
+  return { alwaysOnTop: false }
+})
+
+ipcMain.handle(IPC_CHANNELS.SET_AUTO_START, (event, autoStart) => {
+  if (windowManager) {
+    return windowManager.setAutoStart(autoStart)
+  }
+  return { success: false }
+})
+
+ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
+  if (windowManager) {
+    return { autoStart: windowManager.getAutoStart() }
+  }
+  return { autoStart: false }
+})
 
     log.info('createMainWindow start')
     windowManager.createMainWindow()

@@ -12,7 +12,13 @@ export default {
     copied: '✓ Copied',
     fetchFailed: 'Fetch failed',
     checkUpdate: 'Check for updates',
-    settings: 'Settings'
+    settings: 'Settings',
+    minimize: 'Minimize',
+    maximize: 'Maximize',
+    restore: 'Restore',
+    close: 'Close',
+    pin: 'Pin',
+    unpin: 'Unpin'
   },
   header: {
     title: 'System Monitor',
@@ -129,10 +135,12 @@ export default {
     title: 'Settings',
     language: 'Language',
     theme: 'Theme',
-    update: 'Check Updates',
+    update: 'Update',
     about: 'About',
     version: 'Version',
-    noUpdate: 'You are up to date',
-    updateError: 'Failed to check for updates'
+    noUpdate: 'Current version is up to date',
+    updateError: 'Failed to check for updates',
+    autoStart: 'Auto Start',
+    autoStartDescription: 'Launch app automatically on startup'
   }
 }

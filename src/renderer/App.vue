@@ -65,6 +65,7 @@ import {
   setupSystemThemeListener,
   setupThemeChangeListener,
 } from "./composables/useTheme";
+import { THEME_IDS } from "./constants";
 import CustomTitleBar from "./components/CustomTitleBar.vue";
 
 const { t, locale } = useI18n();
@@ -77,10 +78,10 @@ const { theme } = useTheme();
 
 // Naive UI 主题
 const naiveTheme = computed(() => {
-  if (theme.value === "dark") {
+  if (theme.value === THEME_IDS.DARK) {
     return darkTheme;
   }
-  if (theme.value === "system") {
+  if (theme.value === THEME_IDS.SYSTEM) {
     return window.matchMedia("(prefers-color-scheme: dark)").matches
       ? darkTheme
       : null;
@@ -177,7 +178,7 @@ onMounted(() => {
 }
 
 .fixed-sidebar {
-  background: var(--color-bg-primary);
+  background: var(--color-titlebar-bg);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   padding: 10px;
   display: flex;
@@ -225,7 +226,7 @@ onMounted(() => {
 
 .fixed-sidebar-bottom {
   border-top: 1px solid var(--color-border);
-  padding-top: 10px;
+  padding-top: 10px 2px;
 }
 
 .settings-section {

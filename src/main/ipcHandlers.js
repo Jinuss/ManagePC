@@ -2,32 +2,33 @@ import { ipcMain } from 'electron'
 import { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } from './utils/systemInfo.js'
 import SystemMonitor from './utils/SystemMonitor.js'
 import UpdateManager from './updateManager.js'
+import { IPC_CHANNELS } from './constants'
 
 let systemMonitor = null
 let updateManager = null
 
 export function registerIpcHandlers() {
-  ipcMain.handle('get-ssh-key', () => {
+  ipcMain.handle(IPC_CHANNELS.GET_SSH_KEY, () => {
     return getSSHKey()
   })
 
-  ipcMain.handle('get-system-info', () => {
+  ipcMain.handle(IPC_CHANNELS.GET_SYSTEM_INFO, () => {
     return getSystemInfo()
   })
 
-  ipcMain.handle('get-network-info', () => {
+  ipcMain.handle(IPC_CHANNELS.GET_NETWORK_INFO, () => {
     return getNetworkInfo()
   })
 
-  ipcMain.handle('get-disk-usage', () => {
+  ipcMain.handle(IPC_CHANNELS.GET_DISK_USAGE, () => {
     return getDiskUsage()
   })
 
-  ipcMain.handle('get-battery-info', () => {
+  ipcMain.handle(IPC_CHANNELS.GET_BATTERY_INFO, () => {
     return getBatteryInfo()
   })
 
-  ipcMain.handle('start-monitoring', (event, intervalMs = 1000) => {
+  ipcMain.handle(IPC_CHANNELS.START_MONITORING, (event, intervalMs = 1000) => {
     const window = event.sender.getOwnerBrowserWindow()
 
     if (systemMonitor) {
@@ -40,7 +41,7 @@ export function registerIpcHandlers() {
     return { success: true }
   })
 
-  ipcMain.handle('stop-monitoring', () => {
+  ipcMain.handle(IPC_CHANNELS.STOP_MONITORING, () => {
     if (systemMonitor) {
       systemMonitor.stop()
       systemMonitor = null
@@ -48,7 +49,7 @@ export function registerIpcHandlers() {
     return { success: true }
   })
 
-  ipcMain.handle('check-for-updates', () => {
+  ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, () => {
     if (!updateManager) {
       updateManager = new UpdateManager()
     }

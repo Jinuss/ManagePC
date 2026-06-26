@@ -12,7 +12,13 @@ export default {
     copied: '✓ 已复制',
     fetchFailed: '获取失败',
     checkUpdate: '检查更新',
-    settings: '设置'
+    settings: '设置',
+    minimize: '最小化',
+    maximize: '最大化',
+    restore: '还原',
+    close: '关闭',
+    pin: '置顶',
+    unpin: '取消置顶'
   },
   header: {
     title: '系统监控',
@@ -127,12 +133,14 @@ export default {
   },
   settings: {
     title: '设置',
-    language: '语言设置',
-    theme: '主题设置',
-    update: '检查更新',
+    language: '语言',
+    theme: '主题',
+    update: '更新',
     about: '关于',
     version: '版本',
     noUpdate: '当前已是最新版本',
-    updateError: '检查更新失败'
+    updateError: '检查更新失败',
+    autoStart: '开机自启动',
+    autoStartDescription: '开机时自动启动应用'
   }
 }

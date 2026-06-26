@@ -89,6 +89,20 @@
         </div>
         <div class="settings-section">
           <div class="section-title">
+            <span class="section-icon">🚀</span>
+            <span>{{ t('settings.autoStart') }}</span>
+          </div>
+          <div class="auto-start-content">
+            <span class="auto-start-label">{{ t('settings.autoStartDescription') }}</span>
+            <NSwitch
+              :value="autoStart"
+              @update:value="toggleAutoStart"
+              class="auto-start-switch"
+            />
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="section-title">
             <span class="section-icon">ℹ️</span>
             <span>{{ t('settings.about') }}</span>
           </div>
@@ -118,10 +132,12 @@ import { useI18n } from 'vue-i18n'
 import {
   NConfigProvider,
   NButton,
-  NAlert
+  NAlert,
+  NSwitch
 } from 'naive-ui'
 import { darkTheme } from 'naive-ui'
 import { useTheme, initTheme, setupSystemThemeListener, setupThemeChangeListener } from '../../composables/useTheme'
+import { LANGUAGES, LANGUAGE_CODES, THEME_IDS } from '../../constants'
 
 const { t, locale } = useI18n()
 
@@ -133,10 +149,7 @@ const { theme, themes } = useTheme()
 
 const currentLocale = ref(locale.value)
 
-const languages = [
-  { code: 'zh', name: '中文' },
-  { code: 'en', name: 'English' },
-]
+const languages = LANGUAGES
 
 const switchLanguage = (code) => {
   window.electronAPI.setLanguage(code)
@@ -147,10 +160,10 @@ const setTheme = (newTheme) => {
 }
 
 const naiveTheme = computed(() => {
-  if (theme.value === 'dark') {
+  if (theme.value === THEME_IDS.DARK) {
     return darkTheme
   }
-  if (theme.value === 'system') {
+  if (theme.value === THEME_IDS.SYSTEM) {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? darkTheme : null
   }
   return null
@@ -165,6 +178,13 @@ const versions = ref({
   electron: '',
   node: ''
 })
+
+const autoStart = ref(false)
+
+const toggleAutoStart = async (value) => {
+  await window.electronAPI.setAutoStart(value)
+  autoStart.value = value
+}
 
 const checkUpdate = async () => {
   checkingUpdate.value = true
@@ -200,6 +220,13 @@ onMounted(async () => {
     version.value = await window.electronAPI.getAppVersion()
   } catch {
     version.value = '1.0.0'
+  }
+  
+  try {
+    const result = await window.electronAPI.getAutoStart()
+    autoStart.value = result.autoStart
+  } catch {
+    autoStart.value = false
   }
   
   if (window.electronAPI && window.electronAPI.onLanguageChanged) {
@@ -321,6 +348,17 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   padding: 4px 0;
+}
+
+.auto-start-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.auto-start-label {
+  color: var(--color-text-secondary);
+  font-size: 13px;
 }
 
 .about-label {

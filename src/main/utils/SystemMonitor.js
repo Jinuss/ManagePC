@@ -1,4 +1,5 @@
 import si from 'systeminformation'
+import { IPC_CHANNELS } from '../constants'
 
 class SystemMonitor {
   constructor() {
@@ -78,7 +79,7 @@ class SystemMonitor {
       if (now - lastSend >= sendMs) {
         lastSend = now;
         if (window && !window.isDestroyed()) {
-          window.webContents.send('system-stats', this.cache);
+          window.webContents.send(IPC_CHANNELS.SYSTEM_STATS, this.cache);
         }
       }
     }, collectMs);

@@ -1,10 +1,11 @@
 import { ref } from 'vue'
+import { THEME_IDS, THEME_LABELS, THEME_ICONS, STORAGE_KEYS } from '../constants'
 
-const theme = ref('light')
+const theme = ref(THEME_IDS.LIGHT)
 const themes = [
-  { id: 'light', name: 'light', label: '亮色', icon: '☀️' },
-  { id: 'dark', name: 'dark', label: '暗色', icon: '🌙' },
-  { id: 'system', name: 'system', label: '跟随系统', icon: '⚙️' }
+  { id: THEME_IDS.LIGHT, name: THEME_IDS.LIGHT, label: THEME_LABELS.LIGHT, icon: THEME_ICONS.LIGHT },
+  { id: THEME_IDS.DARK, name: THEME_IDS.DARK, label: THEME_LABELS.DARK, icon: THEME_ICONS.DARK },
+  { id: THEME_IDS.SYSTEM, name: THEME_IDS.SYSTEM, label: THEME_LABELS.SYSTEM, icon: THEME_ICONS.SYSTEM }
 ]
 
 export function useTheme() {
@@ -34,16 +35,22 @@ function applyTheme(themeId) {
   
   root.classList.add(`theme-${themeId}`)
   
-  if (themeId === 'system') {
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  if (themeId === THEME_IDS.SYSTEM) {
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_IDS.DARK : THEME_IDS.LIGHT
     root.classList.add(`theme-${systemTheme}`)
   }
   
-  localStorage.setItem('theme', themeId)
+  localStorage.setItem(STORAGE_KEYS.THEME, themeId)
 }
 
-export function initTheme() {
-  const savedTheme = localStorage.getItem('theme') || 'system'
+export async function initTheme() {
+  let savedTheme = THEME_IDS.SYSTEM
+  try {
+    const result = await window.electronAPI.getSavedTheme()
+    savedTheme = result.theme || THEME_IDS.SYSTEM
+  } catch {
+    savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || THEME_IDS.SYSTEM
+  }
   theme.value = savedTheme
   applyTheme(savedTheme)
 }
@@ -52,9 +59,9 @@ export function setupSystemThemeListener() {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
   
   mediaQuery.addEventListener('change', (e) => {
-    if (theme.value === 'system') {
-      const systemTheme = e.matches ? 'dark' : 'light'
-      document.documentElement.classList.remove('theme-light', 'theme-dark')
+    if (theme.value === THEME_IDS.SYSTEM) {
+      const systemTheme = e.matches ? THEME_IDS.DARK : THEME_IDS.LIGHT
+      document.documentElement.classList.remove(`theme-${THEME_IDS.LIGHT}`, `theme-${THEME_IDS.DARK}`)
       document.documentElement.classList.add(`theme-${systemTheme}`)
     }
   })
