@@ -1,12 +1,18 @@
 import { app, Tray, Menu } from 'electron'
-import { getIconPath, isMac } from './utils/helps'
-import log from 'electron-log'
+import { getTrayIconPath, isMac } from '../../utils/helps'
+import { log } from '../log/logManager.js'
+import { setIsQuitting } from '../../index.js'
 import fs from 'fs'
 
 class TrayManager {
   constructor() {
     this.tray = null
     this.mainWindow = null
+    this.windowManager = null
+  }
+
+  setWindowManager(windowManager) {
+    this.windowManager = windowManager
   }
 
   init(mainWindow) {
@@ -18,7 +24,7 @@ class TrayManager {
     try {
       log.info('createTray start')
 
-      const iconPath = getIconPath()
+      const iconPath = getTrayIconPath()
 
       log.info('iconPath=', iconPath)
       log.info('icon是否存在=', fs.existsSync(iconPath))
@@ -63,24 +69,37 @@ class TrayManager {
   }
 
   showWindow() {
+    log.info('[TrayManager] showWindow called')
+    if (!this.mainWindow || this.mainWindow.isDestroyed()) {
+      log.info('[TrayManager] mainWindow destroyed, recreating...')
+      if (this.windowManager) {
+        this.windowManager.createMainWindow()
+        this.mainWindow = this.windowManager.getMainWindow()
+        this.init(this.mainWindow)
+        log.info('[TrayManager] mainWindow recreated')
+      }
+    }
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.show()
       this.mainWindow.focus()
+      log.info('[TrayManager] mainWindow shown and focused')
     }
   }
 
   hideWindow() {
-    if (this.mainWindow) {
+    log.info('[TrayManager] hideWindow called')
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.hide()
+      log.info('[TrayManager] mainWindow hidden')
     }
   }
 
   quitApp() {
+    log.info('[TrayManager] quitApp called')
+    setIsQuitting(true)
     if (this.tray) {
       this.tray.destroy()
-    }
-    if (this.mainWindow) {
-      this.mainWindow.close()
+      log.info('[TrayManager] tray destroyed')
     }
     app.quit()
   }

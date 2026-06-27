@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
-import log from 'electron-log'
-import { isMac, getIconPath } from './utils/helps'
-import storeManager from './store'
-import { APP_USER_MODEL_ID, WINDOW_DEFAULTS, THEME_DEFAULTS } from './constants'
+import { log } from '../log/logManager.js'
+import { isMac, getIconPath } from '../../utils/helps'
+import storeManager from '../../store'
+import { APP_USER_MODEL_ID, WINDOW_DEFAULTS, THEME_DEFAULTS, IPC_CHANNELS } from '../../constants'
+import { getIsQuitting } from '../../index.js'
 
 app.setAppUserModelId(APP_USER_MODEL_ID)
 
@@ -15,6 +16,18 @@ class WindowManager {
     this.currentTheme = THEME_DEFAULTS.DEFAULT
     this.isAlwaysOnTop = false
     this.autoStart = false
+    this.baseOptions = {};
+    if (isMac()) {
+      this.baseOptions = {
+        frame: true,
+        transparent: true,
+        titleBarStyle: 'hidden',
+      }
+    } else {
+      this.baseOptions = {
+        frame: false,
+      }
+    }
   }
 
   setTrayManager(trayManager) {
@@ -22,24 +35,14 @@ class WindowManager {
   }
 
   createMainWindow() {
+    log.info('[WindowManager] Creating main window')
     const savedBounds = storeManager.getWindowBounds()
     this.isAlwaysOnTop = storeManager.getAlwaysOnTop()
-    
-    let baseOptions={};
-    if(isMac()){
-      baseOptions={
-        frame: true,
-        transparent: true,
-        titleBarStyle: 'hidden',
-      }
-    }else{
-      baseOptions={
-        frame: false,
-      }
-    }
+    log.info('[WindowManager] Saved bounds:', savedBounds)
+    log.info('[WindowManager] Always on top:', this.isAlwaysOnTop)
 
     const windowOptions = {
-      ...baseOptions,
+      ...this.baseOptions,
       width: savedBounds.width || WINDOW_DEFAULTS.MAIN_WIDTH,
       height: savedBounds.height || WINDOW_DEFAULTS.MAIN_HEIGHT,
       icon: getIconPath(),
@@ -59,13 +62,17 @@ class WindowManager {
     }
 
     this.mainWindow = new BrowserWindow(windowOptions)
+    log.info('[WindowManager] Main window created')
 
     const isDev = process.env.NODE_ENV === 'development'
+    log.info('[WindowManager] Is development:', isDev)
 
     if (isDev) {
       this.mainWindow.loadURL('http://localhost:5173')
+      log.info('[WindowManager] Loading dev URL')
     } else {
       this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
+      log.info('[WindowManager] Loading production file')
     }
 
     this.mainWindow.on('resize', () => {
@@ -82,21 +89,40 @@ class WindowManager {
       }
     })
 
+    this.mainWindow.on('minimize', () => {
+      log.info('[WindowManager] Main window minimized')
+      if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
+        log.info('[WindowManager] Closing settings window on main minimize')
+        this.settingsWindow.close()
+        this.settingsWindow = null
+      }
+    })
+
     this.mainWindow.on('close', (event) => {
       log.info('mainWindow close');
 
       const bounds = this.mainWindow.getBounds()
       storeManager.saveWindowBounds(bounds)
 
-      log.info('trayManager exists=', !!this.trayManager);
-      log.info('tray exists=', !!this.trayManager.getTray());
-      if (this.trayManager && !isMac()) {
-        log.info('isDestroyed=', this.mainWindow.isDestroyed());
-        if (!this.mainWindow.isDestroyed()) {
-          log.info('close')
-          event.preventDefault()
-          this.mainWindow.hide()
+      if (getIsQuitting()) {
+        log.info('close - isQuitting=true, allowing close')
+      } else {
+        log.info('trayManager exists=', !!this.trayManager);
+        log.info('tray exists=', !!this.trayManager?.getTray());
+
+        if (this.trayManager && this.trayManager.getTray() && !this.trayManager.getTray().isDestroyed()) {
+          log.info('close - hide window instead of quit')
+          if (!this.mainWindow.isDestroyed()) {
+            event.preventDefault()
+            this.mainWindow.hide()
+          }
         }
+      }
+
+      if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
+        log.info('[WindowManager] Closing settings window on main close')
+        this.settingsWindow.close()
+        this.settingsWindow = null
       }
     })
   }
@@ -113,11 +139,12 @@ class WindowManager {
   }
 
   createSettingsWindow() {
+    log.info('[WindowManager] Creating settings window')
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
+      log.info('[WindowManager] Settings window already exists, focusing')
       this.settingsWindow.focus()
       return
     }
-
     this.settingsWindow = new BrowserWindow({
       width: WINDOW_DEFAULTS.SETTINGS_WIDTH,
       height: WINDOW_DEFAULTS.SETTINGS_HEIGHT,
@@ -125,8 +152,6 @@ class WindowManager {
       autoHideMenuBar: true,
       frame: false,
       skipTaskbar: true,
-      parent: this.mainWindow,
-      modal: false,
       webPreferences: {
         backgroundThrottling: false,
         nodeIntegration: false,
@@ -145,6 +170,14 @@ class WindowManager {
 
     this.settingsWindow.on('close', () => {
       this.settingsWindow = null
+    })
+
+    this.settingsWindow.on('blur', () => {
+      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_BLUR)
+    })
+
+    this.settingsWindow.on('focus', () => {
+      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_FOCUS)
     })
   }
 

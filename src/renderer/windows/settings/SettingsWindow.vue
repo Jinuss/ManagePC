@@ -1,16 +1,15 @@
 <template>
   <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
-    <div class="settings-window">
+    <div class="settings-window" :platform="isMac?'mac':'win'">
       <div class="settings-header">
+        <div class="window-controls">
+          <button v-if="isMac" class="mac-close-button" :class="{ inactive: !isActive }" @click="closeWindow">
+            <span class="mac-close-icon">✕</span>
+          </button>
+          <NButton v-else type="text" size="small" class="close-btn" @click="closeWindow">✕</NButton>
+        </div>
         <span class="settings-title">{{ t('settings.title') }}</span>
-        <NButton
-          type="text"
-          size="small"
-          class="close-btn"
-          @click="closeWindow"
-        >
-          ✕
-        </NButton>
+        <div class="settings-header-spacer"></div>
       </div>
       <div class="settings-content">
         <div class="settings-section">
@@ -127,7 +126,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   NConfigProvider,
@@ -137,9 +136,11 @@ import {
 } from 'naive-ui'
 import { darkTheme } from 'naive-ui'
 import { useTheme, initTheme, setupSystemThemeListener, setupThemeChangeListener } from '../../composables/useTheme'
+import { usePlatform } from '../../composables/usePlatform'
 import { LANGUAGES, LANGUAGE_CODES, THEME_IDS } from '../../constants'
 
 const { t, locale } = useI18n()
+const { isMac } = usePlatform()
 
 initTheme()
 setupSystemThemeListener()
@@ -209,6 +210,11 @@ const closeWindow = () => {
   window.electronAPI.closeSettingsWindow()
 }
 
+const isActive = ref(true)
+
+let blurHandler = null
+let focusHandler = null
+
 onMounted(async () => {
   const appVersions = window.electronAPI.getVersions()
   versions.value = {
@@ -235,6 +241,27 @@ onMounted(async () => {
       currentLocale.value = language
     })
   }
+
+  if (window.electronAPI && window.electronAPI.onWindowBlur) {
+    blurHandler = window.electronAPI.onWindowBlur(() => {
+      isActive.value = false
+    })
+  }
+
+  if (window.electronAPI && window.electronAPI.onWindowFocus) {
+    focusHandler = window.electronAPI.onWindowFocus(() => {
+      isActive.value = true
+    })
+  }
+})
+
+onUnmounted(() => {
+  if (blurHandler) {
+    blurHandler()
+  }
+  if (focusHandler) {
+    focusHandler()
+  }
 })
 </script>
 
@@ -250,16 +277,77 @@ onMounted(async () => {
 .settings-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 16px 20px;
   background-color: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border);
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+.settings-window[platform="mac"] .settings-header {
+  padding: 10px 16px;
+  height: 42px;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.settings-header-spacer {
+  width: 50px;
+}
+
+.mac-close-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background-color: #ff5f56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.mac-close-button:hover {
+  background-color: #ff3b30;
+}
+
+.mac-close-button:hover .mac-close-icon {
+  opacity: 1;
+}
+
+.mac-close-icon {
+  font-size: 11px;
+  color: #000;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.mac-close-button.inactive {
+  background-color: #c0c0c0;
+}
+
+.mac-close-button.inactive:hover {
+  background-color: #a0a0a0;
 }
 
 .settings-title {
+  flex: 1;
   font-size: 16px;
   font-weight: 600;
   color: var(--color-text-primary);
+}
+
+.settings-window[platform="mac"] .settings-title {
+  text-align: center;
+  font-size: 13px;
 }
 
 .close-btn {

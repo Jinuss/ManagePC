@@ -94,7 +94,8 @@ export default {
     network: '网络信息',
     disk: '磁盘使用',
     battery: '电池状态',
-    monitor: '性能监控'
+    monitor: '性能监控',
+    logs: '日志查看'
   },
   battery: {
     title: '电池状态',
@@ -142,5 +143,15 @@ export default {
     updateError: '检查更新失败',
     autoStart: '开机自启动',
     autoStartDescription: '开机时自动启动应用'
+  },
+  logViewer: {
+    title: '日志查看',
+    refresh: '刷新',
+    clear: '清空',
+    lines: '行数',
+    size: '大小',
+    empty: '暂无日志',
+    loadError: '加载日志失败',
+    clearSuccess: '日志已清空'
   }
 }

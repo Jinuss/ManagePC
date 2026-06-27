@@ -1,5 +1,11 @@
 export const APP_USER_MODEL_ID = 'com.example.system-monitor'
 
+export const GITHUB_REPO = {
+  OWNER: 'Jinuss',
+  NAME: 'ManagePC',
+  RELEASE_API: 'https://api.github.com/repos/Jinuss/ManagePC/releases/latest'
+}
+
 export const WINDOW_DEFAULTS = {
   MAIN_WIDTH: 1200,
   MAIN_HEIGHT: 800,
@@ -47,5 +53,14 @@ export const IPC_CHANNELS = {
   SET_ALWAYS_ON_TOP: 'set-always-on-top',
   GET_ALWAYS_ON_TOP: 'get-always-on-top',
   SET_AUTO_START: 'set-auto-start',
-  GET_AUTO_START: 'get-auto-start'
+  GET_AUTO_START: 'get-auto-start',
+  GET_LOG_PATH: 'get-log-path',
+  GET_LOG_INFO: 'get-log-info',
+  READ_LOGS: 'read-logs',
+  CLEAR_LOGS: 'clear-logs',
+  START_LOG_WATCHER: 'start-log-watcher',
+  STOP_LOG_WATCHER: 'stop-log-watcher',
+  LOG_UPDATED: 'log-updated',
+  WINDOW_BLUR: 'window-blur',
+  WINDOW_FOCUS: 'window-focus'
 }

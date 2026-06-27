@@ -9,12 +9,30 @@ export function getIconPath() {
     if (isMac()) {
       return path.join(process.resourcesPath, 'icons', 'macos', 'icon.icns')
     }
-  }else{
+  } else {
     if (isWindows()) {
-      return path.join(process.cwd(),'resources', 'assets', 'icons', 'windows', 'icon.ico')
+      return path.join(process.cwd(), 'resources', 'assets', 'icons', 'windows', 'icon.ico')
     }
     if (isMac()) {
-      return path.join(process.cwd(),'resources', 'assets', 'icons', 'macos', '16x16.png')
+      return path.join(process.cwd(), 'resources', 'assets', 'icons', 'macos', 'icon.icns')
+    }
+  }
+}
+
+export function getTrayIconPath() {
+  if (app.isPackaged) {
+    if (isWindows()) {
+      return path.join(process.resourcesPath, 'icons', 'windows', 'icon.ico')
+    }
+    if (isMac()) {
+      return path.join(process.resourcesPath, 'icons', 'macos', '16x16.png')
+    }
+  } else {
+    if (isWindows()) {
+      return path.join(process.cwd(), 'resources', 'assets', 'icons', 'windows', 'icon.ico')
+    }
+    if (isMac()) {
+      return path.join(process.cwd(), 'resources', 'assets', 'icons', 'macos', '16x16.png')
     }
   }
 }

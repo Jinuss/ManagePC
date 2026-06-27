@@ -16,6 +16,16 @@ export default defineConfig({
   },
   renderer: {
     root: 'src/renderer',
+    server: {
+      hmr: {
+        enabled: true,
+        host: 'localhost'
+      },
+      watch: {
+        usePolling: true,
+        interval: 100
+      }
+    },
     build: {
       outDir: resolve(__dirname, 'out/renderer'),
       rollupOptions: {

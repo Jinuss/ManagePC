@@ -94,7 +94,8 @@ export default {
     network: 'Network Info',
     disk: 'Disk Usage',
     battery: 'Battery',
-    monitor: 'Performance'
+    monitor: 'Performance',
+    logs: 'Logs'
   },
   battery: {
     title: 'Battery Status',
@@ -142,5 +143,15 @@ export default {
     updateError: 'Failed to check for updates',
     autoStart: 'Auto Start',
     autoStartDescription: 'Launch app automatically on startup'
+  },
+  logViewer: {
+    title: 'Log Viewer',
+    refresh: 'Refresh',
+    clear: 'Clear',
+    lines: 'Lines',
+    size: 'Size',
+    empty: 'No logs available',
+    loadError: 'Failed to load logs',
+    clearSuccess: 'Logs cleared'
   }
 }

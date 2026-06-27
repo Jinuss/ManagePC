@@ -47,9 +47,30 @@ contextBridge.exposeInMainWorld('electronAPI', {
   closeWindow: () => ipcRenderer.invoke(IPC_CHANNELS.CLOSE_WINDOW),
   isWindowMaximized: () => ipcRenderer.invoke(IPC_CHANNELS.IS_WINDOW_MAXIMIZED),
   setAlwaysOnTop: (onTop) => ipcRenderer.invoke(IPC_CHANNELS.SET_ALWAYS_ON_TOP, onTop),
-    getAlwaysOnTop: () => ipcRenderer.invoke(IPC_CHANNELS.GET_ALWAYS_ON_TOP),
-    setAutoStart: (autoStart) => ipcRenderer.invoke(IPC_CHANNELS.SET_AUTO_START, autoStart),
-    getAutoStart: () => ipcRenderer.invoke(IPC_CHANNELS.GET_AUTO_START),
+  getAlwaysOnTop: () => ipcRenderer.invoke(IPC_CHANNELS.GET_ALWAYS_ON_TOP),
+  setAutoStart: (autoStart) => ipcRenderer.invoke(IPC_CHANNELS.SET_AUTO_START, autoStart),
+  getAutoStart: () => ipcRenderer.invoke(IPC_CHANNELS.GET_AUTO_START),
   getSavedTheme: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SAVED_THEME),
   getSavedLanguage: () => ipcRenderer.invoke(IPC_CHANNELS.GET_SAVED_LANGUAGE),
+  getLogPath: () => ipcRenderer.invoke(IPC_CHANNELS.GET_LOG_PATH),
+  getLogInfo: () => ipcRenderer.invoke(IPC_CHANNELS.GET_LOG_INFO),
+  readLogs: (maxLines) => ipcRenderer.invoke(IPC_CHANNELS.READ_LOGS, maxLines),
+  clearLogs: () => ipcRenderer.invoke(IPC_CHANNELS.CLEAR_LOGS),
+  startLogWatcher: () => ipcRenderer.invoke(IPC_CHANNELS.START_LOG_WATCHER),
+  stopLogWatcher: () => ipcRenderer.invoke(IPC_CHANNELS.STOP_LOG_WATCHER),
+  onLogUpdated: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.LOG_UPDATED, (event, logs) => callback(logs))
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.LOG_UPDATED, callback)
+  },
+  removeLogUpdatedListener: (callback) => {
+    ipcRenderer.removeListener(IPC_CHANNELS.LOG_UPDATED, callback)
+  },
+  onWindowBlur: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.WINDOW_BLUR, callback)
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.WINDOW_BLUR, callback)
+  },
+  onWindowFocus: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.WINDOW_FOCUS, callback)
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.WINDOW_FOCUS, callback)
+  }
 })

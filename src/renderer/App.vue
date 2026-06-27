@@ -2,6 +2,7 @@
   <NConfigProvider :theme="naiveTheme"  style="height: 100%; width: 100%">
     <div class="app-container" :platform="isMac?'mac':'win'">
       <CustomTitleBar v-if="!isMac" />
+      <div v-if="isMac" class="mac-titlebar-drag"></div>
       <div class="app-body">
         <div class="fixed-sidebar">
           <div class="fixed-sidebar-top">
@@ -43,11 +44,13 @@
         </aside>
 
         <main class="main-content">
+          <n-message-provider>
           <div class="content-panel">
             <keep-alive include="PCMonitor">
               <component :is="currentComponent" />
             </keep-alive>
           </div>
+          </n-message-provider>
         </main>
       </div>
     </div>
@@ -57,7 +60,7 @@
 <script setup>
 import { ref, onMounted, computed, defineAsyncComponent, h } from "vue";
 import { useI18n } from "vue-i18n";
-import { NConfigProvider, NMenu, NButton, NTooltip } from "naive-ui";
+import { NConfigProvider, NMessageProvider, NMenu, NButton, NTooltip } from "naive-ui";
 import { darkTheme } from "naive-ui";
 import {
   useTheme,
@@ -120,6 +123,11 @@ const menuOptions = computed(() => [
     key: "monitor",
     icon: () => h("span", { class: "menu-icon" }, "📈"),
   },
+  {
+    label: t("menu.logs"),
+    key: "logs",
+    icon: () => h("span", { class: "menu-icon" }, "📋"),
+  },
 ]);
 
 const handleMenuSelect = (index) => {
@@ -136,6 +144,7 @@ const componentMap = {
   disk: defineAsyncComponent(() => import("./components/DiskUsage.vue")),
   battery: defineAsyncComponent(() => import("./components/BatteryStatus.vue")),
   monitor: defineAsyncComponent(() => import("./components/PCMonitor.vue")),
+  logs: defineAsyncComponent(() => import("./components/LogViewer.vue")),
 };
 
 const currentComponent = computed(() => {
@@ -182,6 +191,25 @@ onMounted(() => {
   .fixed-sidebar {
     padding: 40px 18px 20px;
   }
+
+  .sidebar {
+    padding-top: 40px;
+  }
+
+  .main-content {
+    padding-top: 40px;
+  }
+}
+
+.mac-titlebar-drag {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  -webkit-app-region: drag;
+  z-index: 9999;
+  pointer-events: none;
 }
 
 .fixed-sidebar {

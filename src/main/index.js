@@ -1,11 +1,10 @@
 import { app, ipcMain, BrowserWindow } from 'electron'
-import path from 'path'
-import WindowManager from './windowManager.js'
-import { registerIpcHandlers } from './ipcHandlers.js'
-import UpdateManager from './updateManager.js'
-import TrayManager from './trayManager.js'
+import WindowManager from './modules/window/windowManager.js'
+import { registerIpcHandlers } from './modules/ipc/ipcHandlers.js'
+import UpdateManager from './modules/update/updateManager.js'
+import TrayManager from './modules/window/trayManager.js'
 import storeManager from './store.js'
-import log from 'electron-log'
+import logManager, { log } from './modules/log/logManager.js'
 import { IPC_CHANNELS } from './constants'
 
 log.initialize()
@@ -15,6 +14,7 @@ const gotTheLock = app.requestSingleInstanceLock()
 let windowManager = null
 let updateManager = null
 let trayManager = null
+let isQuitting = false
 
 if (!gotTheLock) {
   app.quit()
@@ -47,9 +47,7 @@ if (!gotTheLock) {
     })
     
     ipcMain.handle(IPC_CHANNELS.GET_APP_VERSION, () => {
-      const pkgPath = path.join(app.getAppPath(), 'package.json')
-      const pkg = require(pkgPath)
-      return pkg.version || '1.0.0'
+      return app.getVersion()
     })
 
     ipcMain.handle(IPC_CHANNELS.SET_THEME, (event, theme) => {
@@ -160,10 +158,11 @@ ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
     log.info('createMainWindow end')
 
     trayManager.init(windowManager.getMainWindow())
+    trayManager.setWindowManager(windowManager)
     windowManager.setTrayManager(trayManager)
 
     setTimeout(() => {
-      updateManager.checkForUpdates()
+      updateManager.checkForUpdatesAndNotify()
     }, 3000)
   }
 
@@ -176,6 +175,7 @@ ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
       if (windowManager && windowManager.getMainWindow() === null) {
         windowManager.createMainWindow()
         trayManager.init(windowManager.getMainWindow())
+        trayManager.setWindowManager(windowManager)
         windowManager.setTrayManager(trayManager)
       }
       if (windowManager) {
@@ -186,22 +186,44 @@ ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
 
   app.on('window-all-closed', () => {
     log.info('window-all-closed start')
-    if (process.platform !== 'darwin') {
-      log.info('trayManager exists=', !!trayManager);
-      if (trayManager) {
-        const tray = trayManager.getTray();
-        log.info('tray exists=', !!tray);
-        if (tray && !tray.isDestroyed()) {
-          log.info('window-all-closed fail')
-          return
-        }
+    log.info('trayManager exists=', !!trayManager);
+    if (trayManager) {
+      const tray = trayManager.getTray();
+      log.info('tray exists=', !!tray);
+      if (tray && !tray.isDestroyed()) {
+        log.info('window-all-closed - keep app running with tray')
+        return
       }
-      log.info('window-all-closed end')
-      app.quit()
     }
+    log.info('window-all-closed - quit app')
+    app.quit()
   })
 }
 
+
+process.on('SIGTERM', () => {
+  log.info('SIGTERM received, closing app')
+  isQuitting = true
+  if (trayManager) {
+    const tray = trayManager.getTray()
+    if (tray && !tray.isDestroyed()) {
+      tray.destroy()
+    }
+  }
+  app.quit()
+})
+
+process.on('SIGINT', () => {
+  log.info('SIGINT received, closing app')
+  isQuitting = true
+  if (trayManager) {
+    const tray = trayManager.getTray()
+    if (tray && !tray.isDestroyed()) {
+      tray.destroy()
+    }
+  }
+  app.quit()
+})
 
 process.on('uncaughtException', (err) => {
   log.error('uncaughtException')
@@ -223,4 +245,12 @@ export function getUpdateManager() {
 
 export function getTrayManager() {
   return trayManager
+}
+
+export function setIsQuitting(value) {
+  isQuitting = value
+}
+
+export function getIsQuitting() {
+  return isQuitting
 }
