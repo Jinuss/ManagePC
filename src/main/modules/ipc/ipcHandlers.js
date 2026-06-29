@@ -56,7 +56,13 @@ export function registerIpcHandlers() {
       updateManager = new UpdateManager()
     }
 
-    return await updateManager.checkForUpdates()
+    const checkPromise = updateManager.checkForUpdates()
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 30000)
+    )
+
+    await Promise.race([checkPromise, timeoutPromise])
+
   })
 
   ipcMain.handle(IPC_CHANNELS.GET_LOG_PATH, () => {

@@ -1,5 +1,6 @@
 appId: com.example.system-monitor
-productName: SuperSystemMonitor
+productName: Super System Monitor
+
 directories:
   output: dist
 
@@ -11,31 +12,27 @@ extraResources:
   - from: resources/assets/icons
     to: icons
 
-generateUpdatesFilesForAllChannels: true
-
 publish:
   provider: github
-  repo: ManagePC
   owner: Jinuss
+  repo: ManagePC
   releaseType: release
 
 win:
-  target: nsis
-  executableName: SuperSystemMonitor
+  target:
+    - nsis
   icon: resources/assets/icons/windows/icon.ico
-
-mac:
-  target: dmg
-  category: public.app-category.utilities
-  icon: resources/assets/icons/macos/icon.icns
+  executableName: SuperSystemMonitor
 
 nsis:
   oneClick: false
-  perMachine: false
+  perMachine: true
   allowToChangeInstallationDirectory: true
-
-  createDesktopShortcut: always
+  createDesktopShortcut: true
   createStartMenuShortcut: true
+  shortcutName: Super System Monitor
 
-  installerIcon: resources/assets/icons/windows/icon.ico
-  uninstallerIcon: resources/assets/icons/windows/icon.ico
+mac:
+  target:
+    - dmg
+  icon: resources/assets/icons/macos/icon.icns
