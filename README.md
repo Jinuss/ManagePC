@@ -1,9 +1,6 @@
 [![中文](https://img.shields.io/badge/lang-中文-red.svg)](README.md)
 [![en](https://img.shields.io/badge/lang-English-blue.svg)](README.en.md)
 
-# My Project
-...
-...
 # ManagePC
 
 一款基于 Electron + Vue3 的跨平台系统管理工具，提供系统监控、网络管理、SSH 密钥管理等功能。
