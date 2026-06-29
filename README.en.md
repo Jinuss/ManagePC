@@ -1,3 +1,9 @@
+[![en](https://img.shields.io/badge/lang-English-blue.svg)](README.en.md)
+[![中文](https://img.shields.io/badge/lang-中文-red.svg)](README.md)
+
+# My Project
+...
+
 # ManagePC
 
 A cross-platform system management tool built with Electron + Vue3, providing system monitoring, network management, SSH key management and more.
