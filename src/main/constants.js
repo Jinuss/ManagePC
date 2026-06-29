@@ -40,6 +40,7 @@ export const IPC_CHANNELS = {
   CHECK_FOR_UPDATES: 'check-for-updates',
   OPEN_SETTINGS_WINDOW: 'open-settings-window',
   CLOSE_SETTINGS_WINDOW: 'close-settings-window',
+  OPEN_SETTINGS_DEVTOOLS: 'open-settings-devtools',
   SET_THEME: 'set-theme',
   SET_LANGUAGE: 'set-language',
   THEME_CHANGED: 'theme-changed',

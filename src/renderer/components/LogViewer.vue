@@ -1,146 +1,149 @@
 <template>
-    <div class="log-viewer">
-      <div class="log-header">
-        <div class="log-info">
-          <span class="log-mode-badge" :class="isDev ? 'dev' : 'prod'">
-            {{ isDev ? 'DEV' : 'PROD' }}
-          </span>
-          <span class="log-path" :title="logPath">{{ shortPath }}</span>
-        </div>
-        <div class="log-actions">
-          <NButton size="tiny" @click="refreshLogs" :loading="loading">
-            {{ t('logViewer.refresh') }}
-          </NButton>
-          <NButton size="tiny" type="warning" @click="handleClearLogs">
-            {{ t('logViewer.clear') }}
-          </NButton>
-        </div>
+  <div class="log-viewer">
+    <div class="log-header">
+      <div class="log-info">
+        <span class="log-mode-badge" :class="isDev ? 'dev' : 'prod'">
+          {{ isDev ? "DEV" : "PROD" }}
+        </span>
+        <span class="log-path" :title="logPath">{{ shortPath }}</span>
       </div>
-      <div class="log-stats">
-        <span>{{ t('logViewer.lines') }}: {{ logInfo.lineCount }}</span>
-        <span>{{ t('logViewer.size') }}: {{ formattedSize }}</span>
-      </div>
-      <div class="log-content" ref="logContainer">
-        <div
-          v-for="(log, index) in logs"
-          :key="index"
-          class="log-line"
-          :class="log.level"
-        >
-          <span class="log-time">{{ formatTime(log.timestamp) }}</span>
-          <span class="log-level" :class="log.level">[{{ log.level.toUpperCase() }}]</span>
-          <span class="log-message">{{ log.message }}</span>
-        </div>
-        <div v-if="logs.length === 0 && !loading" class="log-empty">
-          {{ t('logViewer.empty') }}
-        </div>
+      <div class="log-actions">
+        <NButton size="tiny" @click="refreshLogs" :loading="loading">
+          {{ t("logViewer.refresh") }}
+        </NButton>
+        <NButton size="tiny" type="warning" @click="handleClearLogs">
+          {{ t("logViewer.clear") }}
+        </NButton>
       </div>
     </div>
+    <div class="log-stats">
+      <span>{{ t("logViewer.lines") }}: {{ logInfo.lineCount }}</span>
+      <span>{{ t("logViewer.size") }}: {{ formattedSize }}</span>
+    </div>
+    <div class="log-content" ref="logContainer">
+      <div
+        v-for="(log, index) in logs"
+        :key="index"
+        class="log-line"
+        :class="log.level"
+      >
+        <span class="log-time">{{ formatTime(log.timestamp) }}</span>
+        <span class="log-level" :class="log.level"
+          >[{{ log.level.toUpperCase() }}]</span
+        >
+        <span class="log-message">{{ log.message }}</span>
+      </div>
+      <div v-if="logs.length === 0 && !loading" class="log-empty">
+        {{ t("logViewer.empty") }}
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { NButton, NMessageProvider, useMessage } from 'naive-ui'
+import { ref, computed, onMounted, onUnmounted, nextTick } from "vue";
+import { useI18n } from "vue-i18n";
+import { NButton, NMessageProvider, useMessage } from "naive-ui";
 
-const { t } = useI18n()
-const message = useMessage()
+const { t } = useI18n();
+const message = useMessage();
 
-const logs = ref([])
-const loading = ref(false)
-const logPath = ref('')
-const logInfo = ref({ lineCount: 0, size: 0, isDev: false })
-const logContainer = ref(null)
-let removeLogListener = null
+const logs = ref([]);
+const loading = ref(false);
+const logPath = ref("");
+const logInfo = ref({ lineCount: 0, size: 0, isDev: false });
+const logContainer = ref(null);
+let removeLogListener = null;
 
-const isDev = computed(() => logInfo.value.isDev)
+const isDev = computed(() => logInfo.value.isDev);
 
 const shortPath = computed(() => {
-  const path = logPath.value
+  const path = logPath.value;
   if (path.length > 50) {
-    return '...' + path.slice(-47)
+    return "..." + path.slice(-47);
   }
-  return path
-})
+  return path;
+});
 
 const formattedSize = computed(() => {
-  const size = logInfo.value.size
-  if (size < 1024) return size + ' B'
-  if (size < 1024 * 1024) return (size / 1024).toFixed(2) + ' KB'
-  return (size / (1024 * 1024)).toFixed(2) + ' MB'
-})
+  const size = logInfo.value.size;
+  if (size < 1024) return size + " B";
+  if (size < 1024 * 1024) return (size / 1024).toFixed(2) + " KB";
+  return (size / (1024 * 1024)).toFixed(2) + " MB";
+});
 
 const formatTime = (timestamp) => {
-  if (!timestamp) return ''
-  const date = new Date(timestamp)
-  return date.toLocaleTimeString('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  })
-}
-
-
+  if (!timestamp) return "";
+  const date = new Date(timestamp);
+  return date.toLocaleTimeString("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+};
 
 const scrollToTop = async () => {
-  await nextTick()
+  await nextTick();
   if (logContainer.value) {
-    logContainer.value.scrollTop = 0
+    logContainer.value.scrollTo({
+      top: logContainer.value.scrollHeight,
+      behavior: "smooth",
+    });
   }
-}
+};
 
 const refreshLogs = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const logData = await window.electronAPI.readLogs(500)
-    logs.value = logData.reverse()
-    logInfo.value = await window.electronAPI.getLogInfo()
-    logPath.value = await window.electronAPI.getLogPath()
-    await scrollToTop()
+    const logData = await window.electronAPI.readLogs(500);
+    logs.value = logData;
+    logInfo.value = await window.electronAPI.getLogInfo();
+    logPath.value = await window.electronAPI.getLogPath();
+    await scrollToTop();
   } catch (error) {
-    console.error('Failed to load logs:', error)
-    message.error(t('logViewer.loadError'))
+    console.error("Failed to load logs:", error);
+    message.error(t("logViewer.loadError"));
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleNewLogs = async (newLogs) => {
   if (newLogs && newLogs.length > 0) {
-    logs.value.unshift(...newLogs.reverse())
-    logInfo.value = await window.electronAPI.getLogInfo()
-    await scrollToTop()
+    logs.value.push(...newLogs);
+    logInfo.value = await window.electronAPI.getLogInfo();
+    await scrollToTop();
   }
-}
+};
 
 const handleClearLogs = async () => {
   try {
-    const result = await window.electronAPI.clearLogs()
+    const result = await window.electronAPI.clearLogs();
     if (result.success) {
-      message.success(t('logViewer.clearSuccess'))
-      await refreshLogs()
+      message.success(t("logViewer.clearSuccess"));
+      await refreshLogs();
     } else {
-      message.error(result.error || t('logViewer.clearError'))
+      message.error(result.error || t("logViewer.clearError"));
     }
   } catch (error) {
-    console.error('Failed to clear logs:', error)
-    message.error(t('logViewer.clearError'))
+    console.error("Failed to clear logs:", error);
+    message.error(t("logViewer.clearError"));
   }
-}
+};
 
 onMounted(async () => {
-  await refreshLogs()
-  await window.electronAPI.startLogWatcher()
-  removeLogListener = window.electronAPI.onLogUpdated(handleNewLogs)
-})
+  await refreshLogs();
+  await window.electronAPI.startLogWatcher();
+  removeLogListener = window.electronAPI.onLogUpdated(handleNewLogs);
+});
 
 onUnmounted(() => {
   if (removeLogListener) {
-    removeLogListener()
+    removeLogListener();
   }
-  window.electronAPI.stopLogWatcher()
-})
+  window.electronAPI.stopLogWatcher();
+});
 </script>
 
 <style scoped>
@@ -211,7 +214,7 @@ onUnmounted(() => {
   flex: 1;
   overflow-y: auto;
   padding: 12px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 12px;
   line-height: 1.6;
   background-color: var(--color-bg-tertiary, #1e1e1e);

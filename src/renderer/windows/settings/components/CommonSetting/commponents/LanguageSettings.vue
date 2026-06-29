@@ -4,16 +4,11 @@
       <span>{{ t("settings.language") }}</span>
       <NSelect
         v-model:value="currentLocale"
-        :options="
-          LANGUAGES.map((lang) => ({
-            label: lang.name,
-            value: lang.code,
-          }))
-        "
+        :options="LANGUAGES"
         :consistent-menu-width="false"
         menu-size="small"
         @change="switchLanguage"
-        style="width: 120px;"
+        style="width: 120px"
       />
     </div>
   </div>
@@ -23,7 +18,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { NSelect } from "naive-ui";
-import { LANGUAGES } from "../../../constants";
+import { LANGUAGES } from "../../../../../constants";
 
 const { t, locale } = useI18n();
 const currentLocale = ref(locale.value);

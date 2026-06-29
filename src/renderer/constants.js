@@ -17,16 +17,6 @@ export const THEME_ICONS = {
 }
 
 export const LANGUAGES = [
-  { code: 'zh', name: '中文' },
-  { code: 'en', name: 'English' }
+  { value: 'zh', label: '中文' },
+  { value: 'en', label: 'English' }
 ]
-
-export const LANGUAGE_CODES = {
-  ZH: 'zh',
-  EN: 'en'
-}
-
-export const STORAGE_KEYS = {
-  THEME: 'theme',
-  LANGUAGE: 'language'
-}

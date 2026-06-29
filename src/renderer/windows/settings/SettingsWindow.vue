@@ -42,37 +42,17 @@
 </template>
 
 <script setup>
-import {
-  ref,
-  computed,
-  onMounted,
-  onUnmounted,
-  h,
-  defineAsyncComponent,
-} from "vue";
-import { NConfigProvider, NButton, NMenu } from "naive-ui";
+import { ref, computed, onMounted, onUnmounted, h } from "vue";
+import { NConfigProvider, NMenu } from "naive-ui";
 import { darkTheme } from "naive-ui";
 import { useTheme } from "../../composables/useTheme";
 import { usePlatform } from "../../composables/usePlatform";
 import { THEME_IDS } from "../../constants";
 import { useI18n } from "vue-i18n";
+import { componentMap } from "./config.js";
 
-
-const componentMap = {
-  language: defineAsyncComponent(
-    () => import("./components/LanguageSettings.vue"),
-  ),
-  theme: defineAsyncComponent(() => import("./components/ThemeSettings.vue")),
-  update: defineAsyncComponent(() => import("./components/UpdateSettings.vue")),
-  autoStart: defineAsyncComponent(
-    () => import("./components/AutoStartSettings.vue"),
-  ),
-  about: defineAsyncComponent(() => import("./components/AboutSettings.vue")),
-};
-
-const { t, locale } = useI18n();
+const { t } = useI18n();
 const { isMac } = usePlatform();
-
 const { theme } = useTheme();
 
 const naiveTheme = computed(() => {
@@ -87,28 +67,18 @@ const naiveTheme = computed(() => {
   return null;
 });
 
-const activeTab = ref("language");
+const activeTab = ref("common");
 
 const menuOptions = computed(() => [
   {
-    label: t("settings.language"),
-    key: "language",
-    icon: () => h("span", { class: "menu-icon" }, "🌐"),
+    label: t("settings.common"),
+    key: "common",
+    icon: () => h("span", { class: "menu-icon" }, "⚙️"),
   },
   {
     label: t("settings.theme"),
     key: "theme",
     icon: () => h("span", { class: "menu-icon" }, "🎨"),
-  },
-  {
-    label: t("settings.update"),
-    key: "update",
-    icon: () => h("span", { class: "menu-icon" }, "🔄"),
-  },
-  {
-    label: t("settings.autoStart"),
-    key: "autoStart",
-    icon: () => h("span", { class: "menu-icon" }, "🚀"),
   },
   {
     label: t("settings.about"),
@@ -179,7 +149,7 @@ onUnmounted(() => {
 
 .windows-controls {
   display: flex;
-  flex:1;
+  flex: 1;
   gap: 4px;
   height: 32px;
   justify-content: flex-end;
@@ -293,6 +263,7 @@ onUnmounted(() => {
 }
 
 .control-btn {
+  -webkit-app-region: no-drag;
   width: 46px;
   height: 32px;
   border: none;

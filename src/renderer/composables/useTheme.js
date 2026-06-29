@@ -11,10 +11,10 @@ export function useTheme() {
 
 function applyTheme(themeId) {
   const root = document.documentElement
-  
+
   root.classList.remove('theme-light', 'theme-dark', 'theme-system')
   root.classList.add(`theme-${themeId}`)
-  
+
   if (themeId === THEME_IDS.SYSTEM) {
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? THEME_IDS.DARK : THEME_IDS.LIGHT
     root.classList.add(`theme-${systemTheme}`)
@@ -38,7 +38,7 @@ export async function initTheme() {
 
 export function setupSystemThemeListener() {
   const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-  
+
   mediaQuery.addEventListener('change', (e) => {
     if (theme.value === THEME_IDS.SYSTEM) {
       const systemTheme = e.matches ? THEME_IDS.DARK : THEME_IDS.LIGHT

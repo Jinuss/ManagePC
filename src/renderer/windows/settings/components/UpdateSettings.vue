@@ -1,35 +1,36 @@
 <template>
-  <div class="settings-section">
-    <div class="update-content">
-      <NButton
-        type="primary"
-        size="medium"
-        :loading="checkingUpdate"
-        class="update-btn"
-        @click="checkUpdate"
+  <div class="update-content">
+    <NButton
+      type="primary"
+      size="medium"
+      :loading="checkingUpdate"
+      class="update-btn"
+      @click="checkUpdate"
+    >
+      <span
+        ><span v-show="!checkingUpdate"> 🔄</span>
+        {{ t("common.checkUpdate") }}</span
       >
-        {{ t("common.checkUpdate") }}
-      </NButton>
-      <div v-if="updateStatus" class="update-status">
-        <NAlert
-          v-if="updateStatus === 'no-update'"
-          type="success"
-          :title="t('settings.noUpdate')"
-          :closable="false"
-        />
-        <NAlert
-          v-else-if="updateStatus === 'update-available'"
-          type="info"
-          :title="updateMessage"
-          :closable="false"
-        />
-        <NAlert
-          v-else-if="updateStatus === 'error'"
-          type="error"
-          :title="t('settings.updateError')"
-          :closable="false"
-        />
-      </div>
+    </NButton>
+    <div v-if="updateStatus" class="update-status">
+      <NAlert
+        v-if="updateStatus === 'no-update'"
+        type="success"
+        :title="t('settings.noUpdate')"
+        :closable="false"
+      />
+      <NAlert
+        v-else-if="updateStatus === 'update-available'"
+        type="info"
+        :title="updateMessage"
+        :closable="false"
+      />
+      <NAlert
+        v-else-if="updateStatus === 'error'"
+        type="error"
+        :title="t('settings.updateError')"
+        :closable="false"
+      />
     </div>
   </div>
 </template>
@@ -66,11 +67,6 @@ const checkUpdate = async () => {
 </script>
 
 <style scoped>
-.settings-section {
-  background-color: var(--color-bg-primary);
-  border-radius: 8px;
-  padding: 16px;
-}
 .update-content {
   display: flex;
   flex-direction: column;

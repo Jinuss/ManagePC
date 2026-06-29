@@ -5,14 +5,7 @@
         <span class="about-label">{{ t("settings.version") }}:</span>
         <span class="about-value">{{ version }}</span>
       </div>
-      <div class="about-item">
-        <span class="about-label">Electron:</span>
-        <span class="about-value">{{ versions.electron }}</span>
-      </div>
-      <div class="about-item">
-        <span class="about-label">Node.js:</span>
-        <span class="about-value">{{ versions.node }}</span>
-      </div>
+      <UpdateSettings />
     </div>
   </div>
 </template>
@@ -20,16 +13,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import UpdateSettings from "./UpdateSettings.vue";
 
 const { t } = useI18n();
 
 const version = ref("");
-const versions = ref({ electron: "", node: "" });
 
 onMounted(async () => {
-  const appVersions = window.electronAPI.getVersions();
-  versions.value = { electron: appVersions.electron, node: appVersions.node };
-
   try {
     version.value = await window.electronAPI.getAppVersion();
   } catch {
@@ -47,11 +37,11 @@ onMounted(async () => {
 
 .about-content {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
 }
 .about-item {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   padding: 4px 0;
 }
