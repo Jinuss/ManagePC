@@ -4,7 +4,6 @@
       <div class="app-icon">⚙️</div>
       <span class="app-title">{{ t("header.title") }}</span>
     </div>
-    <div class="titlebar-center"></div>
     <div class="titlebar-right">
       <div class="window-controls">
         <button
@@ -134,15 +133,6 @@ onUnmounted(() => {
   transition: color var(--transition-normal);
 }
 
-.titlebar-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: var(--color-titlebar-text-secondary);
-  transition: color var(--transition-normal);
-}
-
 .titlebar-right {
   display: flex;
   align-items: center;
@@ -185,7 +175,7 @@ onUnmounted(() => {
 }
 
 .control-btn.pin-btn.is-pinned .icon {
-  color: #1890ff;
+  transform: rotate(-45deg);
 }
 
 .control-btn.close-btn:hover {
@@ -194,11 +184,5 @@ onUnmounted(() => {
 
 .control-btn.close-btn:hover .icon {
   color: #ffffff;
-}
-
-@media (max-width: 768px) {
-  .titlebar-center {
-    display: none;
-  }
 }
 </style>

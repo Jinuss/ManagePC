@@ -151,8 +151,10 @@ class WindowManager {
       icon: getIconPath(),
       autoHideMenuBar: true,
       frame: false,
+      resizable: false,
       skipTaskbar: true,
       webPreferences: {
+        devTools: true,
         backgroundThrottling: false,
         nodeIntegration: false,
         contextIsolation: true,

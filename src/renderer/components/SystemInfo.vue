@@ -56,7 +56,6 @@ const copied = ref(false);
 const fetchNetworkInfo = async () => {
   try {
     const info = await window.electronAPI.getNetworkInfo();
-    console.log("🚀 ~ fetchNetworkInfo ~ info:", info);
     networkInfo.value = info;
   } catch (error) {
     console.error("获取网络信息失败:", error);

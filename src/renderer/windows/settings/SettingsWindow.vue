@@ -1,268 +1,153 @@
 <template>
   <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
-    <div class="settings-window" :platform="isMac?'mac':'win'">
+    <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
       <div class="settings-header">
-        <div class="window-controls">
-          <button v-if="isMac" class="mac-close-button" :class="{ inactive: !isActive }" @click="closeWindow">
+        <div class="mac-controls">
+          <button
+            v-if="isMac"
+            class="mac-close-button"
+            :class="{ inactive: !isActive }"
+            @click="closeWindow"
+          >
             <span class="mac-close-icon">✕</span>
           </button>
-          <NButton v-else type="text" size="small" class="close-btn" @click="closeWindow">✕</NButton>
         </div>
-        <span class="settings-title">{{ t('settings.title') }}</span>
-        <div class="settings-header-spacer"></div>
+        <div class="windows-controls">
+          <button
+            v-if="!isMac"
+            class="control-btn close-btn"
+            @click="closeWindow"
+            :title="t('common.close')"
+          >
+            <span class="icon">✕</span>
+          </button>
+        </div>
       </div>
-      <div class="settings-content">
-        <div class="settings-section">
-          <div class="section-title">
-            <span class="section-icon">🌐</span>
-            <span>{{ t('settings.language') }}</span>
-          </div>
-          <div class="language-options">
-            <NButton
-              v-for="lang in languages"
-              :key="lang.code"
-              :type="currentLocale === lang.code ? 'primary' : 'default'"
-              size="medium"
-              class="language-option-btn"
-              @click="switchLanguage(lang.code)"
-            >
-              {{ lang.name }}
-            </NButton>
-          </div>
-        </div>
-        <div class="settings-section">
-          <div class="section-title">
-            <span class="section-icon">🎨</span>
-            <span>{{ t('settings.theme') }}</span>
-          </div>
-          <div class="theme-options">
-            <NButton
-              v-for="t in themes"
-              :key="t.id"
-              :type="theme.value === t.id ? 'primary' : 'default'"
-              size="medium"
-              class="theme-option-btn"
-              @click="setTheme(t.id)"
-            >
-              <span>{{ t.icon }}</span>
-              <span>{{ t.label }}</span>
-            </NButton>
-          </div>
-        </div>
-        <div class="settings-section">
-          <div class="section-title">
-            <span class="section-icon">🔄</span>
-            <span>{{ t('settings.update') }}</span>
-          </div>
-          <div class="update-content">
-            <NButton
-              type="primary"
-              size="medium"
-              :loading="checkingUpdate"
-              class="update-btn"
-              @click="checkUpdate"
-            >
-              {{ t('common.checkUpdate') }}
-            </NButton>
-            <div v-if="updateStatus" class="update-status">
-              <NAlert
-                v-if="updateStatus === 'no-update'"
-                type="success"
-                :title="t('settings.noUpdate')"
-                :closable="false"
-              />
-              <NAlert
-                v-else-if="updateStatus === 'update-available'"
-                type="info"
-                :title="updateMessage"
-                :closable="false"
-              />
-              <NAlert
-                v-else-if="updateStatus === 'error'"
-                type="error"
-                :title="t('settings.updateError')"
-                :closable="false"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="settings-section">
-          <div class="section-title">
-            <span class="section-icon">🚀</span>
-            <span>{{ t('settings.autoStart') }}</span>
-          </div>
-          <div class="auto-start-content">
-            <span class="auto-start-label">{{ t('settings.autoStartDescription') }}</span>
-            <NSwitch
-              :value="autoStart"
-              @update:value="toggleAutoStart"
-              class="auto-start-switch"
-            />
-          </div>
-        </div>
-        <div class="settings-section">
-          <div class="section-title">
-            <span class="section-icon">ℹ️</span>
-            <span>{{ t('settings.about') }}</span>
-          </div>
-          <div class="about-content">
-            <div class="about-item">
-              <span class="about-label">{{ t('settings.version') }}:</span>
-              <span class="about-value">{{ version }}</span>
-            </div>
-            <div class="about-item">
-              <span class="about-label">Electron:</span>
-              <span class="about-value">{{ versions.electron }}</span>
-            </div>
-            <div class="about-item">
-              <span class="about-label">Node.js:</span>
-              <span class="about-value">{{ versions.node }}</span>
-            </div>
-          </div>
-        </div>
+      <div class="settings-body">
+        <aside class="settings-sidebar">
+          <NMenu
+            :value="activeTab"
+            :options="menuOptions"
+            class="sidebar-menu"
+            mode="vertical"
+            @update:value="handleMenuSelect"
+          />
+        </aside>
+        <main class="settings-main">
+          <component :is="componentMap[activeTab]" />
+        </main>
       </div>
     </div>
   </NConfigProvider>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
 import {
-  NConfigProvider,
-  NButton,
-  NAlert,
-  NSwitch
-} from 'naive-ui'
-import { darkTheme } from 'naive-ui'
-import { useTheme, initTheme, setupSystemThemeListener, setupThemeChangeListener } from '../../composables/useTheme'
-import { usePlatform } from '../../composables/usePlatform'
-import { LANGUAGES, LANGUAGE_CODES, THEME_IDS } from '../../constants'
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  h,
+  defineAsyncComponent,
+} from "vue";
+import { NConfigProvider, NButton, NMenu } from "naive-ui";
+import { darkTheme } from "naive-ui";
+import { useTheme } from "../../composables/useTheme";
+import { usePlatform } from "../../composables/usePlatform";
+import { THEME_IDS } from "../../constants";
+import { useI18n } from "vue-i18n";
 
-const { t, locale } = useI18n()
-const { isMac } = usePlatform()
 
-initTheme()
-setupSystemThemeListener()
-setupThemeChangeListener()
+const componentMap = {
+  language: defineAsyncComponent(
+    () => import("./components/LanguageSettings.vue"),
+  ),
+  theme: defineAsyncComponent(() => import("./components/ThemeSettings.vue")),
+  update: defineAsyncComponent(() => import("./components/UpdateSettings.vue")),
+  autoStart: defineAsyncComponent(
+    () => import("./components/AutoStartSettings.vue"),
+  ),
+  about: defineAsyncComponent(() => import("./components/AboutSettings.vue")),
+};
 
-const { theme, themes } = useTheme()
+const { t, locale } = useI18n();
+const { isMac } = usePlatform();
 
-const currentLocale = ref(locale.value)
-
-const languages = LANGUAGES
-
-const switchLanguage = (code) => {
-  window.electronAPI.setLanguage(code)
-}
-
-const setTheme = (newTheme) => {
-  window.electronAPI.setTheme(newTheme)
-}
+const { theme } = useTheme();
 
 const naiveTheme = computed(() => {
   if (theme.value === THEME_IDS.DARK) {
-    return darkTheme
+    return darkTheme;
   }
   if (theme.value === THEME_IDS.SYSTEM) {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? darkTheme : null
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? darkTheme
+      : null;
   }
-  return null
-})
+  return null;
+});
 
-const checkingUpdate = ref(false)
-const updateStatus = ref(null)
-const updateMessage = ref('')
+const activeTab = ref("language");
 
-const version = ref('')
-const versions = ref({
-  electron: '',
-  node: ''
-})
+const menuOptions = computed(() => [
+  {
+    label: t("settings.language"),
+    key: "language",
+    icon: () => h("span", { class: "menu-icon" }, "🌐"),
+  },
+  {
+    label: t("settings.theme"),
+    key: "theme",
+    icon: () => h("span", { class: "menu-icon" }, "🎨"),
+  },
+  {
+    label: t("settings.update"),
+    key: "update",
+    icon: () => h("span", { class: "menu-icon" }, "🔄"),
+  },
+  {
+    label: t("settings.autoStart"),
+    key: "autoStart",
+    icon: () => h("span", { class: "menu-icon" }, "🚀"),
+  },
+  {
+    label: t("settings.about"),
+    key: "about",
+    icon: () => h("span", { class: "menu-icon" }, "ℹ️"),
+  },
+]);
 
-const autoStart = ref(false)
-
-const toggleAutoStart = async (value) => {
-  await window.electronAPI.setAutoStart(value)
-  autoStart.value = value
-}
-
-const checkUpdate = async () => {
-  checkingUpdate.value = true
-  updateStatus.value = null
-  try {
-    const result = await window.electronAPI.checkForUpdates()
-    if (result.status === 'no-update') {
-      updateStatus.value = 'no-update'
-    } else if (result.status === 'update-available') {
-      updateStatus.value = 'update-available'
-      updateMessage.value = result.message
-    }
-  } catch (error) {
-    console.error('检查更新失败:', error)
-    updateStatus.value = 'error'
-  } finally {
-    checkingUpdate.value = false
-  }
-}
+const handleMenuSelect = (key) => {
+  activeTab.value = key;
+};
 
 const closeWindow = () => {
-  window.electronAPI.closeSettingsWindow()
-}
+  window.electronAPI.closeSettingsWindow();
+};
 
-const isActive = ref(true)
+const isActive = ref(true);
 
-let blurHandler = null
-let focusHandler = null
+let blurHandler = null;
+let focusHandler = null;
 
 onMounted(async () => {
-  const appVersions = window.electronAPI.getVersions()
-  versions.value = {
-    electron: appVersions.electron,
-    node: appVersions.node
-  }
-  
-  try {
-    version.value = await window.electronAPI.getAppVersion()
-  } catch {
-    version.value = '1.0.0'
-  }
-  
-  try {
-    const result = await window.electronAPI.getAutoStart()
-    autoStart.value = result.autoStart
-  } catch {
-    autoStart.value = false
-  }
-  
-  if (window.electronAPI && window.electronAPI.onLanguageChanged) {
-    window.electronAPI.onLanguageChanged((language) => {
-      locale.value = language
-      currentLocale.value = language
-    })
-  }
-
   if (window.electronAPI && window.electronAPI.onWindowBlur) {
     blurHandler = window.electronAPI.onWindowBlur(() => {
-      isActive.value = false
-    })
+      isActive.value = false;
+    });
   }
 
   if (window.electronAPI && window.electronAPI.onWindowFocus) {
     focusHandler = window.electronAPI.onWindowFocus(() => {
-      isActive.value = true
-    })
+      isActive.value = true;
+    });
   }
-})
+});
 
 onUnmounted(() => {
-  if (blurHandler) {
-    blurHandler()
-  }
-  if (focusHandler) {
-    focusHandler()
-  }
-})
+  if (blurHandler) blurHandler();
+  if (focusHandler) focusHandler();
+});
 </script>
 
 <style>
@@ -277,26 +162,27 @@ onUnmounted(() => {
 .settings-header {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
-  background-color: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
   -webkit-app-region: drag;
   user-select: none;
+  justify-content: space-between;
+  height: 32px;
 }
 
-.settings-window[platform="mac"] .settings-header {
-  padding: 10px 16px;
-  height: 42px;
-}
-
-.window-controls {
+.mac-controls {
   display: flex;
   align-items: center;
-  -webkit-app-region: no-drag;
+  width: 180px;
+  height: 32px;
+  background-color: var(--color-bg-primary);
+  border-right: 1px solid var(--color-border);
 }
 
-.settings-header-spacer {
-  width: 50px;
+.windows-controls {
+  display: flex;
+  flex:1;
+  gap: 4px;
+  height: 32px;
+  justify-content: flex-end;
 }
 
 .mac-close-button {
@@ -360,103 +246,77 @@ onUnmounted(() => {
   color: var(--color-text-primary);
 }
 
-.settings-content {
+.settings-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.settings-sidebar {
+  width: 180px;
+  background-color: var(--color-bg-primary);
+  border-right: 1px solid var(--color-border);
+  padding: 16px 0;
+}
+
+.sidebar-menu {
+  border-right: none;
+}
+
+.sidebar-menu :deep(.n-menu-item) {
+  height: 44px;
+  line-height: 44px;
+  padding: 0 16px;
+  margin: 2px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.sidebar-menu :deep(.n-menu-item:hover) {
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
+.sidebar-menu :deep(.n-menu-item.n-menu-item--active) {
+  background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.menu-icon {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.settings-main {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
 }
 
-.settings-section {
-  background-color: var(--color-bg-primary);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.section-title {
+.control-btn {
+  width: 46px;
+  height: 32px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  transition: background-color var(--transition-fast);
+  padding: 0;
+}
+.control-btn .icon {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 16px;
+  color: var(--color-titlebar-text);
+  transition: color var(--transition-normal);
+  line-height: 1;
 }
 
-.section-icon {
-  font-size: 16px;
+.control-btn.close-btn:hover {
+  background-color: #e81123;
 }
 
-.language-options {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.language-option-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
-}
-
-.theme-options {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.theme-option-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 6px;
-}
-
-.update-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.update-btn {
-  align-self: flex-start;
-}
-
-.update-status {
-  width: 100%;
-}
-
-.about-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.about-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-}
-
-.auto-start-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.auto-start-label {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-}
-
-.about-label {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-}
-
-.about-value {
-  color: var(--color-text-primary);
-  font-size: 13px;
-  font-family: monospace;
+.control-btn.close-btn:hover .icon {
+  color: #ffffff;
 }
 </style>

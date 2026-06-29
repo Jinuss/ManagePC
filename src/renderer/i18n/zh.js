@@ -142,7 +142,10 @@ export default {
     noUpdate: '当前已是最新版本',
     updateError: '检查更新失败',
     autoStart: '开机自启动',
-    autoStartDescription: '开机时自动启动应用'
+    autoStartDescription: '开机时自动启动应用',
+    themeLight: '亮色',
+    themeDark: '暗色',
+    themeSystem: '跟随系统'
   },
   logViewer: {
     title: '日志查看',

@@ -142,7 +142,10 @@ export default {
     noUpdate: 'Current version is up to date',
     updateError: 'Failed to check for updates',
     autoStart: 'Auto Start',
-    autoStartDescription: 'Launch app automatically on startup'
+    autoStartDescription: 'Launch app automatically on startup',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System'
   },
   logViewer: {
     title: 'Log Viewer',

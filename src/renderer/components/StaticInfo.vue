@@ -53,7 +53,6 @@ const systemInfo = ref({});
 const fetchSystemInfo = async () => {
   try {
     const data = await window.electronAPI.getSystemInfo();
-    console.log("🚀 ~ fetchSystemInfo ~ data:", data)
     systemInfo.value = data;
   } catch (error) {
     console.error("获取系统信息失败:", error);
