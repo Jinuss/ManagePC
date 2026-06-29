@@ -1,5 +1,4 @@
-[![中文](https://img.shields.io/badge/lang-中文-red.svg)](README.md)
-[![en](https://img.shields.io/badge/lang-English-blue.svg)](README.en.md)
+[🇺🇸 English](README.en.md) | [🇨🇳 中文](README.md)
 
 # ManagePC
 
