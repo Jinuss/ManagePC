@@ -78,10 +78,6 @@ jobs:
         with:
           path: release
 
-      - name: Show downloaded files
-        run: |
-          find release -type f
-
       - name: Create Release if it does not exist
         run: |
           if ! gh release view "${{ github.ref_name }}" --repo "$GH_REPO" >/dev/null 2>&1; then
@@ -91,13 +87,22 @@ jobs:
               --generate-notes
           fi
 
-      - name: Upload all files
+      - name: Upload release assets
         run: |
-          find release -type f \
-            ! -name "builder-debug.yml" \
-            -print0 | while IFS= read -r -d '' file; do
+          shopt -s globstar nullglob
+          files=(
+             release/**/*.exe
+             release/**/*.exe.blockmap
+             release/**/latest.yml
+             release/**/*.dmg
+             release/**/*.dmg.blockmap
+             release/**/latest-mac.yml
+             release/**/*.zip
+          )
+
+          for file in "${files[@]}"; do
             echo "Uploading $file"
             gh release upload "${{ github.ref_name }}" "$file" \
-               --repo "$GH_REPO" \
-               --clobber
+              --repo "$GH_REPO" \
+              --clobber
           done
