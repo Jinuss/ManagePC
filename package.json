@@ -10,8 +10,8 @@
     "pack:win": "npm run build && electron-builder --config electron-builder.yml --win --x64",
     "pack:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64",
     "pack:all": "npm run build && electron-builder --config electron-builder.yml -mwl",
-    "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=always",
-    "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=always"
+    "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=never",
+    "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=never"
   },
   "keywords": [
     "electron",
