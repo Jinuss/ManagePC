@@ -26,9 +26,6 @@ class TrayManager {
 
       const iconPath = getTrayIconPath()
 
-      log.info('iconPath=', iconPath)
-      log.info('icon是否存在=', fs.existsSync(iconPath))
-
       this.tray = new Tray(iconPath)
 
       const contextMenu = Menu.buildFromTemplate([

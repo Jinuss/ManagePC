@@ -31,7 +31,7 @@ class LogManager {
         this.log.transports.file.resolvePathFn = () => debugLogPath
         this.log.transports.file.level = 'debug'
         this.log.transports.console.level = 'debug'
-        this.log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
+        this.log.transports.file.format = '[{m}/{d}/{y} {h}:{i}:{s}] [{level}] {text}'
 
         if (fs.existsSync(debugLogPath)) {
             fs.writeFileSync(debugLogPath, '', 'utf-8')
@@ -61,7 +61,7 @@ class LogManager {
             return path.join(logDir, 'main.log')
         }
 
-        this.log.transports.file.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
+        this.log.transports.file.format = '[{m}/{d}/{y} {h}:{i}:{s}] [{level}] {text}'
 
         this.log.info('=== Production Mode ===')
         this.log.info('Main log path:', this.log.transports.file.resolvePathFn())
@@ -100,13 +100,13 @@ class LogManager {
     }
 
     parseLogLine(line) {
-        const regex = /\[(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})\.(\d{3})\] \[(\w+)\] (.+)/
+        const regex = /\[(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})\] \[(\w+)\] (.+)/
         const match = line.match(regex)
 
         if (match) {
-            const [, year, month, day, hour, minute, second, ms, level, message] = match
+            const [, month, day, year, hour, minute, second, level, message] = match
             return {
-                timestamp: new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}.${ms}`),
+                timestamp: new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`),
                 level: level.toLowerCase(),
                 message: message,
                 raw: line

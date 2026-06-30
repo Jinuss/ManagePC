@@ -27,6 +27,7 @@
           class="log-line"
           :class="log.level"
         >
+          <span class="log-index">{{ index + 1 }}</span>
           <span class="log-time">{{ formatTime(log.timestamp) }}</span>
           <span class="log-level" :class="log.level">[{{ log.level.toUpperCase() }}]</span>
           <span class="log-message">{{ log.message }}</span>
@@ -73,20 +74,21 @@ const formattedSize = computed(() => {
 const formatTime = (timestamp) => {
   if (!timestamp) return ''
   const date = new Date(timestamp)
-  return date.toLocaleTimeString('zh-CN', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  })
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const year = date.getFullYear()
+  const hour = String(date.getHours()).padStart(2, '0')
+  const minute = String(date.getMinutes()).padStart(2, '0')
+  const second = String(date.getSeconds()).padStart(2, '0')
+  return `${month}/${day}/${year} ${hour}:${minute}:${second}`
 }
 
 
 
-const scrollToTop = async () => {
+const scrollToBottom = async () => {
   await nextTick()
   if (logContainer.value) {
-    logContainer.value.scrollTop = 0
+    logContainer.value.scrollTop = logContainer.value.scrollHeight
   }
 }
 
@@ -94,10 +96,10 @@ const refreshLogs = async () => {
   loading.value = true
   try {
     const logData = await window.electronAPI.readLogs(500)
-    logs.value = logData.reverse()
+    logs.value = logData
     logInfo.value = await window.electronAPI.getLogInfo()
     logPath.value = await window.electronAPI.getLogPath()
-    await scrollToTop()
+    await scrollToBottom()
   } catch (error) {
     console.error('Failed to load logs:', error)
     message.error(t('logViewer.loadError'))
@@ -108,9 +110,9 @@ const refreshLogs = async () => {
 
 const handleNewLogs = async (newLogs) => {
   if (newLogs && newLogs.length > 0) {
-    logs.value.unshift(...newLogs.reverse())
+    logs.value.push(...newLogs)
     logInfo.value = await window.electronAPI.getLogInfo()
-    await scrollToTop()
+    await scrollToBottom()
   }
 }
 
@@ -238,6 +240,13 @@ onUnmounted(() => {
 
 .log-line.debug {
   color: #9cdcfe;
+}
+
+.log-index {
+  color: #808080;
+  flex-shrink: 0;
+  width: 40px;
+  text-align: right;
 }
 
 .log-time {
