@@ -69,13 +69,23 @@
             </div>
           </n-message-provider>
         </main>
+
+        <NModal v-model:show="showUpdateDownloadedModal" preset="card" :title="t('settings.updateDownloaded')" :closable="false">
+          <div class="update-downloaded-content">
+            <div class="update-downloaded-message">{{ t('settings.updateDownloadedMessage') }}</div>
+            <div class="update-downloaded-actions">
+              <NButton type="primary" @click="installUpdate">{{ t('settings.restartNow') }}</NButton>
+              <NButton @click="showUpdateDownloadedModal = false">{{ t('settings.restartLater') }}</NButton>
+            </div>
+          </div>
+        </NModal>
       </div>
     </div>
   </NConfigProvider>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, h } from "vue";
+import { ref, onMounted, onUnmounted, computed, h } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   NConfigProvider,
@@ -83,6 +93,7 @@ import {
   NMenu,
   NButton,
   NTooltip,
+  NModal,
 } from "naive-ui";
 import { darkTheme } from "naive-ui";
 import { useTheme, initTheme } from "./composables/useTheme";
@@ -114,6 +125,18 @@ const naiveTheme = computed(() => {
 const activeTab = ref("system");
 
 const systemInfo = ref({});
+
+const showUpdateDownloadedModal = ref(false);
+
+let removeUpdateDownloadedListener = null;
+
+const installUpdate = async () => {
+  await window.electronAPI.installUpdate();
+};
+
+const handleUpdateDownloaded = () => {
+  showUpdateDownloadedModal.value = true;
+};
 
 const menuOptions = computed(() => [
   {
@@ -171,6 +194,16 @@ onMounted(() => {
     window.electronAPI.onLanguageChanged((language) => {
       locale.value = language;
     });
+  }
+
+  if (window.electronAPI && window.electronAPI.onUpdateDownloaded) {
+    removeUpdateDownloadedListener = window.electronAPI.onUpdateDownloaded(handleUpdateDownloaded);
+  }
+});
+
+onUnmounted(() => {
+  if (removeUpdateDownloadedListener) {
+    removeUpdateDownloadedListener();
   }
 });
 </script>
@@ -294,6 +327,21 @@ onMounted(() => {
   padding: 20px;
   overflow-y: auto;
   box-shadow: var(--shadow-md);
+}
+
+.update-downloaded-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.update-downloaded-message {
+  font-size: 16px;
+  color: var(--text-primary-color);
+}
+.update-downloaded-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 @media (max-width: 768px) {

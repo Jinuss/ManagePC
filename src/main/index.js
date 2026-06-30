@@ -157,12 +157,14 @@ ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
     windowManager.createMainWindow()
     log.info('createMainWindow end')
 
+    updateManager.setMainWindow(windowManager.getMainWindow())
+
     trayManager.init(windowManager.getMainWindow())
     trayManager.setWindowManager(windowManager)
     windowManager.setTrayManager(trayManager)
 
     setTimeout(() => {
-      updateManager.checkForUpdatesAndNotify()
+      updateManager.checkForUpdates()
     }, 3000)
   }
 

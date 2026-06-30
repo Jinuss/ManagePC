@@ -30,6 +30,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
     isLinux: process.platform === 'linux'
   }),
   checkForUpdates: () => ipcRenderer.invoke(IPC_CHANNELS.CHECK_FOR_UPDATES),
+  downloadUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE),
+  installUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.INSTALL_UPDATE),
+  onUpdateAvailable: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, (event, data) => callback(data))
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback)
+  },
+  onDownloadProgress: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, (event, data) => callback(data))
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, callback)
+  },
+  onUpdateDownloaded: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_DOWNLOADED, callback)
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_DOWNLOADED, callback)
+  },
+  onUpdateError: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_ERROR, (event, data) => callback(data))
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_ERROR, callback)
+  },
   openSettingsWindow: () => ipcRenderer.invoke(IPC_CHANNELS.OPEN_SETTINGS_WINDOW),
   closeSettingsWindow: () => ipcRenderer.invoke(IPC_CHANNELS.CLOSE_SETTINGS_WINDOW),
   setTheme: (theme) => ipcRenderer.invoke(IPC_CHANNELS.SET_THEME, theme),

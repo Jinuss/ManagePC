@@ -64,6 +64,20 @@ export function registerIpcHandlers() {
     await Promise.race([checkPromise, timeoutPromise])
   })
 
+  ipcMain.handle(IPC_CHANNELS.DOWNLOAD_UPDATE, () => {
+    if (updateManager) {
+      updateManager.downloadUpdate()
+    }
+    return { success: true }
+  })
+
+  ipcMain.handle(IPC_CHANNELS.INSTALL_UPDATE, () => {
+    if (updateManager) {
+      updateManager.quitAndInstall()
+    }
+    return { success: true }
+  })
+
   ipcMain.handle(IPC_CHANNELS.GET_LOG_PATH, () => {
     return logHandler.getLogPath()
   })

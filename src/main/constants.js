@@ -63,5 +63,11 @@ export const IPC_CHANNELS = {
   STOP_LOG_WATCHER: 'stop-log-watcher',
   LOG_UPDATED: 'log-updated',
   WINDOW_BLUR: 'window-blur',
-  WINDOW_FOCUS: 'window-focus'
-}
+  WINDOW_FOCUS: 'window-focus',
+  UPDATE_AVAILABLE: 'update-available',
+  UPDATE_DOWNLOAD_PROGRESS: 'update-download-progress',
+  UPDATE_DOWNLOADED: 'update-downloaded',
+  UPDATE_ERROR: 'update-error',
+  DOWNLOAD_UPDATE: 'download-update',
+  INSTALL_UPDATE: 'install-update'
+  }
