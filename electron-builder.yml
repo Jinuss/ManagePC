@@ -12,12 +12,6 @@ extraResources:
   - from: resources/assets/icons
     to: icons
 
-publish:
-  provider: github
-  owner: Jinuss
-  repo: ManagePC
-  releaseType: release
-
 win:
   target:
     - nsis
