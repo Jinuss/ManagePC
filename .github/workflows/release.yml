@@ -68,33 +68,34 @@ jobs:
       - windows
       - macos
 
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: release
 
-      - name: Show release files
+      - name: Show downloaded files
         run: |
           find release -type f
 
-      - name: Create Release if needed
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release if it does not exist
         run: |
-          gh release view "${{ github.ref_name }}" >/dev/null 2>&1 || \
-          gh release create "${{ github.ref_name }}" \
-            --title "${{ github.ref_name }}" \
-            --generate-notes
+          if ! gh release view "${{ github.ref_name }}" --repo "$GH_REPO" >/dev/null 2>&1; then
+            gh release create "${{ github.ref_name }}" \
+              --repo "$GH_REPO" \
+              --title "${{ github.ref_name }}" \
+              --generate-notes
+          fi
 
-      - name: Upload Windows files
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload all files
         run: |
-          find release/windows-dist -type f -exec gh release upload "${{ github.ref_name }}" "{}" --clobber \;
-
-      - name: Upload macOS files
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          find release/macos-dist -type f -exec gh release upload "${{ github.ref_name }}" "{}" --clobber \;
+          find release -type f -print0 | while IFS= read -r -d '' file; do
+            echo "Uploading $file"
+            gh release upload "${{ github.ref_name }}" "$file" \
+              --repo "$GH_REPO" \
+              --clobber
+          done
