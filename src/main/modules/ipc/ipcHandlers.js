@@ -62,7 +62,6 @@ export function registerIpcHandlers() {
     )
 
     await Promise.race([checkPromise, timeoutPromise])
-
   })
 
   ipcMain.handle(IPC_CHANNELS.GET_LOG_PATH, () => {

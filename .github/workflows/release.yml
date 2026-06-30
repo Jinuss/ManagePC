@@ -91,13 +91,13 @@ jobs:
         run: |
           shopt -s globstar nullglob
           files=(
-             release/**/*.exe
-             release/**/*.exe.blockmap
-             release/**/latest.yml
-             release/**/*.dmg
-             release/**/*.dmg.blockmap
-             release/**/latest-mac.yml
-             release/**/*.zip
+              release/windows-dist/*.exe
+              release/windows-dist/*.exe.blockmap
+              release/windows-dist/latest.yml
+              release/macos-dist/*.dmg
+              release/macos-dist/*.dmg.blockmap
+              release/macos-dist/*.zip
+              release/macos-dist/latest-mac.yml
           )
 
           for file in "${files[@]}"; do
