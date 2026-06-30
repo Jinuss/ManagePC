@@ -11,7 +11,7 @@ export default {
     copy: '📋 复制',
     copied: '✓ 已复制',
     fetchFailed: '获取失败',
-    checkUpdate: '检查更新',
+    checkUpdate: '更新',
     settings: '设置',
     minimize: '最小化',
     maximize: '最大化',
@@ -134,15 +134,19 @@ export default {
   },
   settings: {
     title: '设置',
+    common: '通用设置',
     language: '语言',
-    theme: '主题',
+    theme: '主题设置',
     update: '更新',
     about: '关于',
-    version: '版本',
+    version: '版本信息',
     noUpdate: '当前已是最新版本',
     updateError: '检查更新失败',
     autoStart: '开机自启动',
-    autoStartDescription: '开机时自动启动应用'
+    autoStartDescription: '开机时自动启动应用',
+    themeLight: '亮色',
+    themeDark: '暗色',
+    themeSystem: '跟随系统'
   },
   logViewer: {
     title: '日志查看',

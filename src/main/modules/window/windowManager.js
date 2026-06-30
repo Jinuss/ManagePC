@@ -151,8 +151,10 @@ class WindowManager {
       icon: getIconPath(),
       autoHideMenuBar: true,
       frame: false,
+      // resizable: false,
       skipTaskbar: true,
       webPreferences: {
+        devTools: true,
         backgroundThrottling: false,
         nodeIntegration: false,
         contextIsolation: true,
@@ -164,6 +166,7 @@ class WindowManager {
 
     if (isDev) {
       this.settingsWindow.loadURL('http://localhost:5173/windows/settings/index.html')
+      this.settingsWindow.webContents.openDevTools()
     } else {
       this.settingsWindow.loadFile(path.join(__dirname, '../renderer/windows/settings/index.html'))
     }
@@ -179,6 +182,12 @@ class WindowManager {
     this.settingsWindow.on('focus', () => {
       this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_FOCUS)
     })
+  }
+
+  openSettingsDevTools() {
+    if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
+      this.settingsWindow.webContents.openDevTools()
+    }
   }
 
   closeSettingsWindow() {

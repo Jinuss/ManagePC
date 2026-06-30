@@ -1,3 +1,5 @@
+[English](README.en.md) | [中文](README.md)
+
 # ManagePC
 
 A cross-platform system management tool built with Electron + Vue3, providing system monitoring, network management, SSH key management and more.

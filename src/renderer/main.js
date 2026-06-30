@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import i18n from './i18n'
 import './styles/global.css'
+import { initTheme } from './composables/useTheme'
 
 const app = createApp(App)
 
@@ -14,12 +15,11 @@ async function initApp() {
       i18n.global.locale.value = result.language
     }
   } catch {
-    const saved = localStorage.getItem('language')
-    if (saved) {
-      i18n.global.locale.value = saved
-    }
   }
-  
+
+  // 初始化主题
+  await initTheme()
+
   app.mount('#app')
 }
 

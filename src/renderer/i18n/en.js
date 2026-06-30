@@ -11,7 +11,7 @@ export default {
     copy: '📋 Copy',
     copied: '✓ Copied',
     fetchFailed: 'Fetch failed',
-    checkUpdate: 'Check for updates',
+    checkUpdate: 'Update',
     settings: 'Settings',
     minimize: 'Minimize',
     maximize: 'Maximize',
@@ -134,15 +134,19 @@ export default {
   },
   settings: {
     title: 'Settings',
+    common: 'Common Settings',
     language: 'Language',
-    theme: 'Theme',
+    theme: 'Theme Settings',
     update: 'Update',
     about: 'About',
-    version: 'Version',
+    version: 'Version Information',
     noUpdate: 'Current version is up to date',
     updateError: 'Failed to check for updates',
     autoStart: 'Auto Start',
-    autoStartDescription: 'Launch app automatically on startup'
+    autoStartDescription: 'Launch app automatically on startup',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System'
   },
   logViewer: {
     title: 'Log Viewer',

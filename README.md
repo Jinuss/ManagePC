@@ -1,3 +1,5 @@
+[中文](README.md) | [English](README.en.md)
+
 # ManagePC
 
 一款基于 Electron + Vue3 的跨平台系统管理工具，提供系统监控、网络管理、SSH 密钥管理等功能。

@@ -70,7 +70,6 @@ const batteryInfo = ref({
 const fetchBatteryInfo = async () => {
   try {
     const info = await window.electronAPI.getBatteryInfo()
-    console.log("🚀 ~ fetchBatteryInfo ~ info:", info)
     batteryInfo.value = info
   } catch (error) {
     console.error('获取电池信息失败:', error)

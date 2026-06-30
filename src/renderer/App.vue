@@ -1,6 +1,6 @@
 <template>
-  <NConfigProvider :theme="naiveTheme"  style="height: 100%; width: 100%">
-    <div class="app-container" :platform="isMac?'mac':'win'">
+  <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
+    <div class="app-container" :platform="isMac ? 'mac' : 'win'">
       <CustomTitleBar v-if="!isMac" />
       <div v-if="isMac" class="mac-titlebar-drag"></div>
       <div class="app-body">
@@ -9,13 +9,30 @@
             <div class="fixed-sidebar-menu">
               <NTooltip placement="right" trigger="hover">
                 <template #trigger>
-                  <span class="menu-icon">🔧</span>
+                  <span class="menu-icon" @click="() => (activeTab = 'system')"
+                    >🔧</span
+                  >
                 </template>
                 <span>{{ t("menu.monitoring") }}</span>
               </NTooltip>
             </div>
           </div>
           <div class="fixed-sidebar-bottom">
+            <div class="settings-section">
+              <NTooltip placement="right" trigger="hover">
+                <template #trigger>
+                  <NButton
+                    class="settings-btn"
+                    @click="() => (activeTab = 'logs')"
+                    size="small"
+                    type="text"
+                  >
+                    📋
+                  </NButton>
+                </template>
+                <span>{{ t("menu.logs") }}</span>
+              </NTooltip>
+            </div>
             <div class="settings-section">
               <NTooltip placement="right" trigger="hover">
                 <template #trigger>
@@ -33,7 +50,7 @@
             </div>
           </div>
         </div>
-        <aside class="sidebar">
+        <aside class="sidebar" v-if="activeTab !== 'logs'">
           <NMenu
             :value="activeTab"
             :options="menuOptions"
@@ -45,11 +62,11 @@
 
         <main class="main-content">
           <n-message-provider>
-          <div class="content-panel">
-            <keep-alive include="PCMonitor">
-              <component :is="currentComponent" />
-            </keep-alive>
-          </div>
+            <div class="content-panel">
+              <keep-alive include="PCMonitor">
+                <component :is="currentComponent" />
+              </keep-alive>
+            </div>
           </n-message-provider>
         </main>
       </div>
@@ -58,25 +75,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineAsyncComponent, h } from "vue";
+import { ref, onMounted, computed, h } from "vue";
 import { useI18n } from "vue-i18n";
-import { NConfigProvider, NMessageProvider, NMenu, NButton, NTooltip } from "naive-ui";
-import { darkTheme } from "naive-ui";
 import {
-  useTheme,
-  initTheme,
-  setupSystemThemeListener,
-  setupThemeChangeListener,
-} from "./composables/useTheme";
-import {usePlatform} from "./composables/usePlatform";
+  NConfigProvider,
+  NMessageProvider,
+  NMenu,
+  NButton,
+  NTooltip,
+} from "naive-ui";
+import { darkTheme } from "naive-ui";
+import { useTheme, initTheme } from "./composables/useTheme";
+import { usePlatform } from "./composables/usePlatform";
 import { THEME_IDS } from "./constants";
 import CustomTitleBar from "./components/CustomTitleBar.vue";
+import { componentMap } from "./config";
 
 const { t, locale } = useI18n();
-const {isMac} = usePlatform();
+const { isMac } = usePlatform();
+
 initTheme();
-setupSystemThemeListener();
-setupThemeChangeListener();
 
 const { theme } = useTheme();
 
@@ -123,11 +141,6 @@ const menuOptions = computed(() => [
     key: "monitor",
     icon: () => h("span", { class: "menu-icon" }, "📈"),
   },
-  {
-    label: t("menu.logs"),
-    key: "logs",
-    icon: () => h("span", { class: "menu-icon" }, "📋"),
-  },
 ]);
 
 const handleMenuSelect = (index) => {
@@ -136,15 +149,6 @@ const handleMenuSelect = (index) => {
 
 const openSettings = async () => {
   await window.electronAPI.openSettingsWindow();
-};
-
-const componentMap = {
-  system: defineAsyncComponent(() => import("./components/StaticInfo.vue")),
-  network: defineAsyncComponent(() => import("./components/SystemInfo.vue")),
-  disk: defineAsyncComponent(() => import("./components/DiskUsage.vue")),
-  battery: defineAsyncComponent(() => import("./components/BatteryStatus.vue")),
-  monitor: defineAsyncComponent(() => import("./components/PCMonitor.vue")),
-  logs: defineAsyncComponent(() => import("./components/LogViewer.vue")),
 };
 
 const currentComponent = computed(() => {
@@ -162,7 +166,7 @@ const fetchSystemInfo = async () => {
 
 onMounted(() => {
   fetchSystemInfo();
-  
+
   if (window.electronAPI && window.electronAPI.onLanguageChanged) {
     window.electronAPI.onLanguageChanged((language) => {
       locale.value = language;
@@ -221,7 +225,7 @@ onMounted(() => {
   justify-content: space-between;
 }
 
-.fixed-sidebar-menu{
+.fixed-sidebar-menu {
   display: flex;
   justify-content: center;
 }
@@ -229,7 +233,6 @@ onMounted(() => {
 .fixed-sidebar-menu .menu-icon {
   font-size: 24px;
 }
-
 
 .sidebar {
   width: 200px;
@@ -264,9 +267,8 @@ onMounted(() => {
   color: white;
 }
 
-
 .fixed-sidebar-bottom {
-  font-size:24px
+  font-size: 24px;
 }
 
 .settings-section {

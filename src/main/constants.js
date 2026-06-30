@@ -7,9 +7,9 @@ export const GITHUB_REPO = {
 }
 
 export const WINDOW_DEFAULTS = {
-  MAIN_WIDTH: 1200,
-  MAIN_HEIGHT: 800,
-  SETTINGS_WIDTH: 400,
+  MAIN_WIDTH: 800,
+  MAIN_HEIGHT: 550,
+  SETTINGS_WIDTH: 600,
   SETTINGS_HEIGHT: 480
 }
 
@@ -40,6 +40,7 @@ export const IPC_CHANNELS = {
   CHECK_FOR_UPDATES: 'check-for-updates',
   OPEN_SETTINGS_WINDOW: 'open-settings-window',
   CLOSE_SETTINGS_WINDOW: 'close-settings-window',
+  OPEN_SETTINGS_DEVTOOLS: 'open-settings-devtools',
   SET_THEME: 'set-theme',
   SET_LANGUAGE: 'set-language',
   THEME_CHANGED: 'theme-changed',
