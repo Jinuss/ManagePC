@@ -17,6 +17,7 @@ win:
     - nsis
   icon: resources/assets/icons/windows/icon.ico
   executableName: SuperSystemMonitor
+  artifactName: "Super-System-Monitor-Setup-${version}.${ext}"
 
 nsis:
   oneClick: false
