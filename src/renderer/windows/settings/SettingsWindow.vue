@@ -278,4 +278,8 @@ onUnmounted(() => {
 .control-btn.close-btn:hover .icon {
   color: #ffffff;
 }
+
+.n-menu .n-menu-item-content {
+  padding-left: 16px !important;
+}
 </style>

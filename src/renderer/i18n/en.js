@@ -149,6 +149,7 @@ export default {
     restartNow: 'Restart Now',
     restartLater: 'Restart Later',
     releaseNotes: 'Release Notes',
+    updateAvailable: 'Update Available',
     updateDownloaded: 'Update Downloaded',
     updateDownloadedMessage: 'Update has been downloaded. Would you like to restart now?',
     autoStart: 'Auto Start',

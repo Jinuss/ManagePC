@@ -1,14 +1,17 @@
-import { ipcMain } from 'electron'
+import { ipcMain, app } from 'electron'
 import { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } from '../../utils/systemInfo.js'
 import SystemMonitor from '../../utils/SystemMonitor.js'
 import UpdateManager from '../update/updateManager.js'
-import { createLogHandler } from '../log/logManager.js'
+import { createLogHandler,log } from '../log/logManager.js'
 import { IPC_CHANNELS } from '../../constants'
 
 let systemMonitor = null
 let updateManager = null
 const logHandler = createLogHandler()
 
+/** 注册所有 IPC 处理器
+ * 将渲染进程的请求转发到对应的服务模块
+ */
 export function registerIpcHandlers() {
   ipcMain.handle(IPC_CHANNELS.GET_SSH_KEY, () => {
     return getSSHKey()
@@ -52,10 +55,15 @@ export function registerIpcHandlers() {
   })
 
   ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, async () => {
+    if (!app.isPackaged) {
+      log.error('非打包应用不支持检查更新')
+      return { success: true, message: '非打包应用不支持检查更新' }
+    }
+
     if (!updateManager) {
       updateManager = new UpdateManager()
     }
-
+    log.info('检查更新')
     const checkPromise = updateManager.checkForUpdates()
     const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('timeout')), 30000)
@@ -106,10 +114,16 @@ export function registerIpcHandlers() {
   })
 }
 
+/** 获取系统监控实例
+ * @returns {SystemMonitor|null}
+ */
 export function getSystemMonitor() {
   return systemMonitor
 }
 
+/** 获取更新管理器实例
+ * @returns {UpdateManager|null}
+ */
 export function getUpdateManager() {
   return updateManager
 }

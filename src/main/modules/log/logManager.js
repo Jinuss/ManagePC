@@ -4,6 +4,9 @@ import fs from 'fs'
 import { app } from 'electron'
 import { isWindows, isMac } from '../../utils/helps'
 
+/** 日志管理器类
+ * 负责日志的初始化、配置、读取和监听
+ */
 class LogManager {
     constructor() {
         this.log = _log
@@ -13,6 +16,9 @@ class LogManager {
         this.initLogger()
     }
 
+        /** 初始化日志系统
+     * 根据开发/生产环境配置不同的日志行为
+     */
     initLogger() {
         const isDev = !app.isPackaged
         this.isDev = isDev
@@ -24,6 +30,9 @@ class LogManager {
         }
     }
 
+        /** 配置开发环境日志
+     * 日志级别为 debug，输出到控制台和 debug.log 文件
+     */
     configureDevLogger() {
         const rootDir = app.getAppPath()
         const debugLogPath = path.join(rootDir, 'debug.log')
@@ -41,6 +50,9 @@ class LogManager {
         this.log.info('Debug log path:', debugLogPath)
     }
 
+        /** 配置生产环境日志
+     * 日志级别为 info，根据平台选择不同的日志目录
+     */
     configureProdLogger() {
         this.log.transports.file.level = 'info'
         this.log.transports.console.level = 'info'
@@ -67,6 +79,9 @@ class LogManager {
         this.log.info('Main log path:', this.log.transports.file.resolvePathFn())
     }
 
+        /** 获取日志文件路径
+     * @returns {string} - 日志文件的绝对路径
+     */
     getLogPath() {
         if (this.isDev) {
             return path.join(app.getAppPath(), 'debug.log')
@@ -74,6 +89,10 @@ class LogManager {
         return this.log.transports.file.resolvePathFn()
     }
 
+        /** 读取日志内容
+     * @param {number} maxLines - 最大读取行数，默认 500
+     * @returns {Array} - 解析后的日志对象数组
+     */
     async readLogs(maxLines = 500) {
         const logPath = this.getLogPath()
         const logs = []
@@ -99,6 +118,10 @@ class LogManager {
         return logs
     }
 
+        /** 解析日志行
+     * @param {string} line - 日志行文本
+     * @returns {Object} - 解析后的日志对象 { timestamp, level, message, raw }
+     */
     parseLogLine(line) {
         const regex = /\[(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})\] \[(\w+)\] (.+)/
         const match = line.match(regex)
@@ -121,6 +144,9 @@ class LogManager {
         }
     }
 
+        /** 清空日志文件
+     * @returns {Object} - { success: boolean, error?: string }
+     */
     async clearLogs() {
         const logPath = this.getLogPath()
         try {
@@ -133,6 +159,9 @@ class LogManager {
         }
     }
 
+        /** 获取日志文件信息
+     * @returns {Object} - { path, size, lineCount, isDev }
+     */
     getLogInfo() {
         const logPath = this.getLogPath()
         let size = 0
@@ -157,6 +186,9 @@ class LogManager {
         }
     }
 
+        /** 开始监听日志文件变化
+     * @param {BrowserWindow} window - 要发送日志更新的窗口
+     */
     startWatching(window) {
         if (this.isWatching) {
             return
@@ -191,6 +223,11 @@ class LogManager {
         }
     }
 
+        /** 处理日志文件变化
+     * 读取新增的日志内容并发送给渲染进程
+     * @param {BrowserWindow} window - 目标窗口
+     * @param {string} logPath - 日志文件路径
+     */
     handleLogFileChange(window, logPath) {
         try {
             const stats = fs.statSync(logPath)
@@ -220,6 +257,8 @@ class LogManager {
         }
     }
 
+        /** 停止监听日志文件
+     */
     stopWatching() {
         if (this.watcher) {
             this.watcher.close()
@@ -237,6 +276,9 @@ export default logManager
 
 export const log = logManager.log
 
+/** 创建日志处理器
+ * @returns {Object} - 包含日志操作方法的对象
+ */
 export function createLogHandler() {
     return {
         getLogPath: () => logManager.getLogPath(),

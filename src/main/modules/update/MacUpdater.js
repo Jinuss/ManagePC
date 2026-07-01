@@ -4,11 +4,17 @@ import BaseUpdater from './BaseUpdater.js'
 import { GITHUB_REPO } from '../../constants.js'
 import { log } from '../log/logManager.js'
 
+/** macOS 平台更新管理器
+ * 通过 GitHub API 检查更新，使用系统对话框通知用户
+ */
 export default class MacUpdater extends BaseUpdater {
   constructor() {
     super()
   }
 
+    /** 检查更新并显示通知
+   * @returns {Promise<Object>} - 更新检查结果
+   */
   async checkForUpdatesAndNotify() {
     const result = await this.checkForUpdates()
     if (result.status === 'update-available') {
@@ -17,6 +23,10 @@ export default class MacUpdater extends BaseUpdater {
     return result
   }
 
+    /** 检查更新
+   * 通过 GitHub Releases API 获取最新版本信息
+   * @returns {Promise<Object>} - 更新检查结果
+   */
   async checkForUpdates() {
     log.info('[MacUpdater] checkForUpdates called')
     log.info('[MacUpdater] Current version:', this.currentVersion)
@@ -61,6 +71,10 @@ export default class MacUpdater extends BaseUpdater {
     }
   }
 
+    /** 显示更新对话框
+   * 使用系统对话框通知用户发现新版本
+   * @param {Object} updateInfo - 更新信息
+   */
   async showUpdateDialog(updateInfo) {
     log.info('[MacUpdater] showUpdateDialog called with updateInfo:', updateInfo)
     const { response } = await dialog.showMessageBox({

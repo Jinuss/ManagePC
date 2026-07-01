@@ -8,6 +8,9 @@ import { getIsQuitting } from '../../index.js'
 
 app.setAppUserModelId(APP_USER_MODEL_ID)
 
+/** 窗口管理器类
+ * 负责主窗口和设置窗口的创建、管理和控制
+ */
 class WindowManager {
   constructor() {
     this.mainWindow = null
@@ -30,10 +33,16 @@ class WindowManager {
     }
   }
 
+    /** 设置托盘管理器引用
+   * @param {TrayManager} trayManager - 托盘管理器实例
+   */
   setTrayManager(trayManager) {
     this.trayManager = trayManager
   }
 
+    /** 创建主窗口
+   * 恢复上次保存的窗口尺寸和位置，加载渲染进程
+   */
   createMainWindow() {
     log.info('[WindowManager] Creating main window')
     const savedBounds = storeManager.getWindowBounds()
@@ -45,6 +54,8 @@ class WindowManager {
       ...this.baseOptions,
       width: savedBounds.width || WINDOW_DEFAULTS.MAIN_WIDTH,
       height: savedBounds.height || WINDOW_DEFAULTS.MAIN_HEIGHT,
+      minWidth: WINDOW_DEFAULTS.MIN_WIDTH,
+      minHeight: WINDOW_DEFAULTS.MIN_HEIGHT,
       icon: getIconPath(),
       autoHideMenuBar: true,
       alwaysOnTop: this.isAlwaysOnTop,
@@ -64,10 +75,7 @@ class WindowManager {
     this.mainWindow = new BrowserWindow(windowOptions)
     log.info('[WindowManager] Main window created')
 
-    const isDev = process.env.NODE_ENV === 'development'
-    log.info('[WindowManager] Is development:', isDev)
-
-    if (isDev) {
+    if (!app.isPackaged) {
       this.mainWindow.loadURL('http://localhost:5173')
       log.info('[WindowManager] Loading dev URL')
     } else {
@@ -108,7 +116,6 @@ class WindowManager {
         log.info('close - isQuitting=true, allowing close')
       } else {
         log.info('trayManager exists=', !!this.trayManager);
-        log.info('tray exists=', !!this.trayManager?.getTray());
 
         if (this.trayManager && this.trayManager.getTray() && !this.trayManager.getTray().isDestroyed()) {
           log.info('close - hide window instead of quit')
@@ -127,10 +134,15 @@ class WindowManager {
     })
   }
 
+    /** 获取主窗口实例
+   * @returns {BrowserWindow|null}
+   */
   getMainWindow() {
     return this.mainWindow
   }
 
+    /** 显示主窗口
+   */
   showWindow() {
     if (this.mainWindow) {
       this.mainWindow.show()
@@ -138,6 +150,9 @@ class WindowManager {
     }
   }
 
+    /** 创建设置窗口
+   * 如果设置窗口已存在，则聚焦到该窗口
+   */
   createSettingsWindow() {
     log.info('[WindowManager] Creating settings window')
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
@@ -162,9 +177,7 @@ class WindowManager {
       }
     })
 
-    const isDev = process.env.NODE_ENV === 'development'
-
-    if (isDev) {
+    if (!app.isPackaged) {
       this.settingsWindow.loadURL('http://localhost:5173/windows/settings/index.html')
       this.settingsWindow.webContents.openDevTools()
     } else {
@@ -184,12 +197,16 @@ class WindowManager {
     })
   }
 
+    /** 打开设置窗口的 DevTools
+   */
   openSettingsDevTools() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
       this.settingsWindow.webContents.openDevTools()
     }
   }
 
+    /** 关闭设置窗口
+   */
   closeSettingsWindow() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
       this.settingsWindow.close()
@@ -197,20 +214,30 @@ class WindowManager {
     }
   }
 
+    /** 获取设置窗口实例
+   * @returns {BrowserWindow|null}
+   */
   getSettingsWindow() {
     return this.settingsWindow
   }
 
+    /** 设置当前主题
+   * @param {string} theme - 主题名称
+   */
   setTheme(theme) {
     this.currentTheme = theme
   }
 
+    /** 最小化主窗口
+   */
   minimizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.minimize()
     }
   }
 
+    /** 最大化/还原主窗口
+   */
   maximizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       if (this.mainWindow.isMaximized()) {
@@ -221,12 +248,18 @@ class WindowManager {
     }
   }
 
+    /** 关闭主窗口
+   */
   closeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.close()
     }
   }
 
+    /** 设置主窗口是否置顶
+   * @param {boolean} onTop - 是否置顶
+   * @returns {Object} - { success: boolean }
+   */
   setAlwaysOnTop(onTop) {
     this.isAlwaysOnTop = onTop
     storeManager.setAlwaysOnTop(onTop)
@@ -236,10 +269,17 @@ class WindowManager {
     return { success: true }
   }
 
+    /** 获取主窗口是否置顶
+   * @returns {boolean}
+   */
   getAlwaysOnTop() {
     return this.isAlwaysOnTop
   }
 
+    /** 设置开机自启
+   * @param {boolean} autoStart - 是否自启
+   * @returns {Object} - { success: boolean }
+   */
   setAutoStart(autoStart) {
     this.autoStart = autoStart
     storeManager.setAutoStart(autoStart)
@@ -249,6 +289,9 @@ class WindowManager {
     return { success: true }
   }
 
+    /** 获取开机自启设置
+   * @returns {boolean}
+   */
   getAutoStart() {
     return this.autoStart
   }

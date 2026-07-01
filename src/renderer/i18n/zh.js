@@ -149,6 +149,8 @@ export default {
     restartNow: '立即重启',
     restartLater: '稍后重启',
     releaseNotes: '更新说明',
+    updateAvailable: '发现新版本',
+    updateAvailable: '发现新版本',
     updateDownloaded: '更新已下载',
     updateDownloadedMessage: '更新已下载完成，是否立即重启应用？',
     autoStart: '开机自启动',

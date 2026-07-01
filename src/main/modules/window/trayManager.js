@@ -4,6 +4,9 @@ import { log } from '../log/logManager.js'
 import { setIsQuitting } from '../../index.js'
 import fs from 'fs'
 
+/** 托盘管理器类
+ * 负责系统托盘图标的创建和菜单管理
+ */
 class TrayManager {
   constructor() {
     this.tray = null
@@ -11,15 +14,23 @@ class TrayManager {
     this.windowManager = null
   }
 
+    /** 设置窗口管理器引用
+   * @param {WindowManager} windowManager - 窗口管理器实例
+   */
   setWindowManager(windowManager) {
     this.windowManager = windowManager
   }
 
+    /** 初始化托盘
+   * @param {BrowserWindow} mainWindow - 主窗口实例
+   */
   init(mainWindow) {
     this.mainWindow = mainWindow
     this.createTray()
   }
 
+    /** 创建托盘图标和菜单
+   */
   createTray() {
     try {
       log.info('createTray start')
@@ -65,6 +76,9 @@ class TrayManager {
     }
   }
 
+    /** 显示主窗口
+   * 如果主窗口已销毁，重新创建
+   */
   showWindow() {
     log.info('[TrayManager] showWindow called')
     if (!this.mainWindow || this.mainWindow.isDestroyed()) {
@@ -83,6 +97,8 @@ class TrayManager {
     }
   }
 
+    /** 隐藏主窗口
+   */
   hideWindow() {
     log.info('[TrayManager] hideWindow called')
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
@@ -91,6 +107,9 @@ class TrayManager {
     }
   }
 
+    /** 退出应用
+   * 设置退出标志，销毁托盘，退出应用
+   */
   quitApp() {
     log.info('[TrayManager] quitApp called')
     setIsQuitting(true)
@@ -101,6 +120,9 @@ class TrayManager {
     app.quit()
   }
 
+    /** 获取托盘实例
+   * @returns {Tray|null}
+   */
   getTray() {
     return this.tray
   }

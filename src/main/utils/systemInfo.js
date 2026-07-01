@@ -2,8 +2,12 @@ import si from 'systeminformation'
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
-import { isWindows, isMac, formatSize } from './helps.js'
+import { isWindows, formatSize } from './helps.js'
 
+/** 获取磁盘使用情况
+ * 根据平台获取本地磁盘的空间信息
+ * @returns {Array} - 磁盘信息数组
+ */
 export async function getDiskUsage() {
   try {
     const partitions = await si.fsSize()
@@ -82,6 +86,10 @@ export async function getDiskUsage() {
   }
 }
 
+/** 获取 SSH 公钥
+ * 从用户家目录读取 SSH 公钥内容
+ * @returns {string} - SSH 公钥内容
+ */
 export function getSSHKey() {
   try {
     let sshDir = ''
@@ -124,6 +132,10 @@ export function getSSHKey() {
   }
 }
 
+/** 获取系统基本信息
+ * 获取操作系统、CPU、内存等信息
+ * @returns {Object} - 系统信息对象
+ */
 export async function getSystemInfo() {
   try {
     const [osInfo, cpu, mem] = await Promise.all([
@@ -166,6 +178,10 @@ export async function getSystemInfo() {
   }
 }
 
+/** 获取网络接口信息
+ * 获取活跃的网络接口及其 IP 地址
+ * @returns {Array} - 网络接口数组
+ */
 export async function getNetworkInfo() {
   try {
     const interfaces = await si.networkInterfaces()
@@ -188,6 +204,10 @@ export async function getNetworkInfo() {
   }
 }
 
+/** 获取电池信息
+ * 获取电池电量、充电状态等信息
+ * @returns {Object} - 电池信息对象
+ */
 export async function getBatteryInfo() {
   try {
     const battery = await si.battery()

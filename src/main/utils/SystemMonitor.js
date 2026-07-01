@@ -1,6 +1,9 @@
 import si from 'systeminformation'
 import { IPC_CHANNELS } from '../constants'
 
+/** 系统监控类
+ * 定期采集 CPU、内存、网络等系统数据并发送到渲染进程
+ */
 class SystemMonitor {
   constructor() {
     this.cache = {
@@ -13,6 +16,10 @@ class SystemMonitor {
     this.interval = null
   }
 
+    /** 采集系统数据
+   * 使用 systeminformation 库获取 CPU、内存、网络信息
+   * @returns {Object} - 采集的系统数据
+   */
   async collect() {
     try {
       const [cpu, mem, network] = await Promise.all([
@@ -60,6 +67,10 @@ class SystemMonitor {
     }
   }
 
+    /** 格式化每秒字节数为可读字符串
+   * @param {number} bytes - 每秒字节数
+   * @returns {string} - 格式化后的字符串（如 "1.5 MB/s"）
+   */
   formatBytesPerSecond(bytes) {
     if (bytes === 0) return '0 B/s'
     const k = 1024
@@ -68,6 +79,11 @@ class SystemMonitor {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
+    /** 开始监控
+   * @param {BrowserWindow} window - 目标窗口
+   * @param {number} collectMs - 采集间隔（毫秒），默认 1000
+   * @param {number} sendMs - 发送间隔（毫秒），默认 2000
+   */
   start(window, collectMs = 1000, sendMs = 2000) {
     this.stop();
     let lastSend = 0;
@@ -85,6 +101,9 @@ class SystemMonitor {
     }, collectMs);
   }
 
+    /** 停止监控
+   * 清除定时器
+   */
   stop() {
     if (this.interval) {
       clearInterval(this.interval)
