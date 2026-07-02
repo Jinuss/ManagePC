@@ -65,7 +65,8 @@ export default class WindowsUpdater extends BaseUpdater {
   async checkForUpdates() {
     log.info('[WindowsUpdater] checkForUpdates called')
     log.info('[WindowsUpdater] Current version:', this.currentVersion)
-
+    log.info('[WindowsUpdater] Feed URL:', autoUpdater.getFeedURL())
+    
     return new Promise((resolve) => {
       const cleanup = () => {
         this.autoUpdater.removeListener('update-not-available', onNotAvailable)

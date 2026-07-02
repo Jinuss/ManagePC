@@ -2,7 +2,7 @@ import { ipcMain, app } from 'electron'
 import { getSystemInfo, getNetworkInfo, getDiskUsage, getSSHKey, getBatteryInfo } from '../../utils/systemInfo.js'
 import SystemMonitor from '../../utils/SystemMonitor.js'
 import UpdateManager from '../update/updateManager.js'
-import { createLogHandler,log } from '../log/logManager.js'
+import { createLogHandler, log } from '../log/logManager.js'
 import { IPC_CHANNELS } from '../../constants'
 
 let systemMonitor = null
@@ -69,7 +69,7 @@ export function registerIpcHandlers() {
       setTimeout(() => reject(new Error('timeout')), 30000)
     )
 
-    await Promise.race([checkPromise, timeoutPromise])
+    return await Promise.race([checkPromise, timeoutPromise])
   })
 
   ipcMain.handle(IPC_CHANNELS.DOWNLOAD_UPDATE, () => {
