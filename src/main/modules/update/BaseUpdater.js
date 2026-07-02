@@ -8,14 +8,6 @@ export default class BaseUpdater {
     this.currentVersion = app.getVersion()
   }
 
-    /** 检查更新（抽象方法）
-   * 子类必须实现此方法
-   * @returns {Promise<Object>} - 更新检查结果
-   */
-  async checkForUpdates() {
-    throw new Error('checkForUpdates must be implemented by subclass')
-  }
-
     /** 检查更新并显示通知
    * @returns {Promise<Object>} - 更新检查结果
    */

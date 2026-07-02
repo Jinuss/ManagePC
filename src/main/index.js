@@ -214,8 +214,9 @@ if (!gotTheLock) {
     trayManager.setWindowManager(windowManager)
     windowManager.setTrayManager(trayManager)
 
-    if (app.isPackaged && isMac) {
+    if (app.isPackaged && isMac()) {
       // macos 平台在主线程中监听更新事件
+      log.info('主动更新：checkForUpdates start')
       setTimeout(() => {
         updateManager.checkForUpdates()
       }, 3000)
