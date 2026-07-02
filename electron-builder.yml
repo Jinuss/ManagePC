@@ -2,7 +2,7 @@ appId: com.example.system-monitor
 productName: Super System Monitor
 
 directories:
-  output: dist
+  output: release
 
 files:
   - out/**/*

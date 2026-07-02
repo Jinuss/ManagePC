@@ -12,7 +12,8 @@
     "pack:all": "npm run build && electron-builder --config electron-builder.yml -mwl",
     "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=never",
     "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=never",
-    "prepare": "husky"
+    "prepare": "husky",
+    "clean": "powershell -Command \"if (Test-Path 'release') { Remove-Item -Recurse -Force 'release' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
   },
   "keywords": [
     "electron",
