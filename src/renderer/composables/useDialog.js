@@ -10,6 +10,7 @@ export function useDialog() {
     negativeText = '取消',
     type = 'warning',
     closable = false,
+    maskClosable = false,
     onPositive = () => {},
     onNegative = () => {}
   } = {}) => {
@@ -20,6 +21,7 @@ export function useDialog() {
       negativeText,
       closable,
       type,
+      maskClosable,
       onPositiveClick: () => {
         onPositive()
         return true
@@ -36,6 +38,7 @@ export function useDialog() {
     content = '',
     positiveText = '确定',
     closable = true,
+    maskClosable = false,
     onPositive = () => {}
   } = {}) => {
     return dialog.info({
@@ -43,6 +46,7 @@ export function useDialog() {
       content,
       positiveText,
       closable,
+      maskClosable,
       onPositiveClick: () => {
         onPositive()
         return true
@@ -55,6 +59,7 @@ export function useDialog() {
     content = '',
     positiveText = '确定',
     closable = true,
+    maskClosable = false,
     onPositive = () => {}
   } = {}) => {
     return dialog.success({
@@ -62,6 +67,7 @@ export function useDialog() {
       content,
       positiveText,
       closable,
+      maskClosable,
       onPositiveClick: () => {
         onPositive()
         return true
@@ -75,6 +81,7 @@ export function useDialog() {
     positiveText = '确定',
     negativeText = '取消',
     closable = false,
+    maskClosable = false,
     onPositive = () => {},
     onNegative = () => {}
   } = {}) => {
@@ -84,6 +91,7 @@ export function useDialog() {
       positiveText,
       negativeText,
       closable,
+      maskClosable,
       onPositiveClick: () => {
         onPositive()
         return true
@@ -100,6 +108,7 @@ export function useDialog() {
     content = '',
     positiveText = '确定',
     closable = true,
+    maskClosable = false,
     onPositive = () => {}
   } = {}) => {
     return dialog.error({
@@ -107,6 +116,7 @@ export function useDialog() {
       content,
       positiveText,
       closable,
+      maskClosable,
       onPositiveClick: () => {
         onPositive()
         return true

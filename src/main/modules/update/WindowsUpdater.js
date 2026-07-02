@@ -67,68 +67,66 @@ export default class WindowsUpdater extends BaseUpdater {
     log.info('[WindowsUpdater] Current version:', this.currentVersion)
     log.info('[WindowsUpdater] Feed URL:', autoUpdater.getFeedURL())
 
-    return new Promise(async (resolve) => {
-      const cleanup = () => {
-        this.autoUpdater.removeListener('update-not-available', onNotAvailable)
-        this.autoUpdater.removeListener('update-available', onAvailable)
-        this.autoUpdater.removeListener('error', onError)
-      }
+    const cleanup = () => {
+      this.autoUpdater.removeListener('update-not-available', onNotAvailable)
+      this.autoUpdater.removeListener('update-available', onAvailable)
+      this.autoUpdater.removeListener('error', onError)
+    }
 
-      const onNotAvailable = () => {
-        cleanup()
-        log.info('[WindowsUpdater] No update available')
-        resolve({ status: 'no-update', message: '当前已是最新版本' })
-      }
+    const onNotAvailable = () => {
+      cleanup()
+      log.info('[WindowsUpdater] No update available')
+      this.sendEvent(IPC_CHANNELS.UPDATE_INVALID, { status: 'no-update', message: '当前已是最新版本' })
+    }
 
-      const onAvailable = (info) => {
-        cleanup()
-        log.info('[WindowsUpdater] Update available:', info)
-        const updateInfo = {
-          status: 'update-available',
-          version: info.version,
-          message: `发现新版本 ${info.version}`,
-          releaseNotes: info.releaseNotes || ''
-        }
-        this.sendEvent(IPC_CHANNELS.UPDATE_AVAILABLE, updateInfo)
-        resolve(updateInfo)
+    const onAvailable = (info) => {
+      cleanup()
+      log.info('[WindowsUpdater] Update available:', info)
+      const updateInfo = {
+        status: 'update-available',
+        version: info.version,
+        message: `发现新版本 ${info.version}`,
+        releaseNotes: info.releaseNotes || ''
       }
+      this.sendEvent(IPC_CHANNELS.UPDATE_AVAILABLE, updateInfo)
+    }
 
-      const onError = (error) => {
-        cleanup()
-        log.error('[WindowsUpdater] Check update failed:', error)
-        const errorInfo = {
-          status: 'error',
-          message: '检查更新失败，请稍后重试'
-        }
-        this.sendEvent(IPC_CHANNELS.UPDATE_ERROR, errorInfo)
-        resolve(errorInfo)
+    const onError = (error) => {
+      cleanup()
+      log.error('[WindowsUpdater] Check update failed:', error)
+      const errorInfo = {
+        status: 'error',
+        message: '检查更新失败，请稍后重试'
       }
+      this.sendEvent(IPC_CHANNELS.UPDATE_ERROR, errorInfo)
+    }
 
-      this.autoUpdater.once('update-not-available', onNotAvailable)
-      this.autoUpdater.once('update-available', onAvailable)
-      this.autoUpdater.once('error', onError)
-      this.autoUpdater.once('checking-for-update', () => {
-        log.info('[WindowsUpdater] Checking for update...')
-      })
-
-      try {
-        const result = await this.autoUpdater.checkForUpdates()
-        log.info('[WindowsUpdater] Check update result:', result)
-      } catch (error) {
-        log.error('[WindowsUpdater] Check update failed:', error)
-      }
+    this.autoUpdater.once('update-not-available', onNotAvailable)
+    this.autoUpdater.once('update-available', onAvailable)
+    this.autoUpdater.once('error', onError)
+    this.autoUpdater.once('checking-for-update', () => {
+      log.info('[WindowsUpdater] Checking for update...')
     })
+
+    try {
+      const result = await this.autoUpdater.checkForUpdates()
+      log.info('[WindowsUpdater] Check update result:', result)
+    } catch (error) {
+      log.error('[WindowsUpdater] Check update failed:', error)
+    }
   }
 
   /** 下载更新包
  */
   downloadUpdate() {
+    log.info('[WindowsUpdater] downloadUpdate called')
     this.autoUpdater.downloadUpdate()
   }
 
   /** 退出应用并安装更新
  */
   quitAndInstall() {
+    log.info('[WindowsUpdater] quitAndInstall called')
     this.autoUpdater.quitAndInstall()
   }
 }

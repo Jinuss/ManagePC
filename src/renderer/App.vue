@@ -1,9 +1,11 @@
 <template>
   <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
     <NDialogProvider>
-      <NMessageProvider>
-        <MainLayout />
-      </NMessageProvider>
+      <NNotificationProvider placement="bottom-right">
+        <NMessageProvider>
+          <MainLayout />
+        </NMessageProvider>
+      </NNotificationProvider>
     </NDialogProvider>
   </NConfigProvider>
 </template>
@@ -11,7 +13,12 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { NConfigProvider, NMessageProvider, NDialogProvider } from "naive-ui";
+import {
+  NConfigProvider,
+  NMessageProvider,
+  NDialogProvider,
+  NNotificationProvider,
+} from "naive-ui";
 import { darkTheme } from "naive-ui";
 import { useTheme } from "./composables/useTheme";
 import { THEME_IDS } from "./constants";

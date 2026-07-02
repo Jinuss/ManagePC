@@ -68,8 +68,8 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
-import { NMenu, NButton, NTooltip } from "naive-ui";
+import { computed, ref, onMounted, onUnmounted, h } from "vue";
+import { NMenu, NButton, NTooltip, useNotification, NProgress } from "naive-ui";
 import { usePlatform } from "../composables/usePlatform";
 import { useMenuOptions } from "../composables/useMenuOptions";
 import CustomTitleBar from "./CustomTitleBar.vue";
@@ -113,13 +113,46 @@ const handleUpdateAvailable = (updateInfo) => {
   console.log("🚀 ~ handleUpdateAvailable ~ updateInfo:", updateInfo);
   confirm({
     title: `${t("settings.updateAvailable")} ${updateInfo.version}`,
-    content: updateInfo.releaseNotes ? h('div', { innerHTML: updateInfo.releaseNotes }) : t("settings.noReleaseNotes"),
+    content: () =>
+      updateInfo.releaseNotes
+        ? h("div", {
+            class: "release-notes",
+            innerHTML: updateInfo.releaseNotes,
+          })
+        : t("settings.noReleaseNotes"),
     positiveText: t("settings.downloadNow"),
     negativeText: t("settings.remindLater"),
-    onPositive: async () => {
-      await window.electronAPI.downloadUpdate();
+    maskClosable: false,
+    onPositive: () => {
+      handleDownloadProgress();
     },
   });
+};
+
+const notification = useNotification();
+
+const progrssNotif = ref();
+
+const handleDownloadProgress = () => {
+  progrssNotif.value = notification.create({
+    title: "更新中",
+    description: "正在下载更新，请稍后...",
+    content: () => h(NProgress, { percentage: 0 }),
+    duration: 0,
+    closable: false,
+  });
+
+  window.electronAPI.onDownloadProgress((progress) => {
+    console.log("🚀 ~ handleDownloadProgress ~ progress:", progress);
+
+    progrssNotif.value.content = () =>
+      h(NProgress, { percentage: progress.percent * 100 });
+  });
+  window.electronAPI.onUpdateDownloaded(() => {
+    progrssNotif.value.destroy();
+    console.log("🚀 ~ handleDownloadProgress ~ onDownloadComplete");
+  });
+  window.electronAPI.downloadUpdate();
 };
 
 onMounted(() => {
@@ -127,13 +160,20 @@ onMounted(() => {
   if (isMac) return;
   setTimeout(() => {
     checkForUpdates();
-  }, 3000);
+  }, 1000);
 
   if (window.electronAPI && window.electronAPI.onUpdateAvailable) {
     removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
       handleUpdateAvailable,
     );
   }
+  // var p = {
+  //   status: "update-available",
+  //   version: "1.0.30",
+  //   message: "发现新版本 1.0.30",
+  //   releaseNotes:
+  //     "<h2>[1.0.30] - 2026-07-02</h2>\n<h3>🐛 Bug Fixes</h3>\n<ul>\n<li>修复主动更新2</li>\n</ul>",
+  // };
 });
 
 onUnmounted(() => {

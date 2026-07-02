@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IPC_CHANNELS } from '../main/constants'
 
+
 contextBridge.exposeInMainWorld('electronAPI', {
   // ==================== 系统信息相关 API ====================
   // 获取系统基本信息（CPU、内存、操作系统等）

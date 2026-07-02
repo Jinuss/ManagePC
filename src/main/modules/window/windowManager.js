@@ -33,16 +33,16 @@ class WindowManager {
     }
   }
 
-    /** 设置托盘管理器引用
-   * @param {TrayManager} trayManager - 托盘管理器实例
-   */
+  /** 设置托盘管理器引用
+ * @param {TrayManager} trayManager - 托盘管理器实例
+ */
   setTrayManager(trayManager) {
     this.trayManager = trayManager
   }
 
-    /** 创建主窗口
-   * 恢复上次保存的窗口尺寸和位置，加载渲染进程
-   */
+  /** 创建主窗口
+ * 恢复上次保存的窗口尺寸和位置，加载渲染进程
+ */
   createMainWindow() {
     log.info('[WindowManager] Creating main window')
     const savedBounds = storeManager.getWindowBounds()
@@ -78,6 +78,7 @@ class WindowManager {
     if (!app.isPackaged) {
       this.mainWindow.loadURL('http://localhost:5173')
       log.info('[WindowManager] Loading dev URL')
+      this.mainWindow.webContents.openDevTools();
     } else {
       this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
       log.info('[WindowManager] Loading production file')
@@ -134,15 +135,15 @@ class WindowManager {
     })
   }
 
-    /** 获取主窗口实例
-   * @returns {BrowserWindow|null}
-   */
+  /** 获取主窗口实例
+ * @returns {BrowserWindow|null}
+ */
   getMainWindow() {
     return this.mainWindow
   }
 
-    /** 显示主窗口
-   */
+  /** 显示主窗口
+ */
   showWindow() {
     if (this.mainWindow) {
       this.mainWindow.show()
@@ -150,9 +151,9 @@ class WindowManager {
     }
   }
 
-    /** 创建设置窗口
-   * 如果设置窗口已存在，则聚焦到该窗口
-   */
+  /** 创建设置窗口
+ * 如果设置窗口已存在，则聚焦到该窗口
+ */
   createSettingsWindow() {
     log.info('[WindowManager] Creating settings window')
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
@@ -197,16 +198,16 @@ class WindowManager {
     })
   }
 
-    /** 打开设置窗口的 DevTools
-   */
+  /** 打开设置窗口的 DevTools
+ */
   openSettingsDevTools() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
       this.settingsWindow.webContents.openDevTools()
     }
   }
 
-    /** 关闭设置窗口
-   */
+  /** 关闭设置窗口
+ */
   closeSettingsWindow() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
       this.settingsWindow.close()
@@ -214,30 +215,30 @@ class WindowManager {
     }
   }
 
-    /** 获取设置窗口实例
-   * @returns {BrowserWindow|null}
-   */
+  /** 获取设置窗口实例
+ * @returns {BrowserWindow|null}
+ */
   getSettingsWindow() {
     return this.settingsWindow
   }
 
-    /** 设置当前主题
-   * @param {string} theme - 主题名称
-   */
+  /** 设置当前主题
+ * @param {string} theme - 主题名称
+ */
   setTheme(theme) {
     this.currentTheme = theme
   }
 
-    /** 最小化主窗口
-   */
+  /** 最小化主窗口
+ */
   minimizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.minimize()
     }
   }
 
-    /** 最大化/还原主窗口
-   */
+  /** 最大化/还原主窗口
+ */
   maximizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       if (this.mainWindow.isMaximized()) {
@@ -248,18 +249,18 @@ class WindowManager {
     }
   }
 
-    /** 关闭主窗口
-   */
+  /** 关闭主窗口
+ */
   closeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       this.mainWindow.close()
     }
   }
 
-    /** 设置主窗口是否置顶
-   * @param {boolean} onTop - 是否置顶
-   * @returns {Object} - { success: boolean }
-   */
+  /** 设置主窗口是否置顶
+ * @param {boolean} onTop - 是否置顶
+ * @returns {Object} - { success: boolean }
+ */
   setAlwaysOnTop(onTop) {
     this.isAlwaysOnTop = onTop
     storeManager.setAlwaysOnTop(onTop)
@@ -269,17 +270,17 @@ class WindowManager {
     return { success: true }
   }
 
-    /** 获取主窗口是否置顶
-   * @returns {boolean}
-   */
+  /** 获取主窗口是否置顶
+ * @returns {boolean}
+ */
   getAlwaysOnTop() {
     return this.isAlwaysOnTop
   }
 
-    /** 设置开机自启
-   * @param {boolean} autoStart - 是否自启
-   * @returns {Object} - { success: boolean }
-   */
+  /** 设置开机自启
+ * @param {boolean} autoStart - 是否自启
+ * @returns {Object} - { success: boolean }
+ */
   setAutoStart(autoStart) {
     this.autoStart = autoStart
     storeManager.setAutoStart(autoStart)
@@ -289,9 +290,9 @@ class WindowManager {
     return { success: true }
   }
 
-    /** 获取开机自启设置
-   * @returns {boolean}
-   */
+  /** 获取开机自启设置
+ * @returns {boolean}
+ */
   getAutoStart() {
     return this.autoStart
   }

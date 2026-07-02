@@ -7,12 +7,13 @@
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "preview": "electron-vite preview",
-    "pack:win": "npm run build && electron-builder --config electron-builder.yml --win --x64",
+    "pack:win": "npm run clean:electron-cache && npm run clean && npm run build && electron-builder --config electron-builder.yml --win --x64",
     "pack:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64",
     "pack:all": "npm run build && electron-builder --config electron-builder.yml -mwl",
     "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=never",
     "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=never",
     "prepare": "husky",
+    "clean:electron-cache": "powershell -Command \"Remove-Item $env:LOCALAPPDATA\\electron-builder -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item $env:LOCALAPPDATA\\electron -Recurse -Force -ErrorAction SilentlyContinue\"",
     "clean": "powershell -Command \"if (Test-Path 'release') { Remove-Item -Recurse -Force 'release' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
   },
   "keywords": [
