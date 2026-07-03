@@ -75,6 +75,10 @@ export const IPC_CHANNELS = {
   // ========== 开机自启 ==========
   SET_AUTO_START: "set-auto-start", // 设置开机自启
   GET_AUTO_START: "get-auto-start", // 查询开机自启状态
+  
+  // ========== 自动升级 ==========
+  SET_AUTO_UPDATE: "set-auto-update", // 设置自动升级
+  GET_AUTO_UPDATE: "get-auto-update", // 查询自动升级状态
 
   // ========== 持久化设置 ==========
   GET_SAVED_THEME: "get-saved-theme", // 获取保存的主题
@@ -88,6 +92,7 @@ export const IPC_CHANNELS = {
   START_LOG_WATCHER: "start-log-watcher", // 开始监控日志文件
   STOP_LOG_WATCHER: "stop-log-watcher", // 停止监控日志文件
   LOG_UPDATED: "log-updated", // 日志更新通知
+  OPEN_LOG_PATH: "open-log-path", // 打开日志文件路径
 
   // ========== 窗口事件 ==========
   WINDOW_BLUR: "window-blur", // 窗口失焦事件

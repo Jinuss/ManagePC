@@ -111,6 +111,20 @@ class StoreManager {
   setAutoStart(autoStart) {
     this.store.set('autoStart', autoStart)
   }
+
+  /** 获取自动升级设置
+ * @returns {boolean} - 是否自动升级
+ */
+  getAutoUpdate() {
+    return this.store.get('autoUpdate', false)
+  }
+
+  /** 设置自动升级
+ * @param {boolean} autoUpdate - 是否自动升级
+ */
+  setAutoUpdate(autoUpdate) {
+    this.store.set('autoUpdate', autoUpdate)
+  }
 }
 
 

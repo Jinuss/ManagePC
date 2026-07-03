@@ -10,6 +10,10 @@ export default class WindowsUpdater extends BaseUpdater {
   constructor() {
     super();
     this.autoUpdater = autoUpdater;
+
+    this.autoUpdater.logger = log;
+    log.transports.file.level = "debug";
+
     this.mainWindow = null;
     this.initUpdater();
   }
@@ -117,8 +121,7 @@ export default class WindowsUpdater extends BaseUpdater {
     });
 
     try {
-      const result = await this.autoUpdater.checkForUpdates();
-      log.info("[WindowsUpdater] Check update result:", result);
+      await this.autoUpdater.checkForUpdates();
     } catch (error) {
       log.error("[WindowsUpdater] Check update failed:", error);
     }

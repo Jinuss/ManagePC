@@ -85,7 +85,17 @@ if (!gotTheLock) {
       })
       return { success: true }
     })
-
+   
+    // ============ 自动升级设置 IPC ============
+    // 设置自动升级
+    ipcMain.handle(IPC_CHANNELS.SET_AUTO_UPDATE, (event, autoUpdate) => {
+      storeManager.setAutoUpdate(autoUpdate)
+    })
+    
+    // 获取自动升级设置
+    ipcMain.handle(IPC_CHANNELS.GET_AUTO_UPDATE, () => {
+      return storeManager.getAutoUpdate()
+    })
     
     // ============ 语言设置 IPC ============
     // 设置应用语言，保存到配置并通知所有窗口

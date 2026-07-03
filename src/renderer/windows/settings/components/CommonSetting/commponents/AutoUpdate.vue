@@ -1,13 +1,11 @@
 <template>
   <div class="settings-section">
-    <div class="auto-start-content">
-      <span class="auto-start-label">{{
-        t("settings.autoStartDescription")
-      }}</span>
+    <div class="auto-Update-content">
+      <span class="auto-Update-label"> 有更新时自动升级应用 </span>
       <NSwitch
-        :value="autoStart"
-        @update:value="toggleAutoStart"
-        class="auto-start-switch"
+        :value="autoUpdate"
+        @update:value="toggleAutoUpdate"
+        class="auto-Update-switch"
         :round="false"
       />
     </div>
@@ -21,19 +19,19 @@ import { NSwitch } from "naive-ui";
 
 const { t } = useI18n();
 
-const autoStart = ref(false);
+const autoUpdate = ref(false);
 
-const toggleAutoStart = async (value) => {
-  await window.electronAPI.setAutoStart(value);
-  autoStart.value = value;
+const toggleAutoUpdate = (value) => {
+  window.electronAPI.setAutoUpdate(value);
+  autoUpdate.value = value;
 };
 
-onMounted(async () => {
+onMounted(() => {
   try {
-    const result = await window.electronAPI.getAutoStart();
-    autoStart.value = result.autoStart;
+    const result = window.electronAPI.getAutoUpdate();
+    autoUpdate.value = result.autoUpdate;
   } catch {
-    autoStart.value = false;
+    autoUpdate.value = false;
   }
 });
 </script>
@@ -44,12 +42,12 @@ onMounted(async () => {
   border-radius: 8px;
   padding: 16px;
 }
-.auto-start-content {
+.auto-Update-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.auto-start-label {
+.auto-Update-label {
   color: var(--color-text-secondary);
   font-size: 13px;
 }

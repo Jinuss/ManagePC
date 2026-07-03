@@ -1,4 +1,4 @@
-import { ipcMain, app } from "electron";
+import { ipcMain, app, shell } from "electron";
 import {
   getSystemInfo,
   getNetworkInfo,
@@ -66,11 +66,10 @@ export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
 
   ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, async () => {
     if (!app.isPackaged) {
-      log.error("非打包应用不支持检查更新");
-      return { success: true, message: "非打包应用不支持检查更新" };
+      log.warn("[ipcHandle ] 非打包应用不支持检查更新");
     }
 
-    log.info("检查更新");
+    log.info("[ipcHandle ] 检查更新");
     updateManager.checkForUpdates();
   });
 
@@ -108,6 +107,13 @@ export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
 
   ipcMain.handle(IPC_CHANNELS.STOP_LOG_WATCHER, () => {
     logHandler.stopWatching();
+    return { success: true };
+  });
+
+  ipcMain.handle(IPC_CHANNELS.OPEN_LOG_PATH, (event, path) => {
+    if (path) {
+      shell.showItemInFolder(path);
+    }
     return { success: true };
   });
 }

@@ -161,11 +161,9 @@ onMounted(() => {
   // macos 不监听更新事件
   if (isMac) return;
 
-  if (
-    window.electronAPI &&
-    window.electronAPI.onUpdateAvailable &&
-    window.electronAPI.checkForUpdates
-  ) {
+  // 获取自动升级设置
+  const autoUpdate = window.electronAPI.getAutoUpdate();
+  if (autoUpdate) {
     // 监听
     removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
       handleUpdateAvailable,

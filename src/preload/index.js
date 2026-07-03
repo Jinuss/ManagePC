@@ -154,6 +154,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setAutoStart: (autoStart) => ipcRenderer.invoke(IPC_CHANNELS.SET_AUTO_START, autoStart),
   // 获取开机自启设置
   getAutoStart: () => ipcRenderer.invoke(IPC_CHANNELS.GET_AUTO_START),
+  // 设置自动升级
+  setAutoUpdate: (autoUpdate) => ipcRenderer.invoke(IPC_CHANNELS.SET_AUTO_UPDATE, autoUpdate),
+  // 获取自动升级设置
+  getAutoUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.GET_AUTO_UPDATE),
 
   // ==================== 持久化设置相关 API ====================
   // 获取保存的主题设置
@@ -172,6 +176,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   readLogs: (maxLines) => ipcRenderer.invoke(IPC_CHANNELS.READ_LOGS, maxLines),
   // 清空日志文件
   clearLogs: () => ipcRenderer.invoke(IPC_CHANNELS.CLEAR_LOGS),
+  // 打开日志文件路径
+  openLogPath: (path) => ipcRenderer.invoke(IPC_CHANNELS.OPEN_LOG_PATH, path),
   // 开始监听日志文件变化
   startLogWatcher: () => ipcRenderer.invoke(IPC_CHANNELS.START_LOG_WATCHER),
   // 停止监听日志文件变化
