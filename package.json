@@ -14,7 +14,7 @@
     "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=never",
     "prepare": "husky",
     "clean:electron-cache": "powershell -Command \"Remove-Item $env:LOCALAPPDATA\\electron-builder -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item $env:LOCALAPPDATA\\electron -Recurse -Force -ErrorAction SilentlyContinue\"",
-    "clean": "powershell -Command \"if (Test-Path 'release') { Remove-Item -Recurse -Force 'release' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
+    "clean": "powershell -Command \"if (Test-Path 'dist') { Remove-Item -Recurse -Force 'dist' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
   },
   "keywords": [
     "electron",

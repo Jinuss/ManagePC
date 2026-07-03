@@ -85,8 +85,6 @@ const { activeTab, menuOptions, handleMenuSelect } = useMenuOptions();
 
 const { confirm } = useDialog();
 
-const checkingUpdate = ref(false);
-
 const openSettings = async () => {
   await window.electronAPI.openSettingsWindow();
 };
@@ -94,18 +92,6 @@ const openSettings = async () => {
 const currentComponent = computed(() => {
   return componentMap[activeTab.value] || componentMap.system;
 });
-
-const checkForUpdates = async () => {
-  if (checkingUpdate.value) return;
-  checkingUpdate.value = true;
-  try {
-    await window.electronAPI.checkForUpdates();
-  } catch (error) {
-    console.error("检查更新失败:", error);
-  } finally {
-    checkingUpdate.value = false;
-  }
-};
 
 let removeUpdateAvailableListener = null;
 
@@ -135,7 +121,7 @@ const progrssNotif = ref();
 
 const handleDownloadProgress = () => {
   progrssNotif.value = notification.create({
-    title: "更新中",
+    title: "下载中",
     description: "正在下载更新，请稍后...",
     content: () => h(NProgress, { percentage: 0 }),
     duration: 0,
@@ -158,22 +144,31 @@ const handleDownloadProgress = () => {
 onMounted(() => {
   // macos 不监听更新事件
   if (isMac) return;
-  setTimeout(() => {
-    checkForUpdates();
-  }, 1000);
 
-  if (window.electronAPI && window.electronAPI.onUpdateAvailable) {
+  if (
+    window.electronAPI &&
+    window.electronAPI.onUpdateAvailable &&
+    window.electronAPI.checkForUpdates
+  ) {
+    // 监听
     removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
       handleUpdateAvailable,
     );
+    // 检查更新
+    try {
+      window.electronAPI.checkForUpdates();
+    } catch (error) {
+      console.error("检查更新失败:", error);
+    }
   }
-  // var p = {
-  //   status: "update-available",
-  //   version: "1.0.30",
-  //   message: "发现新版本 1.0.30",
-  //   releaseNotes:
-  //     "<h2>[1.0.30] - 2026-07-02</h2>\n<h3>🐛 Bug Fixes</h3>\n<ul>\n<li>修复主动更新2</li>\n</ul>",
-  // };
+  var p = {
+    status: "update-available",
+    version: "1.0.30",
+    message: "发现新版本 1.0.30",
+    releaseNotes:
+      "<h2>[1.0.30] - 2026-07-02</h2>\n<h3>🐛 Bug Fixes</h3>\n<ul>\n<li>修复主动更新2</li>\n</ul>",
+  };
+  handleUpdateAvailable(p);
 });
 
 onUnmounted(() => {
