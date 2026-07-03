@@ -55,6 +55,7 @@ export default class WindowsUpdater extends BaseUpdater {
  */
   sendEvent(channel, data = {}) {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      log.info(`[WindowsUpdater] Sending event to ${channel} Start!`)
       this.mainWindow.webContents.send(channel, data)
     }else{
       log.error('[WindowsUpdater] 主窗口已销毁，无法发送事件',channel,data)
