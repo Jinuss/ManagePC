@@ -117,10 +117,10 @@ const handleUpdateAvailable = (updateInfo) => {
 
 const handleDownloadComplete = () => {
   confirm({
-    title: `下载完成`,
-    content: "是否退出应用并立即安装？",
-    positiveText: "退出并安装",
-    negativeText: "稍后安装",
+    title: t("settings.downloadComplete"),
+    content: t("settings.exitAndInstall"),
+    positiveText: t("settings.exitInstall"),
+    negativeText: t("settings.installLater"),
     maskClosable: false,
     onPositive: () => {
       window.electronAPI.installUpdate();
@@ -134,8 +134,8 @@ const progrssNotif = ref();
 
 const handleDownloadProgress = () => {
   progrssNotif.value = notification.create({
-    title: "下载中",
-    description: "正在下载更新，请稍后...",
+    title: t("settings.downloadingTitle"),
+    description: t("settings.downloadingDescription"),
     content: () => h(NProgress, { percentage: 0 }),
     duration: 0,
     closable: false,
