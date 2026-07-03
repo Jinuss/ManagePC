@@ -1,11 +1,7 @@
 // 应用配置常量
-// 应用配置常量
 
-// Windows 应用程序用户模型 ID
 // Windows 应用程序用户模型 ID
 export const APP_USER_MODEL_ID = 'com.example.system-monitor'
-
-// GitHub 仓库配置
 
 // GitHub 仓库配置
 export const GITHUB_REPO = {
@@ -13,8 +9,6 @@ export const GITHUB_REPO = {
   NAME: 'ManagePC',
   RELEASE_API: 'https://api.github.com/repos/Jinuss/ManagePC/releases/latest'
 }
-
-// 窗口默认配置
 
 // 窗口默认配置
 export const WINDOW_DEFAULTS = {
@@ -27,16 +21,12 @@ export const WINDOW_DEFAULTS = {
 }
 
 // 主题默认配置
-
-// 主题默认配置
 export const THEME_DEFAULTS = {
   SYSTEM: 'system',
   LIGHT: 'light',
   DARK: 'dark',
   DEFAULT: 'system'
 }
-
-// 语言默认配置
 
 // 语言默认配置
 export const LANGUAGE_DEFAULTS = {

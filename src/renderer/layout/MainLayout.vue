@@ -161,14 +161,6 @@ onMounted(() => {
       console.error("检查更新失败:", error);
     }
   }
-  var p = {
-    status: "update-available",
-    version: "1.0.30",
-    message: "发现新版本 1.0.30",
-    releaseNotes:
-      "<h2>[1.0.30] - 2026-07-02</h2>\n<h3>🐛 Bug Fixes</h3>\n<ul>\n<li>修复主动更新2</li>\n</ul>",
-  };
-  handleUpdateAvailable(p);
 });
 
 onUnmounted(() => {
