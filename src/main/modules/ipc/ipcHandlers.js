@@ -79,8 +79,8 @@ export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
     return { success: true };
   });
 
-  ipcMain.handle(IPC_CHANNELS.INSTALL_UPDATE, () => {
-    updateManager.quitAndInstall();
+  ipcMain.handle(IPC_CHANNELS.INSTALL_UPDATE, (event, isSilent = false, isRestart = true) => {
+    updateManager.quitAndInstall(isSilent, isRestart);  
     return { success: true };
   });
 

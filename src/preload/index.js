@@ -98,8 +98,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onUpdateError: (callback) => {
     ipcRenderer.on(IPC_CHANNELS.UPDATE_ERROR, (event, data) => callback(data))
     return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_ERROR, callback)
-  },
-
+  },  
   // ==================== 设置窗口相关 API ====================
   // 打开设置窗口
   openSettingsWindow: () => ipcRenderer.invoke(IPC_CHANNELS.OPEN_SETTINGS_WINDOW),

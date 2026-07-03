@@ -115,6 +115,19 @@ const handleUpdateAvailable = (updateInfo) => {
   });
 };
 
+const handleDownloadComplete = () => {
+  confirm({
+    title: `下载完成`,
+    content: "是否退出应用并立即安装？",
+    positiveText: "退出并安装",
+    negativeText: "稍后安装",
+    maskClosable: false,
+    onPositive: () => {
+      window.electronAPI.installUpdate();
+    },
+  });
+};
+
 const notification = useNotification();
 
 const progrssNotif = ref();
@@ -129,14 +142,17 @@ const handleDownloadProgress = () => {
   });
 
   window.electronAPI.onDownloadProgress((progress) => {
-    console.log("🚀 ~ handleDownloadProgress ~ progress:", progress);
-
     progrssNotif.value.content = () =>
-      h(NProgress, { percentage: progress.percent * 100 });
+      h(NProgress, {
+        percentage: progress.percent.toFixed(0),
+        indicatorPlacement: "inside",
+        processing: true,
+      });
   });
   window.electronAPI.onUpdateDownloaded(() => {
     progrssNotif.value.destroy();
     console.log("🚀 ~ handleDownloadProgress ~ onDownloadComplete");
+    handleDownloadComplete();
   });
   window.electronAPI.downloadUpdate();
 };

@@ -44,9 +44,9 @@ class UpdateManager {
 
     /** 退出并安装更新
    */
-  quitAndInstall() {
+  quitAndInstall(isSilent = false, isRestart = true) {
     if (this.updater.quitAndInstall) {
-      this.updater.quitAndInstall()
+      this.updater.quitAndInstall(isSilent, isRestart)
     }
   }
 }
