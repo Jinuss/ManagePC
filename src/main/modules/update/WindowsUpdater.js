@@ -127,6 +127,51 @@ export default class WindowsUpdater extends BaseUpdater {
     }
   }
 
+  /** 检查更新
+   * 通过 electron-updater 检查 GitHub Releases
+   * @returns {Promise<Object>} - 更新检查结果
+   */
+  async checkForUpdatesOnly(callback) {
+    log.info("[WindowsUpdater-OnlyCheck] checkForUpdates called");
+    log.info("[WindowsUpdater-OnlyCheck] Current version:", this.currentVersion);
+
+    const cleanup = () => {
+      this.autoUpdater.removeListener("update-not-available", onNotAvailable);
+      this.autoUpdater.removeListener("update-available", onAvailable);
+      this.autoUpdater.removeListener("error", onError);
+    };
+
+    const onNotAvailable = () => {
+      cleanup();
+      log.info("[WindowsUpdater-OnlyCheck] No update available");
+      callback(false)
+    };
+
+    const onAvailable = (info) => {
+      cleanup();
+      log.info("[WindowsUpdater-OnlyCheck] Update available:", info);
+      callback(true)
+    };
+
+    const onError = (error) => {
+      cleanup();
+      log.error("[WindowsUpdater-OnlyCheck] Check update failed:", error);
+      callback(false)
+    };
+
+    this.autoUpdater.once("update-not-available", onNotAvailable);
+    this.autoUpdater.once("update-available", onAvailable);
+    this.autoUpdater.once("error", onError);
+    this.autoUpdater.once("checking-for-update", () => {
+      log.info("[WindowsUpdater-OnlyCheck] Checking for update...");
+    });
+
+    try {
+      await this.autoUpdater.checkForUpdates();
+    } catch (error) {
+      log.error("[WindowsUpdater-OnlyCheck] Check update failed:", error);
+    }
+  }
   /** 下载更新包
    */
   downloadUpdate() {

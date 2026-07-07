@@ -73,14 +73,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
    * @returns {Function} - 移除监听器的函数
    */
   onUpdateAvailable: ({ auto = false, callback }) => {
-    if (!auto) {
-      ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, (event, data) =>
-        callback(data),
-      );
-    } else {
-      // 自动下载更新
-      ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE);
-    }
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, (event, data) => {
+      if (!auto) {
+        callback(data);
+      } else {
+        // 自动下载更新
+        ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE);
+      }
+    });
+
     return () =>
       ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
   },
@@ -260,5 +261,5 @@ contextBridge.exposeInMainWorld("electronAPI", {
       );
   },
 
-  getHasUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.GET_HAS_UPDATE)
+  getHasUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.GET_HAS_UPDATE),
 });

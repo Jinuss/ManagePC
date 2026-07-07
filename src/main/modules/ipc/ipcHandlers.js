@@ -71,6 +71,7 @@ export function registerIpcHandlers({
   ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, async () => {
     if (!app.isPackaged) {
       log.warn("[ipcHandle ] 非打包应用不支持检查更新");
+      return;
     }
 
     log.info("[ipcHandle ] 检查更新");
