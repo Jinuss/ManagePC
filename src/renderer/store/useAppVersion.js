@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useAppVersionStore = defineStore("appVersion", {
   state: () => ({
-    hasUpdate: true,
+    hasUpdate: false,
   }),
   actions: {
     setHasUpdate(hasUpdate) {
