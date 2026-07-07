@@ -38,6 +38,7 @@ onMounted(async () => {
 .about-content {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .about-item {
   display: flex;

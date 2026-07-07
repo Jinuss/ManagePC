@@ -1,10 +1,15 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import SettingsWindow from './SettingsWindow.vue'
 import i18n from '../../i18n'
 import '../../styles/global.css'
 import { initTheme } from '../../composables/useTheme'
 
+const pinia = createPinia()
+
 const app = createApp(SettingsWindow)
+
+app.use(pinia)
 
 app.use(i18n)
 

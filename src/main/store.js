@@ -25,7 +25,8 @@ class StoreManager {
           theme: THEME_DEFAULTS.DEFAULT,
           language: LANGUAGE_DEFAULTS.DEFAULT,
           alwaysOnTop: false,
-          autoStart: false
+          autoStart: false,
+          hasUpdate: false
         }
       })
     }
@@ -124,6 +125,10 @@ class StoreManager {
  */
   setAutoUpdate(autoUpdate) {
     this.store.set('autoUpdate', autoUpdate)
+  }
+
+  getStore() {
+    return this.store
   }
 }
 

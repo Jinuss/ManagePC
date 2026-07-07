@@ -1,42 +1,61 @@
 <template>
   <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
-    <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
-      <div class="settings-header">
-        <div class="mac-controls">
-          <button v-if="isMac" class="mac-close-button" :class="{ inactive: !isActive }" @click="closeWindow">
-            <span class="mac-close-icon">✕</span>
-          </button>
+    <NDialogProvider>
+      <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
+        <div class="settings-header">
+          <div class="mac-controls">
+            <button
+              v-if="isMac"
+              class="mac-close-button"
+              :class="{ inactive: !isActive }"
+              @click="closeWindow"
+            >
+              <span class="mac-close-icon">✕</span>
+            </button>
+          </div>
+          <div class="windows-controls">
+            <button
+              v-if="!isMac"
+              class="control-btn close-btn"
+              @click="closeWindow"
+              :title="t('common.close')"
+            >
+              <span class="icon">✕</span>
+            </button>
+          </div>
         </div>
-        <div class="windows-controls">
-          <button v-if="!isMac" class="control-btn close-btn" @click="closeWindow" :title="t('common.close')">
-            <span class="icon">✕</span>
-          </button>
+        <div class="settings-body">
+          <aside class="settings-sidebar">
+            <NMenu
+              :value="activeTab"
+              :options="menuOptions"
+              class="sidebar-menu"
+              mode="vertical"
+              @update:value="handleMenuSelect"
+            />
+          </aside>
+          <main class="settings-main">
+            <component :is="componentMap[activeTab]" />
+          </main>
         </div>
       </div>
-      <div class="settings-body">
-        <aside class="settings-sidebar">
-          <NMenu :value="activeTab" :options="menuOptions" class="sidebar-menu" mode="vertical"
-            @update:value="handleMenuSelect" />
-        </aside>
-        <main class="settings-main">
-          <component :is="componentMap[activeTab]" />
-        </main>
-      </div>
-    </div>
+    </NDialogProvider>
   </NConfigProvider>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, h } from "vue";
-import { NConfigProvider, NMenu } from "naive-ui";
+import { NConfigProvider, NMenu, NDialogProvider } from "naive-ui";
 import { darkTheme } from "naive-ui";
 import { useTheme } from "../../composables/useTheme";
 import { usePlatform } from "../../composables/usePlatform";
 import { THEME_IDS } from "../../constants";
 import { useI18n } from "vue-i18n";
 import { componentMap } from "./config.js";
+import { useAppVersionStore } from "@/store/useAppVersion";
 
 const { t } = useI18n();
+const { setHasUpdate } = useAppVersionStore();
 const { isMac } = usePlatform();
 const { theme } = useTheme();
 
@@ -86,17 +105,22 @@ let blurHandler = null;
 let focusHandler = null;
 
 onMounted(async () => {
-  if (window.electronAPI && window.electronAPI.onWindowBlur) {
-    blurHandler = window.electronAPI.onWindowBlur(() => {
-      isActive.value = false;
-    });
-  }
+  blurHandler = window.electronAPI.onWindowBlur(() => {
+    isActive.value = false;
+  });
 
-  if (window.electronAPI && window.electronAPI.onWindowFocus) {
-    focusHandler = window.electronAPI.onWindowFocus(() => {
-      isActive.value = true;
-    });
-  }
+  focusHandler = window.electronAPI.onWindowFocus(() => {
+    isActive.value = true;
+  });
+
+  window.electronAPI.onHasUpdate(({ hasUpdate }) => {
+    console.log("🚀 ~ onHasUpdate ~ hasUpdate:", hasUpdate);
+    setHasUpdate(hasUpdate);
+  });
+
+  const hasUpdate = await window.electronAPI.getHasUpdate();
+  console.log("🚀 ~ hasUpdate:", hasUpdate);
+  setHasUpdate(hasUpdate);
 });
 
 onUnmounted(() => {
@@ -153,7 +177,7 @@ onUnmounted(() => {
   justify-content: center;
   transition: all 0.15s ease;
   padding: 0;
-  margin-left:10px;
+  margin-left: 10px;
 }
 
 .mac-close-button:hover {

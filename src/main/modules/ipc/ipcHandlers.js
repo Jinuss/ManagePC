@@ -9,6 +9,7 @@ import {
 import SystemMonitor from "../../utils/SystemMonitor.js";
 import { createLogHandler, log } from "../log/logManager.js";
 import { IPC_CHANNELS } from "../../constants";
+import { broadcast } from "../../utils/helps";
 
 let systemMonitor = null;
 let updateManager = null;
@@ -17,11 +18,14 @@ const logHandler = createLogHandler();
 /** 注册所有 IPC 处理器
  * 将渲染进程的请求转发到对应的服务模块
  */
-export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
-  if(!updateManagerInstance){
-     log.error('[ipcHandle ] 更新管理器实例为空')
+export function registerIpcHandlers({
+  updateManager: updateManagerInstance,
+  storeManager,
+}) {
+  if (!updateManagerInstance) {
+    log.error("[ipcHandle ] 更新管理器实例为空");
   }
-  
+
   updateManager = updateManagerInstance;
   ipcMain.handle(IPC_CHANNELS.GET_SSH_KEY, () => {
     return getSSHKey();
@@ -78,10 +82,13 @@ export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
     return { success: true };
   });
 
-  ipcMain.handle(IPC_CHANNELS.INSTALL_UPDATE, (event, isSilent = false, isRestart = true) => {
-    updateManager.quitAndInstall(isSilent, isRestart);  
-    return { success: true };
-  });
+  ipcMain.handle(
+    IPC_CHANNELS.INSTALL_UPDATE,
+    (event, isSilent = false, isRestart = true) => {
+      updateManager.quitAndInstall(isSilent, isRestart);
+      return { success: true };
+    },
+  );
 
   ipcMain.handle(IPC_CHANNELS.GET_LOG_PATH, () => {
     return logHandler.getLogPath();
@@ -115,6 +122,16 @@ export function registerIpcHandlers({ updateManager: updateManagerInstance }) {
       shell.showItemInFolder(path);
     }
     return { success: true };
+  });
+
+  ipcMain.handle(IPC_CHANNELS.NOTIFY_UPDATE_DOWNLOADED, () => {
+    storeManager.getStore().set("hasUpdate", true);
+    broadcast(IPC_CHANNELS.NOTIFY_UPDATE_DOWNLOADED, { hasUpdate: true });
+  });
+
+  ipcMain.handle(IPC_CHANNELS.GET_HAS_UPDATE, () => {
+    log.info("[ipcHandle ] 获取是否有更新");
+    return storeManager.getStore().get("hasUpdate", false);
   });
 }
 

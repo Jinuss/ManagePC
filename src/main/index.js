@@ -47,7 +47,7 @@ if (!gotTheLock) {
     updateManager = new UpdateManager()
     trayManager = new TrayManager()
 
-    registerIpcHandlers({updateManager})
+    registerIpcHandlers({updateManager,storeManager})
 
     
     // ============ 设置窗口相关 IPC ============

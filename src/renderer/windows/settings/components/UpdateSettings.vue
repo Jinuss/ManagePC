@@ -6,12 +6,29 @@
       :loading="checkingUpdate || downloading"
       class="update-btn"
       @click="checkUpdate"
+      v-if="!hasUpdate"
     >
       <span>
         <span v-show="!checkingUpdate && !downloading"> 🔄</span>
-        {{ checkingUpdate ? t("settings.checkingUpdate") : (downloading ? t("settings.downloading") : t("common.checkUpdate")) }}
+        {{
+          checkingUpdate
+            ? t("settings.checkingUpdate")
+            : downloading
+              ? t("settings.downloading")
+              : t("common.checkUpdate")
+        }}
       </span>
     </NButton>
+    <n-badge :value="1" dot v-else>
+      <NButton
+        type="info"
+        size="medium"
+        class="update-btn"
+        @click="checkUpdateAndInstall"
+      >
+        <span> 重启并安装 </span>
+      </NButton>
+    </n-badge>
     <div v-if="updateStatus" class="update-status">
       <NAlert
         v-if="updateStatus === 'no-update'"
@@ -27,29 +44,51 @@
       />
     </div>
 
-    <NModal v-model:show="showUpdateModal" preset="card" title="发现新版本" :closable="false">
+    <NModal
+      v-model:show="showUpdateModal"
+      preset="card"
+      title="发现新版本"
+      :closable="false"
+    >
       <div class="update-modal-content">
         <div class="update-version">{{ updateInfo.version }}</div>
         <div class="update-message">{{ updateInfo.message }}</div>
         <div v-if="updateInfo.releaseNotes" class="update-release-notes">
-          <div class="release-notes-title">{{ t("settings.releaseNotes") }}</div>
+          <div class="release-notes-title">
+            {{ t("settings.releaseNotes") }}
+          </div>
           <div class="release-notes-content">{{ updateInfo.releaseNotes }}</div>
         </div>
         <div v-if="downloading" class="download-progress-section">
           <NProgress :percentage="downloadProgress" :show-indicator="true" />
-          <div class="download-progress-text">{{ downloadProgress.toFixed(1) }}%</div>
+          <div class="download-progress-text">
+            {{ downloadProgress.toFixed(1) }}%
+          </div>
         </div>
         <div class="update-modal-actions">
-          <NButton v-if="!downloading && !downloaded" type="primary" @click="startDownload">
+          <NButton
+            v-if="!downloading && !downloaded"
+            type="primary"
+            @click="startDownload"
+          >
             {{ t("settings.downloadNow") }}
           </NButton>
-          <NButton v-if="!downloading && !downloaded" @click="showUpdateModal = false">
+          <NButton
+            v-if="!downloading && !downloaded"
+            @click="showUpdateModal = false"
+          >
             {{ t("settings.remindLater") }}
           </NButton>
           <NButton v-if="downloaded" type="primary" @click="installUpdate">
             {{ t("settings.restartNow") }}
           </NButton>
-          <NButton v-if="downloaded" @click="showUpdateModal = false; downloaded = false">
+          <NButton
+            v-if="downloaded"
+            @click="
+              showUpdateModal = false;
+              downloaded = false;
+            "
+          >
             {{ t("settings.restartLater") }}
           </NButton>
         </div>
@@ -61,9 +100,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { NButton, NAlert, NModal, NProgress } from "naive-ui";
+import { NButton, NAlert, NModal, NProgress, NBadge } from "naive-ui";
+import { useAppVersionStore } from "@/store/useAppVersion";
+import { useDialog } from "@/composables/useDialog";
 
 const { t } = useI18n();
+const { hasUpdate } = useAppVersionStore();
 
 const checkingUpdate = ref(false);
 const downloading = ref(false);
@@ -112,7 +154,7 @@ const handleUpdateAvailable = (info) => {
   updateInfo.value = {
     version: info.version,
     message: info.message,
-    releaseNotes: info.releaseNotes || ""
+    releaseNotes: info.releaseNotes || "",
   };
   downloaded.value = false;
   downloading.value = false;
@@ -136,18 +178,40 @@ const handleUpdateError = (error) => {
   updateStatus.value = "error";
 };
 
+const { confirm } = useDialog();
+
+const checkUpdateAndInstall = () => {
+  confirm({
+    title: t("settings.downloadComplete"),
+    content: t("settings.exitAndInstall"),
+    positiveText: t("settings.exitInstall"),
+    negativeText: t("settings.installLater"),
+    maskClosable: false,
+    onPositive: () => {
+      window.electronAPI.installUpdate();
+    },
+  });
+};
+
 onMounted(() => {
   if (window.electronAPI && window.electronAPI.onUpdateAvailable) {
-    removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(handleUpdateAvailable);
+    removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
+      handleUpdateAvailable,
+    );
   }
   if (window.electronAPI && window.electronAPI.onDownloadProgress) {
-    removeDownloadProgressListener = window.electronAPI.onDownloadProgress(handleDownloadProgress);
+    removeDownloadProgressListener = window.electronAPI.onDownloadProgress(
+      handleDownloadProgress,
+    );
   }
   if (window.electronAPI && window.electronAPI.onUpdateDownloaded) {
-    removeUpdateDownloadedListener = window.electronAPI.onUpdateDownloaded(handleUpdateDownloaded);
+    removeUpdateDownloadedListener = window.electronAPI.onUpdateDownloaded(
+      handleUpdateDownloaded,
+    );
   }
   if (window.electronAPI && window.electronAPI.onUpdateError) {
-    removeUpdateErrorListener = window.electronAPI.onUpdateError(handleUpdateError);
+    removeUpdateErrorListener =
+      window.electronAPI.onUpdateError(handleUpdateError);
   }
 });
 

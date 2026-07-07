@@ -1,5 +1,5 @@
 import path from 'path'
-import { app } from 'electron'
+import { app, BrowserWindow } from 'electron'
 
 /** 获取应用图标路径
  * 根据平台和打包状态返回正确的图标路径
@@ -71,4 +71,17 @@ export function formatSize(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+/**
+ * 广播消息到所有窗口
+ * @param {*} channel - 通道名称
+ * @param {*} data - 要发送的数据
+ */
+export function broadcast(channel, data) {
+  BrowserWindow.getAllWindows().forEach((win) => {
+    if (!win.isDestroyed()) {
+      win.webContents.send(channel, data)
+    }
+  })
 }

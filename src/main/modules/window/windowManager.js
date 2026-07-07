@@ -210,7 +210,7 @@ class WindowManager {
  */
   closeSettingsWindow() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
-      this.settingsWindow.close()
+      this.settingsWindow.close();
       this.settingsWindow = null
     }
   }

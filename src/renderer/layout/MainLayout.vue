@@ -68,13 +68,12 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, h } from "vue";
-import { NMenu, NButton, NTooltip, useNotification, NProgress } from "naive-ui";
+import { computed } from "vue";
+import { NMenu, NButton, NTooltip } from "naive-ui";
 import { usePlatform } from "../composables/usePlatform";
 import { useMenuOptions } from "../composables/useMenuOptions";
 import CustomTitleBar from "./CustomTitleBar.vue";
 import { componentMap } from "../config";
-import { useDialog } from "../composables/useDialog.js";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -83,104 +82,12 @@ const { isMac } = usePlatform();
 
 const { activeTab, menuOptions, handleMenuSelect } = useMenuOptions();
 
-const { confirm } = useDialog();
-
 const openSettings = async () => {
   await window.electronAPI.openSettingsWindow();
 };
 
 const currentComponent = computed(() => {
   return componentMap[activeTab.value] || componentMap.system;
-});
-
-let removeUpdateAvailableListener = null;
-
-const handleUpdateAvailable = (updateInfo) => {
-  console.log("🚀 ~ handleUpdateAvailable ~ updateInfo:", updateInfo);
-  confirm({
-    title: `${t("settings.updateAvailable")} ${updateInfo.version}`,
-    content: () =>
-      updateInfo.releaseNotes
-        ? h("div", {
-            class: "release-notes",
-            innerHTML: updateInfo.releaseNotes,
-          })
-        : t("settings.noReleaseNotes"),
-    positiveText: t("settings.downloadNow"),
-    negativeText: t("settings.remindLater"),
-    maskClosable: false,
-    onPositive: () => {
-      handleDownloadProgress();
-    },
-  });
-};
-
-const handleDownloadComplete = () => {
-  confirm({
-    title: t("settings.downloadComplete"),
-    content: t("settings.exitAndInstall"),
-    positiveText: t("settings.exitInstall"),
-    negativeText: t("settings.installLater"),
-    maskClosable: false,
-    onPositive: () => {
-      window.electronAPI.installUpdate();
-    },
-  });
-};
-
-const notification = useNotification();
-
-const progrssNotif = ref();
-
-const handleDownloadProgress = () => {
-  progrssNotif.value = notification.create({
-    title: t("settings.downloadingTitle"),
-    description: t("settings.downloadingDescription"),
-    content: () => h(NProgress, { percentage: 0 }),
-    duration: 0,
-    closable: false,
-  });
-
-  window.electronAPI.onDownloadProgress((progress) => {
-    progrssNotif.value.content = () =>
-      h(NProgress, {
-        percentage: progress.percent.toFixed(0),
-        indicatorPlacement: "inside",
-        processing: true,
-      });
-  });
-  window.electronAPI.onUpdateDownloaded(() => {
-    progrssNotif.value.destroy();
-    console.log("🚀 ~ handleDownloadProgress ~ onDownloadComplete");
-    handleDownloadComplete();
-  });
-  window.electronAPI.downloadUpdate();
-};
-
-onMounted(() => {
-  // macos 不监听更新事件
-  if (isMac) return;
-
-  // 获取自动升级设置
-  const autoUpdate = window.electronAPI.getAutoUpdate();
-  if (autoUpdate) {
-    // 监听
-    removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
-      handleUpdateAvailable,
-    );
-    // 检查更新
-    try {
-      window.electronAPI.checkForUpdates();
-    } catch (error) {
-      console.error("检查更新失败:", error);
-    }
-  }
-});
-
-onUnmounted(() => {
-  if (removeUpdateAvailableListener) {
-    removeUpdateAvailableListener();
-  }
 });
 </script>
 

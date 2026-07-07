@@ -1,7 +1,7 @@
 <template>
   <div class="settings-section">
     <div class="auto-Update-content">
-      <span class="auto-Update-label"> 有更新时自动升级应用 </span>
+      <span class="auto-Update-label"> 有更新时自动下载应用 </span>
       <NSwitch
         :value="autoUpdate"
         @update:value="toggleAutoUpdate"

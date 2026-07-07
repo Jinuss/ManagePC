@@ -4,6 +4,7 @@
       <NNotificationProvider placement="bottom-right">
         <NMessageProvider>
           <MainLayout />
+          <UpdateContent />
         </NMessageProvider>
       </NNotificationProvider>
     </NDialogProvider>
@@ -23,6 +24,7 @@ import { darkTheme } from "naive-ui";
 import { useTheme } from "./composables/useTheme";
 import { THEME_IDS } from "./constants";
 import MainLayout from "./layout/MainLayout.vue";
+import UpdateContent from "./layout/UpdateContent.vue";
 
 const { locale } = useI18n();
 

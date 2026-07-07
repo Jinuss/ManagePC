@@ -107,4 +107,6 @@ export const IPC_CHANNELS = {
   UPDATE_ERROR: "update-error", // 更新错误通知
   DOWNLOAD_UPDATE: "download-update", // 开始下载更新
   INSTALL_UPDATE: "install-update", // 安装更新并重启
+  NOTIFY_UPDATE_DOWNLOADED: "notify-update-downloaded", // 通知更新下载完成
+  GET_HAS_UPDATE: "get-has-update", // 获取是否有更新
 };
