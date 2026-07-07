@@ -1,3 +1,6 @@
+<template>
+  <div style="width:0;height:0;">检测更新</div>
+</template>
 <script setup>
 import { onMounted, onUnmounted } from "vue";
 import { usePlatform } from "../composables/usePlatform.js";
@@ -13,10 +16,6 @@ let removeUpdateAvailableListener = null;
 onMounted(() => {
   // macos 不监听更新事件
   if (isMac) return;
-
-  // setTimeout(() => {
-  //   handleDownloadComplete();
-  // }, 10000);
 
   // 获取自动升级设置
   const autoUpdate = window.electronAPI.getAutoUpdate();

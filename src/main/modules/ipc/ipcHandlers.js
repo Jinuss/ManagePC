@@ -131,8 +131,9 @@ export function registerIpcHandlers({
   });
 
   ipcMain.handle(IPC_CHANNELS.GET_HAS_UPDATE, () => {
+    const hasUpdate = storeManager.getStore().get("hasUpdate");
     log.info("[ipcHandle ] 获取是否有更新");
-    return storeManager.getStore().get("hasUpdate", false);
+    return hasUpdate;
   });
 }
 
