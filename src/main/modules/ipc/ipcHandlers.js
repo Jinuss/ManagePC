@@ -68,18 +68,31 @@ export function registerIpcHandlers({
     return { success: true };
   });
 
-  ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, async () => {
+  ipcMain.handle(IPC_CHANNELS.CHECK_FOR_UPDATES, async (event, options) => {
     if (!app.isPackaged) {
       log.warn("[ipcHandle ] 非打包应用不支持检查更新");
       return;
     }
-
-    log.info("[ipcHandle ] 检查更新");
-    updateManager.checkForUpdates();
+    const { autoDownload = false } = options;
+    log.info("[ipcHandle ] 检查更新，是否自动下载更新", { autoDownload });
+    if (!autoDownload) {
+      updateManager.checkForUpdates();
+    } else {
+      const afterCheck = (hasUpdate) => {
+        log.info("[ipcHandle ] 检查更新完成");
+        storeManager.getStore().set("hasUpdate", hasUpdate);
+      };
+      
+      const afterDownloaded = () => {
+        log.info("[ipcHandle ] 更新下载完成");
+        storeManager.getStore().set("hasUpdate", true);
+      };
+      await updateManager.checkAndDownloadUpdates({afterCheck, afterDownloaded});
+    }
   });
 
-  ipcMain.handle(IPC_CHANNELS.DOWNLOAD_UPDATE, () => {
-    updateManager.downloadUpdate();
+  ipcMain.handle(IPC_CHANNELS.DOWNLOAD_UPDATE, (event, options) => {
+    updateManager.downloadUpdate(options);
     return { success: true };
   });
 
@@ -132,7 +145,7 @@ export function registerIpcHandlers({
 
   ipcMain.handle(IPC_CHANNELS.GET_HAS_UPDATE, () => {
     const hasUpdate = storeManager.getStore().get("hasUpdate");
-    log.info("[ipcHandle ] 获取是否有更新");
+    log.info("[ipcHandle ] 获取是否有更新", hasUpdate);
     return hasUpdate;
   });
 }

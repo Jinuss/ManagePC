@@ -26,23 +26,26 @@ class UpdateManager {
   /** 检查更新
    * 根据平台调用对应的检查方法
    */
-  async checkForUpdates(callback) {
+  async checkForUpdates() {
     if (isWindows()) {
-      if (callback) {
-        this.updater.checkForUpdatesOnly(callback);
-      } else {
-        this.updater.checkForUpdates();
-      }
+      this.updater.checkForUpdates();
     } else if (isMac()) {
-      this.updater.checkForUpdatesAndNotify(callback);
+      this.updater.checkForUpdatesAndNotify();
     }
+  }
+
+  /** 检查并下载更新
+   * 根据平台调用对应的检查方法
+   */
+  async checkAndDownloadUpdates(options) {
+    this.updater.checkAndDownload(options);
   }
 
   /** 下载更新
    */
-  downloadUpdate() {
+  downloadUpdate(options) {
     if (this.updater.downloadUpdate) {
-      this.updater.downloadUpdate();
+      this.updater.downloadUpdate(options);
     }
   }
 

@@ -104,9 +104,11 @@ export const IPC_CHANNELS = {
   UPDATE_INVALID: "update-invalid", // 更新无效通知
   UPDATE_DOWNLOAD_PROGRESS: "update-download-progress", // 下载进度通知
   UPDATE_DOWNLOADED: "update-downloaded", // 下载完成通知
+  UPDATE_AUTO_DOWNLOADED: "update-auto-downloaded", // 自动下载完成通知
   UPDATE_ERROR: "update-error", // 更新错误通知
   DOWNLOAD_UPDATE: "download-update", // 开始下载更新
   INSTALL_UPDATE: "install-update", // 安装更新并重启
   NOTIFY_UPDATE_DOWNLOADED: "notify-update-downloaded", // 通知更新下载完成
   GET_HAS_UPDATE: "get-has-update", // 获取是否有更新
+  CHECK_FOR_UPDATES_AND_DOWNLOAD: "check-for-updates-and-download", // 检查更新并下载
 };

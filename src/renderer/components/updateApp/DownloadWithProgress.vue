@@ -1,9 +1,12 @@
 
+<template>
+  <div style="width: 0; height: 0">下载进度占位</div>
+</template>
 <script setup>
 import { ref, onMounted, onUnmounted, h } from "vue";
 import { useNotification, NProgress } from "naive-ui";
-import { usePlatform } from "../composables/usePlatform.js";
-import { useDialog } from "../composables/useDialog.js";
+import { usePlatform } from "@/composables/usePlatform.js";
+import { useDialog } from "@/composables/useDialog.js";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -66,12 +69,14 @@ const handleDownloadProgress = () => {
         processing: true,
       });
   });
-  window.electronAPI.onUpdateDownloaded(() => {
-    progrssNotif.value.destroy();
-    console.log("🚀 ~ handleDownloadProgress ~ onDownloadComplete");
-    handleDownloadComplete();
+  window.electronAPI.onUpdateDownloaded(({ hasNotifyProgress }) => {
+    if (hasNotifyProgress) {
+      progrssNotif.value.destroy();
+      console.log("🚀 ~ handleDownloadProgress ~ onDownloadComplete");
+      handleDownloadComplete();
+    }
   });
-  window.electronAPI.downloadUpdate();
+  window.electronAPI.downloadUpdate({ hasNotifyProgress: true });
 };
 
 let removeUpdateAvailableListener = null;
@@ -84,15 +89,10 @@ onMounted(() => {
   const autoUpdate = window.electronAPI.getAutoUpdate();
   if (autoUpdate) {
     // 监听
-    removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable(
-      handleUpdateAvailable,
-    );
-    // 检查更新
-    try {
-      window.electronAPI.checkForUpdates();
-    } catch (error) {
-      console.error("检查更新失败:", error);
-    }
+    removeUpdateAvailableListener = window.electronAPI.onUpdateAvailable({
+      autoDownload: false,
+      callback: handleUpdateAvailable,
+    });
   }
 });
 

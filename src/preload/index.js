@@ -62,8 +62,22 @@ contextBridge.exposeInMainWorld("electronAPI", {
   }),
 
   // ==================== 更新相关 API ====================
+
+  // 检查更新并下载
+  checkForUpdatesAndDownload: () => {
+    /** 检查更新 */
+    ipcRenderer.invoke(IPC_CHANNELS.CHECK_FOR_UPDATES, { autoDownload: true });
+  },
+  // 监听自动下载更新事件
+  onUpdateAutoDownload: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_AUTO_DOWNLOADED, callback);
+    return () =>
+      ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AUTO_DOWNLOADED, callback);
+  },
+
   // 检查应用更新
-  checkForUpdates: () => ipcRenderer.invoke(IPC_CHANNELS.CHECK_FOR_UPDATES),
+  checkForUpdates: () =>
+    ipcRenderer.invoke(IPC_CHANNELS.CHECK_FOR_UPDATES, { autoDownload: false }),
   // 下载更新包
   downloadUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE),
   // 安装更新并重启应用
@@ -72,13 +86,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
    * @param {Function} callback - 回调函数，接收更新信息 { version, message, releaseNotes }
    * @returns {Function} - 移除监听器的函数
    */
-  onUpdateAvailable: ({ auto = false, callback }) => {
+  onUpdateAvailable: ({ autoDownload = false, callback }) => {
     ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, (event, data) => {
-      if (!auto) {
+      if (!autoDownload) {
         callback(data);
       } else {
         // 自动下载更新
-        ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE);
+        ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE, {
+          hasNotifyProgress: true,
+        });
       }
     });
 

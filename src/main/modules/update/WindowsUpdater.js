@@ -31,27 +31,9 @@ export default class WindowsUpdater extends BaseUpdater {
    */
   initUpdater() {
     this.autoUpdater.autoDownload = false;
-
-    this.autoUpdater.on("update-downloaded", () => {
-      log.info("[WindowsUpdater] Update downloaded");
-      this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOADED);
-    });
-
     this.autoUpdater.on("error", (error) => {
       log.error("[WindowsUpdater] Update error:", error);
       this.sendEvent(IPC_CHANNELS.UPDATE_ERROR, { message: error.message });
-    });
-
-    this.autoUpdater.on("download-progress", (progress) => {
-      log.info(
-        `[WindowsUpdater] Download progress: ${progress.percent.toFixed(1)}%`,
-      );
-      this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, {
-        percent: progress.percent,
-        bytesPerSecond: progress.bytesPerSecond,
-        total: progress.total,
-        transferred: progress.transferred,
-      });
     });
   }
 
@@ -127,13 +109,17 @@ export default class WindowsUpdater extends BaseUpdater {
     }
   }
 
-  /** 检查更新
+  /** 检查更新并自动下载更新
    * 通过 electron-updater 检查 GitHub Releases
    * @returns {Promise<Object>} - 更新检查结果
    */
-  async checkForUpdatesOnly(callback) {
-    log.info("[WindowsUpdater-OnlyCheck] checkForUpdates called");
-    log.info("[WindowsUpdater-OnlyCheck] Current version:", this.currentVersion);
+  async checkAndDownload(options) {
+    const { afterCheck, afterDownloaded } = options;
+    log.info("[WindowsUpdater-checkAndDownload] checkForUpdates called");
+    log.info(
+      "[WindowsUpdater-checkAndDownload] Current version:",
+      this.currentVersion,
+    );
 
     const cleanup = () => {
       this.autoUpdater.removeListener("update-not-available", onNotAvailable);
@@ -143,27 +129,29 @@ export default class WindowsUpdater extends BaseUpdater {
 
     const onNotAvailable = () => {
       cleanup();
-      log.info("[WindowsUpdater-OnlyCheck] No update available");
-      callback(false)
+      log.info("[WindowsUpdater-checkAndDownload] No update available");
+      afterCheck && afterCheck(false);
     };
 
     const onAvailable = (info) => {
       cleanup();
-      log.info("[WindowsUpdater-OnlyCheck] Update available:", info);
-      callback(true)
+      log.info("[WindowsUpdater-checkAndDownload] Update available:", info);
+      this.autoDownloadUpdate(afterDownloaded);
     };
 
     const onError = (error) => {
       cleanup();
-      log.error("[WindowsUpdater-OnlyCheck] Check update failed:", error);
-      callback(false)
+      log.error(
+        "[WindowsUpdater-checkAndDownload] Check update failed:",
+        error,
+      );
     };
 
     this.autoUpdater.once("update-not-available", onNotAvailable);
     this.autoUpdater.once("update-available", onAvailable);
     this.autoUpdater.once("error", onError);
     this.autoUpdater.once("checking-for-update", () => {
-      log.info("[WindowsUpdater-OnlyCheck] Checking for update...");
+      log.info("[WindowsUpdater-checkAndDownload] Checking for update...");
     });
 
     try {
@@ -172,10 +160,41 @@ export default class WindowsUpdater extends BaseUpdater {
       log.error("[WindowsUpdater-OnlyCheck] Check update failed:", error);
     }
   }
+
+  // 自动下载更新包
+  autoDownloadUpdate(afterDownloaded) {
+    log.info("[WindowsUpdater-autoDownloadUpdate] autoDownloadUpdate called");
+
+    this.autoUpdater.once("update-auto-downloaded", () => {
+      log.info("[WindowsUpdater-autoDownloadUpdate] Update downloaded");
+      afterDownloaded && afterDownloaded();
+      this.sendEvent(IPC_CHANNELS.UPDATE_AUTO_DOWNLOADED);
+    });
+
+    this.autoUpdater.downloadUpdate();
+  }
+
   /** 下载更新包
    */
   downloadUpdate() {
-    log.info("[WindowsUpdater] downloadUpdate called");
+    log.info("[WindowsUpdater-downloadUpdate] downloadUpdate called");
+
+    this.autoUpdater.on("update-downloaded", () => {
+      log.info("[WindowsUpdater-downloadUpdate] Update downloaded");
+      this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOADED);
+    });
+
+    this.autoUpdater.on("download-progress", (progress) => {
+      log.info(
+        `[WindowsUpdater] Download progress: ${progress.percent.toFixed(1)}%`,
+      );
+      this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, {
+        percent: progress.percent,
+        bytesPerSecond: progress.bytesPerSecond,
+        total: progress.total,
+        transferred: progress.transferred,
+      });
+    });
     this.autoUpdater.downloadUpdate();
   }
 
