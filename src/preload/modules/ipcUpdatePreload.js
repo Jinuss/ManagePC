@@ -14,19 +14,9 @@ export const updateAPI = {
     ipcRenderer.invoke(IPC_CHANNELS.CHECK_FOR_UPDATES, { autoDownload: false }),
   downloadUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE),
   installUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.INSTALL_UPDATE),
-  onUpdateAvailable: ({ autoDownload = false, callback }) => {
-    ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, (event, data) => {
-      if (!autoDownload) {
-        callback(data);
-      } else {
-        ipcRenderer.invoke(IPC_CHANNELS.DOWNLOAD_UPDATE, {
-          hasNotifyProgress: true,
-        });
-      }
-    });
-
-    return () =>
-      ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
+  onUpdateAvailable: ({ callback }) => {
+    ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
+    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
   },
   onDownloadProgress: (callback) => {
     ipcRenderer.on(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, (event, data) =>

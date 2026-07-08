@@ -36,21 +36,24 @@ import { usePlatform } from "@/composables/usePlatform";
 
 const { t } = useI18n();
 const { isMac } = usePlatform();
-const { hasUpdate ,setHasUpdate} = useAppVersionStore();
+const { hasUpdate, setHasUpdate } = useAppVersionStore();
 const message = useMessage();
 
 const checkingUpdate = ref(false);
 
-const checkUpdate = () => {
+const checkUpdate = async () => {
   if (checkingUpdate.value) {
     message.warning("检查更新中，请稍后");
     return;
   }
   checkingUpdate.value = true;
   try {
-    window.electronAPI.checkForUpdates();
+    await window.electronAPI.checkForUpdates();
+    //TODO: 最后一步确定更新后关闭窗口
+    window.electronAPI.closeSettingsWindow();
   } catch (error) {
     console.error("检查更新失败:", error);
+  } finally {
     checkingUpdate.value = false;
   }
 };

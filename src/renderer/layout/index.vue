@@ -64,20 +64,18 @@
         </div>
       </main>
     </div>
-    <!-- 下载进度占位 -->
-    <DownloadWithProgress />
   </div>
 </template>
 
 <script setup>
 import { computed } from "vue";
 import { NMenu, NButton, NTooltip } from "naive-ui";
-import { usePlatform } from "../composables/usePlatform.js";
-import { useMenuOptions } from "../composables/useMenuOptions.js";
+import { usePlatform } from "@/composables/usePlatform.js";
+import { useMenuOptions } from "@/composables/useMenuOptions.js";
+import { useAppUpdate } from "@/composables/useAppUpdate.js";
 import CustomTitleBar from "./CustomTitleBar.vue";
-import { componentMap } from "../config.js";
+import { componentMap } from "@/config.js";
 import { useI18n } from "vue-i18n";
-import DownloadWithProgress from "@/components/updateApp/DownloadWithProgress.vue";
 
 const { t } = useI18n();
 
@@ -93,6 +91,8 @@ const currentComponent = computed(() => {
   return componentMap[activeTab.value] || componentMap.system;
 });
 
+// 初始化更新监听
+useAppUpdate();
 </script>
 
 <style scoped>

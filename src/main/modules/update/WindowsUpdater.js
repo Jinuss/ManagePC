@@ -167,7 +167,7 @@ export default class WindowsUpdater extends BaseUpdater {
   autoDownloadUpdate() {
     log.info("[WindowsUpdater-autoDownloadUpdate] autoDownloadUpdate called");
 
-    this.autoUpdater.once("update-auto-downloaded", () => {
+    this.autoUpdater.once("update-downloaded", () => {
       log.info(
         "[WindowsUpdater-autoDownloadUpdate] Update downloaded，下载完成",
       );
@@ -185,6 +185,7 @@ export default class WindowsUpdater extends BaseUpdater {
 
     this.autoUpdater.on("update-downloaded", () => {
       log.info("[WindowsUpdater-downloadUpdate] Update downloaded");
+      storeManager.getStore().set("hasUpdate", true);
       this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOADED);
     });
 
