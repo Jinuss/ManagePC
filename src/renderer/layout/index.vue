@@ -64,8 +64,6 @@
         </div>
       </main>
     </div>
-    <!-- 下载占位 -->
-    <DownloadIfAutoUpdate />
     <!-- 下载进度占位 -->
     <DownloadWithProgress />
   </div>
@@ -79,7 +77,6 @@ import { useMenuOptions } from "../composables/useMenuOptions.js";
 import CustomTitleBar from "./CustomTitleBar.vue";
 import { componentMap } from "../config.js";
 import { useI18n } from "vue-i18n";
-import DownloadIfAutoUpdate from "@/components/updateApp/DownloadIfAutoUpdate.vue";
 import DownloadWithProgress from "@/components/updateApp/DownloadWithProgress.vue";
 
 const { t } = useI18n();

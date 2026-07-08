@@ -2,6 +2,7 @@ import { autoUpdater } from "electron-updater";
 import BaseUpdater from "./BaseUpdater.js";
 import { IPC_CHANNELS } from "../../constants.js";
 import { log } from "../log/logManager.js";
+import storeManager from "../../store";
 
 /** Windows 平台更新管理器
  * 使用 electron-updater 实现自动更新
@@ -113,8 +114,7 @@ export default class WindowsUpdater extends BaseUpdater {
    * 通过 electron-updater 检查 GitHub Releases
    * @returns {Promise<Object>} - 更新检查结果
    */
-  async checkAndDownload(options) {
-    const { afterCheck, afterDownloaded } = options;
+  async checkAndDownload() {
     log.info("[WindowsUpdater-checkAndDownload] checkForUpdates called");
     log.info(
       "[WindowsUpdater-checkAndDownload] Current version:",
@@ -129,14 +129,16 @@ export default class WindowsUpdater extends BaseUpdater {
 
     const onNotAvailable = () => {
       cleanup();
-      log.info("[WindowsUpdater-checkAndDownload] No update available");
-      afterCheck && afterCheck(false);
+      log.info(
+        "[WindowsUpdater-checkAndDownload] No update available，已经是最新版本",
+      );
+      storeManager.getStore().set("hasUpdate", false);
     };
 
     const onAvailable = (info) => {
       cleanup();
       log.info("[WindowsUpdater-checkAndDownload] Update available:", info);
-      this.autoDownloadUpdate(afterDownloaded);
+      this.autoDownloadUpdate();
     };
 
     const onError = (error) => {
@@ -162,12 +164,14 @@ export default class WindowsUpdater extends BaseUpdater {
   }
 
   // 自动下载更新包
-  autoDownloadUpdate(afterDownloaded) {
+  autoDownloadUpdate() {
     log.info("[WindowsUpdater-autoDownloadUpdate] autoDownloadUpdate called");
 
     this.autoUpdater.once("update-auto-downloaded", () => {
-      log.info("[WindowsUpdater-autoDownloadUpdate] Update downloaded");
-      afterDownloaded && afterDownloaded();
+      log.info(
+        "[WindowsUpdater-autoDownloadUpdate] Update downloaded，下载完成",
+      );
+      storeManager.getStore().set("hasUpdate", true);
       this.sendEvent(IPC_CHANNELS.UPDATE_AUTO_DOWNLOADED);
     });
 

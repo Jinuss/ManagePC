@@ -276,26 +276,6 @@ class WindowManager {
   getAlwaysOnTop() {
     return this.isAlwaysOnTop
   }
-
-  /** 设置开机自启
- * @param {boolean} autoStart - 是否自启
- * @returns {Object} - { success: boolean }
- */
-  setAutoStart(autoStart) {
-    this.autoStart = autoStart
-    storeManager.setAutoStart(autoStart)
-    app.setLoginItemSettings({
-      openAtLogin: autoStart
-    })
-    return { success: true }
-  }
-
-  /** 获取开机自启设置
- * @returns {boolean}
- */
-  getAutoStart() {
-    return this.autoStart
-  }
 }
 
 export default WindowManager

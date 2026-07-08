@@ -1,11 +1,10 @@
-import { app, ipcMain, BrowserWindow } from "electron";
+import { app } from "electron";
 import WindowManager from "./modules/window/windowManager.js";
-import { registerIpcHandlers } from "./modules/ipc/ipcHandlers.js";
+import { registerIpcHandlers } from "./modules/ipc/index.js";
 import UpdateManager from "./modules/update/updateManager.js";
 import TrayManager from "./modules/window/trayManager.js";
 import storeManager from "./store.js";
 import { log } from "./modules/log/logManager.js";
-import { IPC_CHANNELS } from "./constants";
 import { isMac } from "./utils/helps.js";
 
 // 初始化日志系统
@@ -43,159 +42,6 @@ if (!gotTheLock) {
     updateManager = new UpdateManager();
     trayManager = new TrayManager();
 
-    registerIpcHandlers({ updateManager, storeManager });
-
-    // ============ 设置窗口相关 IPC ============
-    // 打开设置窗口
-    ipcMain.handle(IPC_CHANNELS.OPEN_SETTINGS_WINDOW, () => {
-      windowManager.createSettingsWindow();
-      return { success: true };
-    });
-
-    // 关闭设置窗口
-    ipcMain.handle(IPC_CHANNELS.CLOSE_SETTINGS_WINDOW, () => {
-      windowManager.closeSettingsWindow();
-      return { success: true };
-    });
-
-    // ============ 版本信息 IPC ============
-    // 获取应用版本号
-    ipcMain.handle(IPC_CHANNELS.GET_APP_VERSION, () => {
-      return app.getVersion();
-    });
-
-    // ============ 主题设置 IPC ============
-    // 设置应用主题，保存到配置并通知所有窗口
-    ipcMain.handle(IPC_CHANNELS.SET_THEME, (event, theme) => {
-      storeManager.setTheme(theme);
-      windowManager.setTheme(theme);
-      const allWindows = BrowserWindow.getAllWindows();
-      allWindows.forEach((window) => {
-        if (!window.isDestroyed()) {
-          window.webContents.send(IPC_CHANNELS.THEME_CHANGED, theme);
-        }
-      });
-      return { success: true };
-    });
-
-    // ============ 自动升级设置 IPC ============
-    // 设置自动升级
-    ipcMain.handle(IPC_CHANNELS.SET_AUTO_UPDATE, (event, autoUpdate) => {
-      storeManager.setAutoUpdate(autoUpdate);
-    });
-
-    // 获取自动升级设置
-    ipcMain.handle(IPC_CHANNELS.GET_AUTO_UPDATE, () => {
-      return storeManager.getAutoUpdate();
-    });
-
-    // ============ 语言设置 IPC ============
-    // 设置应用语言，保存到配置并通知所有窗口
-    ipcMain.handle(IPC_CHANNELS.SET_LANGUAGE, (event, language) => {
-      storeManager.setLanguage(language);
-      const allWindows = BrowserWindow.getAllWindows();
-      allWindows.forEach((window) => {
-        if (!window.isDestroyed()) {
-          window.webContents.send(IPC_CHANNELS.LANGUAGE_CHANGED, language);
-        }
-      });
-      return { success: true };
-    });
-
-    // ============ 持久化设置读取 IPC ============
-    // 获取保存的主题设置
-    ipcMain.handle(IPC_CHANNELS.GET_SAVED_THEME, () => {
-      return { theme: storeManager.getTheme() };
-    });
-
-    // 获取保存的语言设置
-    ipcMain.handle(IPC_CHANNELS.GET_SAVED_LANGUAGE, () => {
-      return { language: storeManager.getLanguage() };
-    });
-
-    // ============ 窗口控制 IPC ============
-    // 最小化主窗口
-    ipcMain.handle(IPC_CHANNELS.MINIMIZE_WINDOW, () => {
-      if (windowManager) {
-        const window = windowManager.getMainWindow();
-        if (window && !window.isDestroyed()) {
-          window.minimize();
-        }
-      }
-      return { success: true };
-    });
-
-    // 最大化/还原主窗口（切换状态）
-    ipcMain.handle(IPC_CHANNELS.MAXIMIZE_WINDOW, () => {
-      if (windowManager) {
-        const window = windowManager.getMainWindow();
-        if (window && !window.isDestroyed()) {
-          if (window.isMaximized()) {
-            window.unmaximize();
-          } else {
-            window.maximize();
-          }
-        }
-      }
-      return { success: true };
-    });
-
-    // 关闭主窗口（会触发 close 事件处理）
-    ipcMain.handle(IPC_CHANNELS.CLOSE_WINDOW, () => {
-      if (windowManager) {
-        const window = windowManager.getMainWindow();
-        if (window && !window.isDestroyed()) {
-          window.close();
-        }
-      }
-      return { success: true };
-    });
-
-    // 检查主窗口是否最大化
-    ipcMain.handle(IPC_CHANNELS.IS_WINDOW_MAXIMIZED, () => {
-      if (windowManager) {
-        const window = windowManager.getMainWindow();
-        if (window && !window.isDestroyed()) {
-          return { maximized: window.isMaximized() };
-        }
-      }
-      return { maximized: false };
-    });
-
-    // ============ 窗口置顶 IPC ============
-    // 设置主窗口是否始终置顶
-    ipcMain.handle(IPC_CHANNELS.SET_ALWAYS_ON_TOP, (event, onTop) => {
-      if (windowManager) {
-        return windowManager.setAlwaysOnTop(onTop);
-      }
-      return { success: false };
-    });
-
-    // 获取主窗口是否始终置顶
-    ipcMain.handle(IPC_CHANNELS.GET_ALWAYS_ON_TOP, () => {
-      if (windowManager) {
-        return { alwaysOnTop: windowManager.getAlwaysOnTop() };
-      }
-      return { alwaysOnTop: false };
-    });
-
-    // ============ 开机自启 IPC ============
-    // 设置应用是否开机自启
-    ipcMain.handle(IPC_CHANNELS.SET_AUTO_START, (event, autoStart) => {
-      if (windowManager) {
-        return windowManager.setAutoStart(autoStart);
-      }
-      return { success: false };
-    });
-
-    // 获取应用是否开机自启
-    ipcMain.handle(IPC_CHANNELS.GET_AUTO_START, () => {
-      if (windowManager) {
-        return { autoStart: windowManager.getAutoStart() };
-      }
-      return { autoStart: false };
-    });
-
     log.info("createMainWindow start");
     windowManager.createMainWindow();
     log.info("createMainWindow end");
@@ -206,16 +52,16 @@ if (!gotTheLock) {
     trayManager.setWindowManager(windowManager);
     windowManager.setTrayManager(trayManager);
 
-    // 初始化是否有更新
-    if (app.isPackaged && isMac()) {
-      // macos 平台在主线程中监听更新事件
-      log.info("主动更新：checkForUpdates start");
-      setTimeout(() => {
-        updateManager.checkForUpdates((hasUpdate) => {
-          log.info("electron-store hasUpdate=", hasUpdate);
-          storeManager.getStore().setHasUpdate(hasUpdate);
-        });
-      }, 3000);
+    log.info("registerIpcHandlers start");
+    try {
+      registerIpcHandlers({ updateManager, windowManager });
+    } catch (err) {
+      log.error("registerIpcHandlers error=", err.message);
+    }
+    log.info("registerIpcHandlers end");
+
+    if (app.isPackaged) {
+      checkAndUpdate();
     }
   }
 
@@ -296,29 +142,6 @@ process.on("unhandledRejection", (err) => {
   log.error(err);
 });
 
-// ==================== 导出函数 ====================
-
-/** 获取窗口管理器实例
- * @returns {WindowManager}
- */
-export function getWindowManager() {
-  return windowManager;
-}
-
-/** 获取更新管理器实例
- * @returns {UpdateManager}
- */
-export function getUpdateManager() {
-  return updateManager;
-}
-
-/** 获取托盘管理器实例
- * @returns {TrayManager}
- */
-export function getTrayManager() {
-  return trayManager;
-}
-
 /** 设置退出标志
  * @param {boolean} value - 是否正在退出
  */
@@ -331,4 +154,28 @@ export function setIsQuitting(value) {
  */
 export function getIsQuitting() {
   return isQuitting;
+}
+
+/** 检查是否需要主动更新
+ * 生产环境下，根据配置检查是否有需要更新的版本
+ */
+function checkAndUpdate() {
+  log.info("生产环境，检查是否需要主动更新：checkAndUpdate start");
+  if (isMac()) {
+    log.info("macOS 环境，必须要检测更新");
+    setTimeout(() => {
+      updateManager.checkForUpdates();
+    }, 1000);
+  } else {
+    log.info("Windows 环境，根据配置是否主动检测更新");
+    const autoUpdate = storeManager.getStore().get("autoUpdate");
+    log.info("是否需要主动更新:", autoUpdate);
+    if (!autoUpdate) {
+      log.info("未配置主动更新，不检查更新");
+      return;
+    }
+    setTimeout(async () => {
+      await updateManager.checkAndDownloadUpdates();
+    }, 1000);
+  }
 }
