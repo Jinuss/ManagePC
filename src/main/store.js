@@ -22,6 +22,9 @@ export const defaultState = {
   autoStart: false,
   hasUpdate: false,
   autoUpdate: false,
+  shortcuts: {
+    showWindow: "CommandOrControl+Shift+A",
+  },
 };
 
 class StoreManager {

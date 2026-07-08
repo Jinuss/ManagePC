@@ -76,7 +76,7 @@ const fetchSSHKey = async () => {
     sshKey.value = key;
   } catch (error) {
     console.error("获取 SSH key 失败:", error);
-    sshKey.value = "获取失败";
+    sshKey.value = t('common.fetchFailed');
   }
 };
 

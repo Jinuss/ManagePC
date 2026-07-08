@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, globalShortcut } from "electron";
 import WindowManager from "./modules/window/windowManager.js";
 import { registerIpcHandlers } from "./modules/ipc/index.js";
 import UpdateManager from "./modules/update/updateManager.js";
@@ -59,6 +59,8 @@ if (!gotTheLock) {
       log.error("registerIpcHandlers error=", err.message);
     }
     log.info("registerIpcHandlers end");
+
+    registerShortcuts();
 
     if (app.isPackaged) {
       checkAndUpdate();
@@ -154,6 +156,31 @@ export function setIsQuitting(value) {
  */
 export function getIsQuitting() {
   return isQuitting;
+}
+
+/** 注册全局快捷键
+ * 从配置中读取快捷键设置并注册
+ */
+function registerShortcuts() {
+  log.info("registerShortcuts start");
+  const shortcuts = storeManager.getStore().get("shortcuts", {});
+  const showWindowShortcut = shortcuts.showWindow || "CommandOrControl+Shift+A";
+  
+  const success = globalShortcut.register(showWindowShortcut, () => {
+    if (windowManager && windowManager.getMainWindow()) {
+      const mainWindow = windowManager.getMainWindow();
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus();
+    }
+  });
+  
+  if (success) {
+    log.info(`[Shortcut] Registered showWindow shortcut: ${showWindowShortcut}`);
+  } else {
+    log.error(`[Shortcut] Failed to register showWindow shortcut: ${showWindowShortcut}`);
+  }
 }
 
 /** 检查是否需要主动更新

@@ -21,9 +21,7 @@
     <div class="log-stats">
       <span>{{ t("logViewer.lines") }}: {{ logInfo.lineCount }}</span>
       <span>{{ t("logViewer.size") }}: {{ formattedSize }}</span>
-      <span
-        >初始只能显示最近的500条日志，若要查看全部日志，请点击日志路径打开查看</span
-      >
+      <span>{{ t("logViewer.logLimitHint") }}</span>
     </div>
     <div class="log-content" ref="logContainer">
       <div

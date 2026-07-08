@@ -5,5 +5,7 @@ export const componentMap = {
   
   theme: defineAsyncComponent(() => import("./components/ThemeSettings.vue")),
 
+  shortcut: defineAsyncComponent(() => import("./components/ShortcutSettings.vue")),
+
   about: defineAsyncComponent(() => import("./components/AboutSettings.vue")),
 };

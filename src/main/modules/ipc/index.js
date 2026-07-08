@@ -5,6 +5,7 @@ import { registerIpcUpdateHandlers } from "./ipcUpdateHandlers";
 import { registerIpcLogHandlers } from "./ipcLogHandlers";
 import { registerIpcStoreHandlers } from "./ipcStoreHandlers";
 import { registerIpcWindowHandlers } from "./ipcWindowHandlers";
+import { registerIpcShortcutHandlers } from "./ipcShortcutHandlers";
 
 /** 注册所有 IPC 处理器
  * 将渲染进程的请求转发到对应的服务模块
@@ -20,6 +21,11 @@ export function registerIpcHandlers({
 
   log.info("[ipcRegister ] 注册窗口相关 IPC 处理器");
   registerIpcWindowHandlers({
+    windowManager,
+  });
+
+  log.info("[ipcRegister ] 注册快捷键相关 IPC 处理器");
+  registerIpcShortcutHandlers({
     windowManager,
   });
 

@@ -21,72 +21,48 @@ export default {
     unpin: '取消置顶'
   },
   header: {
-    title: '系统监控',
-    subtitle: 'System Monitor'
+    title: '系统监控'
   },
   cpu: {
     title: 'CPU 使用率',
-    label: 'CPU',
-    unit: '%',
-    core: '核心',
-    usage: '使用率'
-  },
-  memory: {
-    title: '内存使用率',
-    label: '内存',
-    unit: '%',
-    used: '已使用',
-    total: '总计',
-    available: '可用'
+    unit: '%'
   },
   network: {
     title: '网络流量',
-    label: '网络',
-    received: '接收',
-    sent: '发送',
     unit: 'Kbps',
-    interface: '网络接口',
-    status: '状态'
+    received: '接收',
+    sent: '发送'
+  },
+  memory: {
+    title: '内存使用率',
+    unit: '%'
   },
   disk: {
-    title: '磁盘使用',
-    label: '磁盘',
-    used: '已用',
-    total: '总计',
-    free: '可用',
-    type: '类型',
-    local: '本地磁盘',
-    network: '网络位置',
     usage: '磁盘使用情况',
     totalSize: '总容量',
+    used: '已用',
+    free: '可用',
     noDisk: '未检测到磁盘信息'
   },
   networkInfo: {
     title: '网络信息',
     ip: 'IP 地址',
     mac: 'MAC 地址',
-    interface: '接口名称',
-    status: '状态',
     subnetMask: '子网掩码',
     dhcp: 'DHCP'
   },
   system: {
     title: '系统信息',
-    version: '版本',
     hostname: '主机名',
     os: '操作系统',
+    platform: '平台',
     cpu: 'CPU',
     cores: '核心数',
     uptime: '运行时间',
-    memory: '内存',
-    ssh: 'SSH 密钥',
-    platform: '平台',
-    arch: '架构'
+    memory: '内存'
   },
   ssh: {
-    title: 'SSH 公钥',
-    copySuccess: '复制成功',
-    copyFailed: '复制失败'
+    title: 'SSH 公钥'
   },
   menu: {
     monitoring: '系统监控',
@@ -109,28 +85,12 @@ export default {
     noBattery: '未检测到电池',
     calculating: '计算中...'
   },
-  status: {
-    online: '在线',
-    offline: '离线',
-    connected: '已连接',
-    disconnected: '已断开'
-  },
   error: {
-    title: '错误',
-    fetchFailed: '获取数据失败',
-    diskError: '获取磁盘信息失败',
-    networkError: '获取网络信息失败',
-    systemError: '获取系统信息失败',
-    sshError: '获取 SSH 密钥失败'
+    title: '错误'
   },
   time: {
-    seconds: '秒',
-    minutes: '分钟',
     hours: '小时',
-    days: '天',
-    weeks: '周',
-    months: '月',
-    years: '年'
+    minutes: '分钟'
   },
   settings: {
     title: '设置',
@@ -140,30 +100,28 @@ export default {
     update: '更新',
     about: '关于',
     version: '版本信息',
-    noUpdate: '当前已是最新版本',
-    updateError: '检查更新失败',
-    checkingUpdate: '检查更新中...',
-    downloading: '下载中...',
     downloadNow: '立即下载',
     remindLater: '稍后提醒',
-    restartNow: '立即重启',
-    restartLater: '稍后重启',
-    releaseNotes: '更新说明',
     updateAvailable: '发现新版本',
-    updateAvailable: '发现新版本',
-    updateDownloaded: '更新已下载',
-    updateDownloadedMessage: '更新已下载完成，是否立即重启应用？',
     downloadComplete: '下载完成',
     exitAndInstall: '是否退出应用并立即安装？',
     exitInstall: '退出并安装',
     installLater: '稍后安装',
     downloadingTitle: '下载中',
     downloadingDescription: '正在下载更新，请稍后...',
-    autoStart: '开机自启动',
-    autoStartDescription: '开机时自动启动应用',
     themeLight: '亮色',
     themeDark: '暗色',
-    themeSystem: '跟随系统'
+    themeSystem: '跟随系统',
+    noReleaseNotes: '暂无更新说明',
+    restartAndInstall: '重启并安装',
+    checkingUpdate: '检查更新中，请稍后',
+    autoUpdateLabel: '有更新时自动下载应用',
+    autoStartDescription: '开机自动启动',
+    shortcut: '快捷键设置',
+    showWindowShortcut: '唤醒主窗口',
+    shortcutPlaceholder: '按下组合键',
+    shortcutReset: '重置',
+    shortcutConflict: '快捷键冲突'
   },
   logViewer: {
     title: '日志查看',
@@ -173,6 +131,8 @@ export default {
     size: '大小',
     empty: '暂无日志',
     loadError: '加载日志失败',
-    clearSuccess: '日志已清空'
+    clearSuccess: '日志已清空',
+    clearError: '清空日志失败',
+    logLimitHint: '初始只能显示最近的500条日志，若要查看全部日志，请点击日志路径打开查看'
   }
 }

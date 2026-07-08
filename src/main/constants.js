@@ -75,6 +75,11 @@ export const IPC_CHANNELS = {
   // ========== 开机自启 ==========
   SET_AUTO_START: "set-auto-start", // 设置开机自启
   GET_AUTO_START: "get-auto-start", // 查询开机自启状态
+
+  // ========== 快捷键设置 ==========
+  SET_SHORTCUT: "set-shortcut", // 设置快捷键
+  GET_SHORTCUT: "get-shortcut", // 获取快捷键设置
+  REGISTER_SHORTCUT: "register-shortcut", // 注册快捷键
   
   // ========== 自动升级 ==========
   SET_AUTO_UPDATE: "set-auto-update", // 设置自动升级

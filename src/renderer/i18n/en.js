@@ -21,72 +21,48 @@ export default {
     unpin: 'Unpin'
   },
   header: {
-    title: 'System Monitor',
-    subtitle: 'System Monitor'
+    title: 'System Monitor'
   },
   cpu: {
     title: 'CPU Usage',
-    label: 'CPU',
-    unit: '%',
-    core: 'Core',
-    usage: 'Usage'
-  },
-  memory: {
-    title: 'Memory Usage',
-    label: 'Memory',
-    unit: '%',
-    used: 'Used',
-    total: 'Total',
-    available: 'Available'
+    unit: '%'
   },
   network: {
     title: 'Network Traffic',
-    label: 'Network',
-    received: 'Received',
-    sent: 'Sent',
     unit: 'Kbps',
-    interface: 'Interface',
-    status: 'Status'
+    received: 'Received',
+    sent: 'Sent'
+  },
+  memory: {
+    title: 'Memory Usage',
+    unit: '%'
   },
   disk: {
-    title: 'Disk Usage',
-    label: 'Disk',
-    used: 'Used',
-    total: 'Total',
-    free: 'Free',
-    type: 'Type',
-    local: 'Local Disk',
-    network: 'Network Location',
     usage: 'Disk Usage',
     totalSize: 'Total Size',
+    used: 'Used',
+    free: 'Free',
     noDisk: 'No disk information detected'
   },
   networkInfo: {
     title: 'Network Information',
     ip: 'IP Address',
     mac: 'MAC Address',
-    interface: 'Interface Name',
-    status: 'Status',
     subnetMask: 'Subnet Mask',
     dhcp: 'DHCP'
   },
   system: {
     title: 'System Information',
-    version: 'Version',
     hostname: 'Hostname',
     os: 'Operating System',
+    platform: 'Platform',
     cpu: 'CPU',
     cores: 'Cores',
     uptime: 'Uptime',
-    memory: 'Memory',
-    ssh: 'SSH Key',
-    platform: 'Platform',
-    arch: 'Architecture'
+    memory: 'Memory'
   },
   ssh: {
-    title: 'SSH Public Key',
-    copySuccess: 'Copied successfully',
-    copyFailed: 'Copy failed'
+    title: 'SSH Public Key'
   },
   menu: {
     monitoring: 'System Monitor',
@@ -109,28 +85,12 @@ export default {
     noBattery: 'No battery detected',
     calculating: 'Calculating...'
   },
-  status: {
-    online: 'Online',
-    offline: 'Offline',
-    connected: 'Connected',
-    disconnected: 'Disconnected'
-  },
   error: {
-    title: 'Error',
-    fetchFailed: 'Failed to fetch data',
-    diskError: 'Failed to get disk information',
-    networkError: 'Failed to get network information',
-    systemError: 'Failed to get system information',
-    sshError: 'Failed to get SSH key'
+    title: 'Error'
   },
   time: {
-    seconds: 'seconds',
-    minutes: 'minutes',
     hours: 'hours',
-    days: 'days',
-    weeks: 'weeks',
-    months: 'months',
-    years: 'years'
+    minutes: 'minutes'
   },
   settings: {
     title: 'Settings',
@@ -140,29 +100,28 @@ export default {
     update: 'Update',
     about: 'About',
     version: 'Version Information',
-    noUpdate: 'Current version is up to date',
-    updateError: 'Failed to check for updates',
-    checkingUpdate: 'Checking for updates...',
-    downloading: 'Downloading...',
     downloadNow: 'Download Now',
     remindLater: 'Remind Later',
-    restartNow: 'Restart Now',
-    restartLater: 'Restart Later',
-    releaseNotes: 'Release Notes',
     updateAvailable: 'Update Available',
-    updateDownloaded: 'Update Downloaded',
-    updateDownloadedMessage: 'Update has been downloaded. Would you like to restart now?',
     downloadComplete: 'Download Complete',
     exitAndInstall: 'Would you like to exit and install now?',
     exitInstall: 'Exit and Install',
     installLater: 'Install Later',
     downloadingTitle: 'Downloading',
     downloadingDescription: 'Downloading update, please wait...',
-    autoStart: 'Auto Start',
-    autoStartDescription: 'Launch app automatically on startup',
     themeLight: 'Light',
     themeDark: 'Dark',
-    themeSystem: 'System'
+    themeSystem: 'System',
+    noReleaseNotes: 'No release notes',
+    restartAndInstall: 'Restart and Install',
+    checkingUpdate: 'Checking for updates, please wait',
+    autoUpdateLabel: 'Auto download app when updates are available',
+    autoStartDescription: 'Auto start on boot',
+    shortcut: 'Shortcut Settings',
+    showWindowShortcut: 'Show Main Window',
+    shortcutPlaceholder: 'Press key combination',
+    shortcutReset: 'Reset',
+    shortcutConflict: 'Shortcut conflict'
   },
   logViewer: {
     title: 'Log Viewer',
@@ -172,6 +131,8 @@ export default {
     size: 'Size',
     empty: 'No logs available',
     loadError: 'Failed to load logs',
-    clearSuccess: 'Logs cleared'
+    clearSuccess: 'Logs cleared',
+    clearError: 'Failed to clear logs',
+    logLimitHint: 'Only the latest 500 logs are displayed initially. To view all logs, click the log path to open'
   }
 }

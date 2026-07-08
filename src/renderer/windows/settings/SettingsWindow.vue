@@ -92,6 +92,11 @@ const menuOptions = computed(() => [
     icon: () => h("span", { class: "menu-icon" }, "🎨"),
   },
   {
+    label: t("settings.shortcut"),
+    key: "shortcut",
+    icon: () => h("span", { class: "menu-icon" }, "⌨️"),
+  },
+  {
     label: t("settings.about"),
     key: "about",
     icon: () => h("span", { class: "menu-icon" }, "ℹ️"),

@@ -20,7 +20,7 @@
         class="update-btn"
         @click="checkUpdateAndInstall"
       >
-        <span> 重启并安装 </span>
+        <span>{{ t("settings.restartAndInstall") }}</span>
       </NButton>
     </n-badge>
   </div>
@@ -43,7 +43,7 @@ const checkingUpdate = ref(false);
 
 const checkUpdate = async () => {
   if (checkingUpdate.value) {
-    message.warning("检查更新中，请稍后");
+    message.warning(t("settings.checkingUpdate"));
     return;
   }
   checkingUpdate.value = true;

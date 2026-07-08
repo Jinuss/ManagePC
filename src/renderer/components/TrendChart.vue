@@ -5,11 +5,11 @@
       <span class="chart-title">{{ title }}</span>
       <div class="chart-values" v-if="hasMultipleSeries">
         <span class="value-item">
-          <span class="value-label">{{ seriesNames[0] }}</span>
+          <span class="value-label">{{ displaySeriesNames[0] }}</span>
           <span class="value-num" :style="{ color: colors[0] }">{{ currentRecv }} {{ t('network.unit') }}</span>
         </span>
         <span class="value-item">
-          <span class="value-label">{{ seriesNames[1] }}</span>
+          <span class="value-label">{{ displaySeriesNames[1] }}</span>
           <span class="value-num" :style="{ color: colors[1] }">{{ currentSent }} {{ t('network.unit') }}</span>
         </span>
       </div>
@@ -73,8 +73,15 @@ const props = defineProps({
   },
   seriesNames: {
     type: Array,
-    default: () => ['接收', '发送']
+    default: undefined
   }
+})
+
+const displaySeriesNames = computed(() => {
+  if (props.seriesNames && props.seriesNames.length > 0) {
+    return props.seriesNames
+  }
+  return [t('network.received'), t('network.sent')]
 })
 
 const currentValue = computed(() => {
@@ -163,7 +170,7 @@ const chartOption = computed(() => {
       },
       series: [
         {
-          name: props.seriesNames[0],
+          name: displaySeriesNames[0],
           type: 'line',
           smooth: true,
           symbol: 'none',
@@ -187,7 +194,7 @@ const chartOption = computed(() => {
           data: props.data.map(d => d?.recv || 0)
         },
         {
-          name: props.seriesNames[1],
+          name: displaySeriesNames[1],
           type: 'line',
           smooth: true,
           symbol: 'none',

@@ -5,6 +5,7 @@ import { windowAPI } from "./modules/ipcWindowPreload";
 import { storeAPI } from "./modules/ipcStorePreload";
 import { logAPI } from "./modules/ipcLogPreload";
 import { commonAPI } from "./modules/ipcCommonPreload";
+import { shortcutAPI } from "./modules/ipcShortcutPreload";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   // 系统信息
@@ -19,4 +20,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   ...logAPI,
   // 通用
   ...commonAPI,
+  // 快捷键
+  ...shortcutAPI,
 });
