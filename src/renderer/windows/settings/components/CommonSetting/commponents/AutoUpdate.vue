@@ -26,9 +26,10 @@ const toggleAutoUpdate = (value) => {
   autoUpdate.value = value;
 };
 
-onMounted(() => {
+onMounted(async () => {
   try {
-    const result = window.electronAPI.getAutoUpdate();
+    const result = await window.electronAPI.getAutoUpdate();
+    console.log("🚀 ~ result:", result)
     autoUpdate.value = result.autoUpdate;
   } catch {
     autoUpdate.value = false;

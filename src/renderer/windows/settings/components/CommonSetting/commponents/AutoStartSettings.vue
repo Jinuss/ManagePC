@@ -31,6 +31,7 @@ const toggleAutoStart = async (value) => {
 onMounted(async () => {
   try {
     const result = await window.electronAPI.getAutoStart();
+    console.log("🚀 ~ result:", result)
     autoStart.value = result.autoStart;
   } catch {
     autoStart.value = false;

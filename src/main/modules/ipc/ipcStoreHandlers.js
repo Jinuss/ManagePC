@@ -40,7 +40,7 @@ export function registerIpcStoreHandlers({ windowManager }) {
   // 获取自动升级设置
   ipcMain.handle(IPC_CHANNELS.GET_AUTO_UPDATE, () => {
     log.info("[ipcHandle ] 获取自动升级设置", getStoreValue("autoUpdate"));
-    return getStoreValue("autoUpdate");
+    return { autoUpdate: getStoreValue("autoUpdate") };
   });
 
   // 设置应用语言，保存到配置并通知所有窗口
