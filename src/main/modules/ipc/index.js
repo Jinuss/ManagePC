@@ -31,7 +31,7 @@ export function registerIpcHandlers({
 
   log.info("[ipcRegister ] 注册更新相关 IPC 处理器");
   if (app.isPackaged) {
-    log.info("[ipcRegister ] 打包应用注册更新相关 IPC 处理器");
+    log.info("[ipcRegister] 打包应用注册更新相关 IPC 处理器");
     registerIpcUpdateHandlers({
       updateManager,
     });

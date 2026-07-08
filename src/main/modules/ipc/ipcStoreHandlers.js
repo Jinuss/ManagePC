@@ -2,6 +2,7 @@ import { app, ipcMain } from "electron";
 import { IPC_CHANNELS } from "../../constants";
 import { broadcast } from "../../utils/helps";
 import storeManager from "../../store";
+import { log } from "../log/logManager";
 
 /** 注册 IPC 事件处理Store读取函数
  * @param {WindowManager} windowManager - 窗口管理器
@@ -38,6 +39,7 @@ export function registerIpcStoreHandlers({ windowManager }) {
 
   // 获取自动升级设置
   ipcMain.handle(IPC_CHANNELS.GET_AUTO_UPDATE, () => {
+    log.info("[ipcHandle ] 获取自动升级设置", getStoreValue("autoUpdate"));
     return getStoreValue("autoUpdate");
   });
 

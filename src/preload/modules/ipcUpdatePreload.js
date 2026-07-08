@@ -16,7 +16,8 @@ export const updateAPI = {
   installUpdate: () => ipcRenderer.invoke(IPC_CHANNELS.INSTALL_UPDATE),
   onUpdateAvailable: ({ callback }) => {
     ipcRenderer.on(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
-    return () => ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
+    return () =>
+      ipcRenderer.removeListener(IPC_CHANNELS.UPDATE_AVAILABLE, callback);
   },
   onDownloadProgress: (callback) => {
     ipcRenderer.on(IPC_CHANNELS.UPDATE_DOWNLOAD_PROGRESS, (event, data) =>

@@ -1,51 +1,58 @@
 <template>
   <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
     <NDialogProvider>
-      <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
-        <div class="settings-header">
-          <div class="mac-controls">
-            <button
-              v-if="isMac"
-              class="mac-close-button"
-              :class="{ inactive: !isActive }"
-              @click="closeWindow"
-            >
-              <span class="mac-close-icon">✕</span>
-            </button>
+      <NMessageProvider>
+        <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
+          <div class="settings-header">
+            <div class="mac-controls">
+              <button
+                v-if="isMac"
+                class="mac-close-button"
+                :class="{ inactive: !isActive }"
+                @click="closeWindow"
+              >
+                <span class="mac-close-icon">✕</span>
+              </button>
+            </div>
+            <div class="windows-controls">
+              <button
+                v-if="!isMac"
+                class="control-btn close-btn"
+                @click="closeWindow"
+                :title="t('common.close')"
+              >
+                <span class="icon">✕</span>
+              </button>
+            </div>
           </div>
-          <div class="windows-controls">
-            <button
-              v-if="!isMac"
-              class="control-btn close-btn"
-              @click="closeWindow"
-              :title="t('common.close')"
-            >
-              <span class="icon">✕</span>
-            </button>
+          <div class="settings-body">
+            <aside class="settings-sidebar">
+              <NMenu
+                :value="activeTab"
+                :options="menuOptions"
+                class="sidebar-menu"
+                mode="vertical"
+                @update:value="handleMenuSelect"
+              />
+            </aside>
+            <main class="settings-main">
+              <component :is="componentMap[activeTab]" />
+            </main>
           </div>
         </div>
-        <div class="settings-body">
-          <aside class="settings-sidebar">
-            <NMenu
-              :value="activeTab"
-              :options="menuOptions"
-              class="sidebar-menu"
-              mode="vertical"
-              @update:value="handleMenuSelect"
-            />
-          </aside>
-          <main class="settings-main">
-            <component :is="componentMap[activeTab]" />
-          </main>
-        </div>
-      </div>
+      </NMessageProvider>
     </NDialogProvider>
   </NConfigProvider>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, h } from "vue";
-import { NConfigProvider, NMenu, NDialogProvider } from "naive-ui";
+import {
+  NConfigProvider,
+  NMenu,
+  NDialogProvider,
+  NMessageProvider,
+} from "naive-ui";
 import { darkTheme } from "naive-ui";
 import { useTheme } from "../../composables/useTheme";
 import { usePlatform } from "../../composables/usePlatform";
