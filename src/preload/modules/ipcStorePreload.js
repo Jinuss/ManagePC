@@ -9,6 +9,12 @@ export const storeAPI = {
   getAppVersion: () => ipcRenderer.invoke(IPC_CHANNELS.GET_APP_VERSION),
 
   /**
+   * 获取应用是否为打包状态
+   * @returns {Promise<boolean>} - 是否为打包状态
+   */
+  getIsPackaged: () => ipcRenderer.invoke(IPC_CHANNELS.GET_IS_PACKAGED),
+
+  /**
    * 设置主题
    * @param {string} theme - 主题名称
    * @returns {Promise<void>} - 操作完成的Promise

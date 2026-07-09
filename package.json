@@ -24,6 +24,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sentry/electron": "^7.15.0",
     "@vueuse/core": "^14.3.0",
     "echarts": "^6.1.0",
     "electron-log": "^5.4.4",

@@ -8,9 +8,13 @@ import { log } from "./modules/log/logManager.js";
 import { isMac } from "./utils/helps.js";
 import { CUSTOM_PROTOCOL_NAME } from "./constants.js";
 import { registerProtocol } from "./modules/ipc/ipcProtocolHandlers.js";
+import { initSentry, captureException } from "./sentry.js";
 
 // 初始化日志系统
 log.initialize();
+
+// 初始化 Sentry（仅生产环境）
+initSentry();
 
 // 请求单实例锁，确保应用只运行一个实例
 const gotTheLock = app.requestSingleInstanceLock();
@@ -192,11 +196,13 @@ process.on("SIGINT", () => {
 process.on("uncaughtException", (err) => {
   log.error("uncaughtException");
   log.error(err);
+  captureException(err, { type: "uncaughtException" });
 });
 
 process.on("unhandledRejection", (err) => {
   log.error("unhandledRejection");
   log.error(err);
+  captureException(err, { type: "unhandledRejection" });
 });
 
 export function setIsQuitting(value) {

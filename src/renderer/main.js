@@ -4,6 +4,23 @@ import i18n from './i18n'
 import './styles/global.css'
 import { initTheme } from './composables/useTheme'
 
+import * as Sentry from '@sentry/electron/renderer'
+
+async function initSentry() {
+  try {
+    const dsn = window.electronAPI?.getSentryDsn?.()
+    if (dsn) {
+      Sentry.init({
+        dsn,
+        tracesSampleRate: 0.1,
+      })
+    }
+  } catch {
+  }
+}
+
+initSentry()
+
 const app = createApp(App)
 
 app.use(i18n)

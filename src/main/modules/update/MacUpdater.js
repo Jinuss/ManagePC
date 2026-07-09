@@ -3,6 +3,7 @@ import semver from 'semver'
 import BaseUpdater from './BaseUpdater.js'
 import { GITHUB_REPO } from '../../constants.js'
 import { log } from '../log/logManager.js'
+import { addBreadcrumb } from '../../sentry.js'
 
 /** macOS 平台更新管理器
  * 通过 GitHub API 检查更新，使用系统对话框通知用户
@@ -31,6 +32,11 @@ export default class MacUpdater extends BaseUpdater {
     log.info('[MacUpdater] checkForUpdates called')
     log.info('[MacUpdater] Current version:', this.currentVersion)
     log.info('[MacUpdater] GitHub API:', GITHUB_REPO.RELEASE_API)
+    addBreadcrumb({
+      category: 'update',
+      message: '开始检查更新',
+      level: 'info',
+    })
 
     try {
       const response = await fetch(GITHUB_REPO.RELEASE_API)
@@ -86,6 +92,11 @@ export default class MacUpdater extends BaseUpdater {
     })
 
     if (response === 0 && updateInfo.downloadUrl) {
+      addBreadcrumb({
+        category: 'update',
+        message: '用户前往下载更新',
+        level: 'info',
+      })
       await shell.openExternal(updateInfo.downloadUrl)
     }
   }

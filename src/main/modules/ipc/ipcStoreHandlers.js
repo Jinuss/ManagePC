@@ -14,6 +14,11 @@ export function registerIpcStoreHandlers({ windowManager }) {
     return app.getVersion();
   });
 
+  // 获取应用是否为打包状态
+  ipcMain.handle(IPC_CHANNELS.GET_IS_PACKAGED, () => {
+    return app.isPackaged;
+  });
+
   // ============ 通用设置 IPC ============
   // 设置通用配置项
   const setStoreValue = (key, value) => {

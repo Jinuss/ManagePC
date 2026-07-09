@@ -1,3 +1,5 @@
+import { SENTRY_DSN } from '../../main/constants';
+
 export const commonAPI = {
   /**
    * 获取当前运行平台信息
@@ -13,4 +15,11 @@ export const commonAPI = {
     isWindows: process.platform === "win32",
     isLinux: process.platform === "linux",
   }),
+  /**
+   * 获取 Sentry DSN
+   * @returns {string|null} - Sentry DSN 或 null
+   */
+  getSentryDsn: () => {
+    return SENTRY_DSN || null;
+  },
 };

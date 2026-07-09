@@ -38,6 +38,9 @@ export const LANGUAGE_DEFAULTS = {
 // 自定义协议名称
 export const CUSTOM_PROTOCOL_NAME = 'managepc';
 
+// Sentry DSN
+export const SENTRY_DSN = 'https://c5d17667a8e391eeb6f84cc9f8dbc4c6@o4511704216895488.ingest.us.sentry.io/4511704225284096';
+
 // IPC 通道名称常量
 export const IPC_CHANNELS = {
   // ========== 系统信息 ==========
@@ -54,6 +57,7 @@ export const IPC_CHANNELS = {
 
   // ========== 工具 ==========
   GET_APP_VERSION: 'get-app-version', // 获取应用版本号
+  GET_IS_PACKAGED: 'get-is-packaged', // 获取应用是否为打包状态
 
   // ========== 设置窗口 ==========
   OPEN_SETTINGS_WINDOW: 'open-settings-window', // 打开设置窗口

@@ -3,6 +3,7 @@ import BaseUpdater from "./BaseUpdater.js";
 import { IPC_CHANNELS } from "../../constants.js";
 import { log } from "../log/logManager.js";
 import storeManager from "../../store";
+import { addBreadcrumb } from "../../sentry.js";
 
 /** Windows 平台更新管理器
  * 使用 electron-updater 实现自动更新
@@ -166,11 +167,21 @@ export default class WindowsUpdater extends BaseUpdater {
   // 自动下载更新包
   autoDownloadUpdate() {
     log.info("[WindowsUpdater-autoDownloadUpdate] autoDownloadUpdate called");
+    addBreadcrumb({
+      category: "update",
+      message: "开始自动下载更新",
+      level: "info",
+    });
 
     this.autoUpdater.once("update-downloaded", () => {
       log.info(
         "[WindowsUpdater-autoDownloadUpdate] Update downloaded，下载完成",
       );
+      addBreadcrumb({
+        category: "update",
+        message: "自动下载更新完成",
+        level: "info",
+      });
       storeManager.getStore().set("hasUpdate", true);
       this.sendEvent(IPC_CHANNELS.UPDATE_AUTO_DOWNLOADED);
     });
@@ -182,9 +193,19 @@ export default class WindowsUpdater extends BaseUpdater {
    */
   downloadUpdate() {
     log.info("[WindowsUpdater-downloadUpdate] downloadUpdate called");
+    addBreadcrumb({
+      category: "update",
+      message: "开始手动下载更新",
+      level: "info",
+    });
 
     this.autoUpdater.on("update-downloaded", () => {
       log.info("[WindowsUpdater-downloadUpdate] Update downloaded");
+      addBreadcrumb({
+        category: "update",
+        message: "手动下载更新完成",
+        level: "info",
+      });
       storeManager.getStore().set("hasUpdate", true);
       this.sendEvent(IPC_CHANNELS.UPDATE_DOWNLOADED);
     });

@@ -3,6 +3,7 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+  envDir: resolve(__dirname),
   main: {
     plugins: [externalizeDepsPlugin({ exclude: ['electron-store'] })],
     resolve: {
