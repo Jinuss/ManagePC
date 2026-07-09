@@ -38,3 +38,9 @@ publish:
   owner: Jinuss
   repo: ManagePC
   releaseType: release  
+
+# 注册协议
+# protocols:
+#   - name: ManagePC Protocol
+#     schemes:
+#       - managepc  
