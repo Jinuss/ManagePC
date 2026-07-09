@@ -126,5 +126,13 @@ export const IPC_CHANNELS = {
   NOTIFY_UPDATE_DOWNLOADED: 'notify-update-downloaded', // 通知更新下载完成
   GET_HAS_UPDATE: 'get-has-update', // 获取是否有更新
   CHECK_FOR_UPDATES_AND_DOWNLOAD: 'check-for-updates-and-download', // 检查更新并下载
+
+  // ========== 定时任务 ==========
+  TASK_GET_ALL: 'task-get-all', // 获取所有任务
+  TASK_GET_BY_ID: 'task-get-by-id', // 根据ID获取任务
+  TASK_ADD: 'task-add', // 添加任务
+  TASK_UPDATE: 'task-update', // 更新任务
+  TASK_DELETE: 'task-delete', // 删除任务
+  TASK_TOGGLE: 'task-toggle', // 启用/禁用任务
 };
 

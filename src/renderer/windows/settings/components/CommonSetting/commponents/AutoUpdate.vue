@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import { NSwitch } from "naive-ui";
 
@@ -26,10 +26,10 @@ const toggleAutoUpdate = (value) => {
   autoUpdate.value = value;
 };
 
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
     const result = await window.electronAPI.getAutoUpdate();
-    console.log("🚀 ~ result:", result)
+    console.log("🚀 ~ result:", result);
     autoUpdate.value = result.autoUpdate;
   } catch {
     autoUpdate.value = false;

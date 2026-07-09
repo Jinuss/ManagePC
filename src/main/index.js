@@ -9,6 +9,7 @@ import { isMac } from "./utils/helps.js";
 import { CUSTOM_PROTOCOL_NAME } from "./constants.js";
 import { registerProtocol } from "./modules/ipc/ipcProtocolHandlers.js";
 import { initSentry, captureException } from "./sentry.js";
+import taskManager from "./modules/task/taskManager.js";
 
 // 初始化日志系统
 log.initialize();
@@ -71,7 +72,7 @@ if (!gotTheLock) {
     }
   };
 
-  function initApp() {
+  async function initApp() {
     windowManager = new WindowManager();
     updateManager = new UpdateManager();
     trayManager = new TrayManager();
@@ -97,6 +98,8 @@ if (!gotTheLock) {
     registerShortcuts();
 
     registerProtocolOnStartup();
+
+    await taskManager.init();
 
     const initialUrl = extractProtocolUrl(process.argv);
     if (initialUrl) {
@@ -127,7 +130,7 @@ if (!gotTheLock) {
     }
   });
 
-  app.whenReady().then(() => {
+  app.whenReady().then(async () => {
     log.info("App whenReady");
     log.info("isPackaged=", app.isPackaged);
 
@@ -138,7 +141,7 @@ if (!gotTheLock) {
       });
     }
 
-    initApp();
+    await initApp();
 
     app.on("activate", () => {
       if (windowManager && windowManager.getMainWindow() === null) {

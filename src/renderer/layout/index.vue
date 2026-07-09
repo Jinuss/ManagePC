@@ -15,6 +15,16 @@
               <span>{{ t("menu.monitoring") }}</span>
             </NTooltip>
           </div>
+          <div class="fixed-sidebar-menu">
+            <NTooltip placement="right" trigger="hover">
+              <template #trigger>
+                <span class="menu-icon" @click="() => (activeTab = 'task')"
+                  >⏰</span
+                > 
+              </template>
+              <span>{{ t("menu.task") }}</span>
+            </NTooltip>
+          </div>
         </div>
         <div class="fixed-sidebar-bottom">
           <div class="settings-section">
@@ -47,7 +57,7 @@
           </div>
         </div>
       </div>
-      <aside class="sidebar" v-if="activeTab !== 'logs'">
+      <aside class="sidebar" v-if="!['logs', 'task'].includes(activeTab)">
         <NMenu
           :value="activeTab"
           :options="menuOptions"

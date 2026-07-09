@@ -7,6 +7,7 @@ import { logAPI } from './modules/ipcLogPreload';
 import { commonAPI } from './modules/ipcCommonPreload';
 import { shortcutAPI } from './modules/ipcShortcutPreload';
 import { protocolAPI } from './modules/ipcProtocolPreload';
+import { taskAPI } from './modules/ipcTaskPreload';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // 系统信息
@@ -25,5 +26,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ...shortcutAPI,
   // 自定义协议
   ...protocolAPI,
+  // 定时任务
+  ...taskAPI,
 });
 

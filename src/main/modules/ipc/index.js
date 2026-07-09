@@ -7,6 +7,7 @@ import { registerIpcStoreHandlers } from './ipcStoreHandlers';
 import { registerIpcWindowHandlers } from './ipcWindowHandlers';
 import { registerIpcShortcutHandlers } from './ipcShortcutHandlers';
 import { registerIpcProtocolHandlers } from './ipcProtocolHandlers';
+import { registerTaskHandlers } from './ipcTaskHandlers';
 
 /** 注册所有 IPC 处理器
  * 将渲染进程的请求转发到对应的服务模块
@@ -38,6 +39,9 @@ export function registerIpcHandlers({
 
   log.info('[ipcRegister ] 注册自定义协议 IPC 处理器');
   registerIpcProtocolHandlers();
+
+  log.info('[ipcRegister ] 注册定时任务 IPC 处理器');
+  registerTaskHandlers();
 
   log.info('[ipcRegister ] 注册更新相关 IPC 处理器');
   if (app.isPackaged) {

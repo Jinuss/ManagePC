@@ -12,6 +12,8 @@
     "pack:all": "npm run build && electron-builder --config electron-builder.yml -mwl",
     "publish:win": "npm run build && electron-builder --config electron-builder.yml --win --x64 --publish=never",
     "publish:mac": "npm run build && electron-builder --config electron-builder.yml --mac --x64 --publish=never",
+    "rebuild": "npx @electron/rebuild",
+    "postinstall": "npx @electron/rebuild 2>&1 || echo \"Electron rebuild skipped - requires Visual Studio\"",
     "prepare": "husky",
     "clean:electron-cache": "powershell -Command \"Remove-Item $env:LOCALAPPDATA\\electron-builder -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item $env:LOCALAPPDATA\\electron -Recurse -Force -ErrorAction SilentlyContinue\"",
     "clean": "powershell -Command \"if (Test-Path 'dist') { Remove-Item -Recurse -Force 'dist' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
@@ -26,11 +28,13 @@
   "dependencies": {
     "@sentry/electron": "^7.15.0",
     "@vueuse/core": "^14.3.0",
+    "better-sqlite3": "^12.11.1",
     "echarts": "^6.1.0",
     "electron-log": "^5.4.4",
     "electron-store": "^11.0.2",
     "electron-updater": "^6.8.9",
     "naive-ui": "^2.44.1",
+    "node-schedule": "^2.1.1",
     "pinia": "^3.0.4",
     "semver": "^7.8.5",
     "systeminformation": "^5.31.7",
@@ -41,6 +45,7 @@
   "devDependencies": {
     "@commitlint/cli": "^21.1.0",
     "@commitlint/config-conventional": "^21.1.0",
+    "@electron/rebuild": "^4.2.0",
     "@vitejs/plugin-vue": "^5.0.4",
     "electron": "^42.5.0",
     "electron-builder": "^26.15.3",

@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, h } from "vue";
+import { ref, onBeforeMount, onUnmounted, h } from "vue";
 import { useI18n } from "vue-i18n";
 import { NButton, NBadge, useMessage } from "naive-ui";
 import { useAppVersionStore } from "@/store/useAppVersion";
@@ -74,16 +74,16 @@ const checkUpdateAndInstall = () => {
 };
 
 let removeUpdateAvailableListener = null;
-onMounted(() => {
+onBeforeMount(() => {
   if (isMac) return;
   removeUpdateAvailableListener = window.electronAPI.onUpdateAutoDownload(
     () => {
       setHasUpdate(true);
     },
   );
-  onUnmounted(() => {
-    removeUpdateAvailableListener();
-  });
+});
+onUnmounted(() => {
+  removeUpdateAvailableListener();
 });
 </script>
 
