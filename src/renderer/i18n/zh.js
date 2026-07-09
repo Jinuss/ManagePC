@@ -117,6 +117,8 @@ export default {
     checkingUpdate: '检查更新中，请稍后',
     autoUpdateLabel: '有更新时自动下载应用',
     autoStartDescription: '开机自动启动',
+    customProtocolLabel: '注册自定义协议',
+    customProtocolName: 'managepc://',
     shortcut: '快捷键设置',
     showWindowShortcut: '唤醒主窗口',
     shortcutPlaceholder: '按下组合键',

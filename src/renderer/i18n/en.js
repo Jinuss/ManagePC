@@ -117,6 +117,8 @@ export default {
     checkingUpdate: 'Checking for updates, please wait',
     autoUpdateLabel: 'Auto download app when updates are available',
     autoStartDescription: 'Auto start on boot',
+    customProtocolLabel: 'Register custom protocol',
+    customProtocolName: 'managepc://',
     shortcut: 'Shortcut Settings',
     showWindowShortcut: 'Show Main Window',
     shortcutPlaceholder: 'Press key combination',

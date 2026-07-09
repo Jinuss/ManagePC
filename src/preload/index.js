@@ -1,13 +1,14 @@
-import { contextBridge } from "electron";
-import { sysInfoAPI } from "./modules/ipcSysInfoPreload";
-import { updateAPI } from "./modules/ipcUpdatePreload";
-import { windowAPI } from "./modules/ipcWindowPreload";
-import { storeAPI } from "./modules/ipcStorePreload";
-import { logAPI } from "./modules/ipcLogPreload";
-import { commonAPI } from "./modules/ipcCommonPreload";
-import { shortcutAPI } from "./modules/ipcShortcutPreload";
+import { contextBridge } from 'electron';
+import { sysInfoAPI } from './modules/ipcSysInfoPreload';
+import { updateAPI } from './modules/ipcUpdatePreload';
+import { windowAPI } from './modules/ipcWindowPreload';
+import { storeAPI } from './modules/ipcStorePreload';
+import { logAPI } from './modules/ipcLogPreload';
+import { commonAPI } from './modules/ipcCommonPreload';
+import { shortcutAPI } from './modules/ipcShortcutPreload';
+import { protocolAPI } from './modules/ipcProtocolPreload';
 
-contextBridge.exposeInMainWorld("electronAPI", {
+contextBridge.exposeInMainWorld('electronAPI', {
   // 系统信息
   ...sysInfoAPI,
   // 更新
@@ -22,4 +23,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   ...commonAPI,
   // 快捷键
   ...shortcutAPI,
+  // 自定义协议
+  ...protocolAPI,
 });
+

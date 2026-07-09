@@ -1,9 +1,9 @@
-import Store from "electron-store";
+import Store from 'electron-store';
 import {
   WINDOW_DEFAULTS,
   THEME_DEFAULTS,
   LANGUAGE_DEFAULTS,
-} from "./constants";
+} from './constants';
 
 /** 应用配置持久化管理类
  * 使用 electron-store 存储窗口大小、主题、语言等用户配置
@@ -22,8 +22,9 @@ export const defaultState = {
   autoStart: false,
   hasUpdate: false,
   autoUpdate: false,
+  customProtocol: false,
   shortcuts: {
-    showWindow: "CommandOrControl+Shift+A",
+    showWindow: 'CommandOrControl+Shift+A',
   },
 };
 
@@ -48,7 +49,7 @@ class StoreManager {
    * @returns {Object} - 窗口尺寸对象 { width, height, x, y }
    */
   getWindowBounds() {
-    return this.store.get("window", {
+    return this.store.get('window', {
       width: WINDOW_DEFAULTS.MAIN_WIDTH,
       height: WINDOW_DEFAULTS.MAIN_HEIGHT,
       x: null,
@@ -60,7 +61,7 @@ class StoreManager {
    * @param {Object} bounds - 窗口尺寸对象
    */
   saveWindowBounds(bounds) {
-    this.store.set("window", {
+    this.store.set('window', {
       width: bounds.width,
       height: bounds.height,
       x: bounds.x,
@@ -72,14 +73,14 @@ class StoreManager {
    * @returns {boolean} - 是否置顶
    */
   getAlwaysOnTop() {
-    return this.store.get("alwaysOnTop", false);
+    return this.store.get('alwaysOnTop', false);
   }
 
   /** 设置窗口置顶
    * @param {boolean} onTop - 是否置顶
    */
   setAlwaysOnTop(onTop) {
-    this.store.set("alwaysOnTop", onTop);
+    this.store.set('alwaysOnTop', onTop);
   }
 
   getStore() {
@@ -91,3 +92,4 @@ class StoreManager {
 const storeManager = new StoreManager();
 
 export default storeManager;
+
