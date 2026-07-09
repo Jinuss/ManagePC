@@ -31,6 +31,8 @@ mac:
   target:
     - dmg
   icon: resources/assets/icons/macos/icon.icns
+  identity: "-"
+  gatekeeperAssess: false
 
 # 作用：方便于windows平台自动更新，--publish=never，不自动发布到github仓库
 publish:

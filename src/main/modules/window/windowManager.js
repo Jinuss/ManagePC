@@ -4,14 +4,11 @@ import { log } from "../log/logManager.js";
 import { isMac, getIconPath } from "../../utils/helps";
 import storeManager from "../../store";
 import {
-  APP_USER_MODEL_ID,
   WINDOW_DEFAULTS,
   THEME_DEFAULTS,
   IPC_CHANNELS,
 } from "../../constants";
 import { getIsQuitting } from "../../index.js";
-
-app.setAppUserModelId(APP_USER_MODEL_ID);
 
 /** 窗口管理器类
  * 负责主窗口和设置窗口的创建、管理和控制

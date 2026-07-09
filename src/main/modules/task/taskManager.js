@@ -113,11 +113,30 @@ class TaskManager {
   executeTask(task) {
     log.info('[TaskManager] Executing task:', task.id, task.content);
 
-    new Notification({
-      title: '定时任务提醒',
-      body: task.content,
-      silent: false,
-    }).show();
+    if (!Notification.isSupported()) {
+      log.warn('[TaskManager] Notification is not supported on this platform');
+      return;
+    }
+
+    try {
+      const notification = new Notification({
+        title: '定时任务提醒',
+        body: task.content,
+        silent: false,
+      });
+
+      notification.on('show', () => {
+        log.info('[TaskManager] Notification shown');
+      });
+
+      notification.on('failed', (error) => {
+        log.error('[TaskManager] Notification failed:', error);
+      });
+
+      notification.show();
+    } catch (error) {
+      log.error('[TaskManager] Failed to show notification:', error);
+    }
   }
 
   addTask(taskData) {
