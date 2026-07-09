@@ -1,54 +1,59 @@
-import { app, BrowserWindow } from 'electron'
-import path from 'path'
-import { log } from '../log/logManager.js'
-import { isMac, getIconPath } from '../../utils/helps'
-import storeManager from '../../store'
-import { APP_USER_MODEL_ID, WINDOW_DEFAULTS, THEME_DEFAULTS, IPC_CHANNELS } from '../../constants'
-import { getIsQuitting } from '../../index.js'
+import { app, BrowserWindow } from "electron";
+import path from "path";
+import { log } from "../log/logManager.js";
+import { isMac, getIconPath } from "../../utils/helps";
+import storeManager from "../../store";
+import {
+  APP_USER_MODEL_ID,
+  WINDOW_DEFAULTS,
+  THEME_DEFAULTS,
+  IPC_CHANNELS,
+} from "../../constants";
+import { getIsQuitting } from "../../index.js";
 
-app.setAppUserModelId(APP_USER_MODEL_ID)
+app.setAppUserModelId(APP_USER_MODEL_ID);
 
 /** 窗口管理器类
  * 负责主窗口和设置窗口的创建、管理和控制
  */
 class WindowManager {
   constructor() {
-    this.mainWindow = null
-    this.trayManager = null
-    this.settingsWindow = null
-    this.currentTheme = THEME_DEFAULTS.DEFAULT
-    this.isAlwaysOnTop = false
-    this.autoStart = false
+    this.mainWindow = null;
+    this.trayManager = null;
+    this.settingsWindow = null;
+    this.currentTheme = THEME_DEFAULTS.DEFAULT;
+    this.isAlwaysOnTop = false;
+    this.autoStart = false;
     this.baseOptions = {};
     if (isMac()) {
       this.baseOptions = {
         frame: true,
         transparent: true,
-        titleBarStyle: 'hidden',
-      }
+        titleBarStyle: "hidden",
+      };
     } else {
       this.baseOptions = {
         frame: false,
-      }
+      };
     }
   }
 
   /** 设置托盘管理器引用
- * @param {TrayManager} trayManager - 托盘管理器实例
- */
+   * @param {TrayManager} trayManager - 托盘管理器实例
+   */
   setTrayManager(trayManager) {
-    this.trayManager = trayManager
+    this.trayManager = trayManager;
   }
 
   /** 创建主窗口
- * 恢复上次保存的窗口尺寸和位置，加载渲染进程
- */
+   * 恢复上次保存的窗口尺寸和位置，加载渲染进程
+   */
   createMainWindow() {
-    log.info('[WindowManager] Creating main window')
-    const savedBounds = storeManager.getWindowBounds()
-    this.isAlwaysOnTop = storeManager.getAlwaysOnTop()
-    log.info('[WindowManager] Saved bounds:', savedBounds)
-    log.info('[WindowManager] Always on top:', this.isAlwaysOnTop)
+    log.info("[WindowManager] Creating main window");
+    const savedBounds = storeManager.getWindowBounds();
+    this.isAlwaysOnTop = storeManager.getAlwaysOnTop();
+    log.info("[WindowManager] Saved bounds:", savedBounds);
+    log.info("[WindowManager] Always on top:", this.isAlwaysOnTop);
 
     const windowOptions = {
       ...this.baseOptions,
@@ -61,105 +66,111 @@ class WindowManager {
       alwaysOnTop: this.isAlwaysOnTop,
       webPreferences: {
         backgroundThrottling: false,
+        // 禁用在渲染进程中直接使用Node.js API
         nodeIntegration: false,
+        // 使用上下文隔离，隔离渲染Renderer和preload脚本
         contextIsolation: true,
-        preload: path.join(__dirname, '../preload/index.js')
-      }
-    }
+        preload: path.join(__dirname, "../preload/index.js"),
+      },
+    };
 
     if (savedBounds.x !== null && savedBounds.y !== null) {
-      windowOptions.x = savedBounds.x
-      windowOptions.y = savedBounds.y
+      windowOptions.x = savedBounds.x;
+      windowOptions.y = savedBounds.y;
     }
 
-    this.mainWindow = new BrowserWindow(windowOptions)
-    log.info('[WindowManager] Main window created')
+    this.mainWindow = new BrowserWindow(windowOptions);
+    log.info("[WindowManager] Main window created");
 
     if (!app.isPackaged) {
-      this.mainWindow.loadURL('http://localhost:5173')
-      log.info('[WindowManager] Loading dev URL')
+      this.mainWindow.loadURL("http://localhost:5173");
+      log.info("[WindowManager] Loading dev URL");
       this.mainWindow.webContents.openDevTools();
     } else {
-      this.mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
-      log.info('[WindowManager] Loading production file')
+      this.mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
+      log.info("[WindowManager] Loading production file");
     }
 
-    this.mainWindow.on('resize', () => {
+    this.mainWindow.on("resize", () => {
       if (!this.mainWindow.isMaximized()) {
-        const bounds = this.mainWindow.getBounds()
-        storeManager.saveWindowBounds(bounds)
+        const bounds = this.mainWindow.getBounds();
+        storeManager.saveWindowBounds(bounds);
       }
-    })
+    });
 
-    this.mainWindow.on('move', () => {
+    this.mainWindow.on("move", () => {
       if (!this.mainWindow.isMaximized()) {
-        const bounds = this.mainWindow.getBounds()
-        storeManager.saveWindowBounds(bounds)
+        const bounds = this.mainWindow.getBounds();
+        storeManager.saveWindowBounds(bounds);
       }
-    })
+    });
 
-    this.mainWindow.on('minimize', () => {
-      log.info('[WindowManager] Main window minimized')
+    this.mainWindow.on("minimize", () => {
+      log.info("[WindowManager] Main window minimized");
       if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
-        log.info('[WindowManager] Closing settings window on main minimize')
-        this.settingsWindow.close()
-        this.settingsWindow = null
+        log.info("[WindowManager] Closing settings window on main minimize");
+        this.settingsWindow.close();
+        this.settingsWindow = null;
       }
-    })
+    });
 
-    this.mainWindow.on('close', (event) => {
-      log.info('mainWindow close');
+    this.mainWindow.on("close", (event) => {
+      log.info("mainWindow close");
 
-      const bounds = this.mainWindow.getBounds()
-      storeManager.saveWindowBounds(bounds)
+      const bounds = this.mainWindow.getBounds();
+      storeManager.saveWindowBounds(bounds);
 
       if (getIsQuitting()) {
-        log.info('close - isQuitting=true, allowing close')
+        log.info("close - isQuitting=true, allowing close");
       } else {
-        log.info('trayManager exists=', !!this.trayManager);
+        log.info("trayManager exists=", !!this.trayManager);
 
-        if (this.trayManager && this.trayManager.getTray() && !this.trayManager.getTray().isDestroyed()) {
-          log.info('close - hide window instead of quit')
+        if (
+          this.trayManager &&
+          this.trayManager.getTray() &&
+          !this.trayManager.getTray().isDestroyed()
+        ) {
+          log.info("close - hide window instead of quit");
           if (!this.mainWindow.isDestroyed()) {
-            event.preventDefault()
-            this.mainWindow.hide()
+            event.preventDefault();
+            this.mainWindow.hide();
           }
         }
       }
 
       if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
-        log.info('[WindowManager] Closing settings window on main close')
-        this.settingsWindow.close()
-        this.settingsWindow = null
+        log.info("[WindowManager] Closing settings window on main close");
+        this.settingsWindow.close();
+        this.settingsWindow = null;
       }
-    })
+    });
   }
 
   /** 获取主窗口实例
- * @returns {BrowserWindow|null}
- */
+   * @returns {BrowserWindow|null}
+   */
   getMainWindow() {
-    return this.mainWindow
+    return this.mainWindow;
   }
 
   /** 显示主窗口
- */
+   */
   showWindow() {
     if (this.mainWindow) {
-      this.mainWindow.show()
-      this.mainWindow.focus()
+      this.mainWindow.show();
+      this.mainWindow.focus();
     }
   }
 
   /** 创建设置窗口
- * 如果设置窗口已存在，则聚焦到该窗口
- */
+   * 如果设置窗口已存在，则聚焦到该窗口
+   */
   createSettingsWindow() {
-    log.info('[WindowManager] Creating settings window')
+    log.info("[WindowManager] Creating settings window");
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
-      log.info('[WindowManager] Settings window already exists, focusing')
-      this.settingsWindow.focus()
-      return
+      log.info("[WindowManager] Settings window already exists, focusing");
+      this.settingsWindow.focus();
+      return;
     }
     this.settingsWindow = new BrowserWindow({
       width: WINDOW_DEFAULTS.SETTINGS_WIDTH,
@@ -174,108 +185,112 @@ class WindowManager {
         backgroundThrottling: false,
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, '../preload/index.js')
-      }
-    })
+        preload: path.join(__dirname, "../preload/index.js"),
+      },
+    });
 
     if (!app.isPackaged) {
-      this.settingsWindow.loadURL('http://localhost:5173/windows/settings/index.html')
-      this.settingsWindow.webContents.openDevTools()
+      this.settingsWindow.loadURL(
+        "http://localhost:5173/windows/settings/index.html",
+      );
+      this.settingsWindow.webContents.openDevTools();
     } else {
-      this.settingsWindow.loadFile(path.join(__dirname, '../renderer/windows/settings/index.html'))
+      this.settingsWindow.loadFile(
+        path.join(__dirname, "../renderer/windows/settings/index.html"),
+      );
     }
 
-    this.settingsWindow.on('close', () => {
-      this.settingsWindow = null
-    })
+    this.settingsWindow.on("close", () => {
+      this.settingsWindow = null;
+    });
 
-    this.settingsWindow.on('blur', () => {
-      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_BLUR)
-    })
+    this.settingsWindow.on("blur", () => {
+      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_BLUR);
+    });
 
-    this.settingsWindow.on('focus', () => {
-      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_FOCUS)
-    })
+    this.settingsWindow.on("focus", () => {
+      this.settingsWindow.webContents.send(IPC_CHANNELS.WINDOW_FOCUS);
+    });
   }
 
   /** 打开设置窗口的 DevTools
- */
+   */
   openSettingsDevTools() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
-      this.settingsWindow.webContents.openDevTools()
+      this.settingsWindow.webContents.openDevTools();
     }
   }
 
   /** 关闭设置窗口
- */
+   */
   closeSettingsWindow() {
     if (this.settingsWindow && !this.settingsWindow.isDestroyed()) {
       this.settingsWindow.close();
-      this.settingsWindow = null
+      this.settingsWindow = null;
     }
   }
 
   /** 获取设置窗口实例
- * @returns {BrowserWindow|null}
- */
+   * @returns {BrowserWindow|null}
+   */
   getSettingsWindow() {
-    return this.settingsWindow
+    return this.settingsWindow;
   }
 
   /** 设置当前主题
- * @param {string} theme - 主题名称
- */
+   * @param {string} theme - 主题名称
+   */
   setTheme(theme) {
-    this.currentTheme = theme
+    this.currentTheme = theme;
   }
 
   /** 最小化主窗口
- */
+   */
   minimizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-      this.mainWindow.minimize()
+      this.mainWindow.minimize();
     }
   }
 
   /** 最大化/还原主窗口
- */
+   */
   maximizeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
       if (this.mainWindow.isMaximized()) {
-        this.mainWindow.unmaximize()
+        this.mainWindow.unmaximize();
       } else {
-        this.mainWindow.maximize()
+        this.mainWindow.maximize();
       }
     }
   }
 
   /** 关闭主窗口
- */
+   */
   closeWindow() {
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-      this.mainWindow.close()
+      this.mainWindow.close();
     }
   }
 
   /** 设置主窗口是否置顶
- * @param {boolean} onTop - 是否置顶
- * @returns {Object} - { success: boolean }
- */
+   * @param {boolean} onTop - 是否置顶
+   * @returns {Object} - { success: boolean }
+   */
   setAlwaysOnTop(onTop) {
-    this.isAlwaysOnTop = onTop
-    storeManager.setAlwaysOnTop(onTop)
+    this.isAlwaysOnTop = onTop;
+    storeManager.setAlwaysOnTop(onTop);
     if (this.mainWindow && !this.mainWindow.isDestroyed()) {
-      this.mainWindow.setAlwaysOnTop(onTop)
+      this.mainWindow.setAlwaysOnTop(onTop);
     }
-    return { success: true }
+    return { success: true };
   }
 
   /** 获取主窗口是否置顶
- * @returns {boolean}
- */
+   * @returns {boolean}
+   */
   getAlwaysOnTop() {
-    return this.isAlwaysOnTop
+    return this.isAlwaysOnTop;
   }
 }
 
-export default WindowManager
+export default WindowManager;

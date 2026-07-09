@@ -29,10 +29,15 @@ if (!gotTheLock) {
     log.info(`[Protocol] Received protocol URL: ${url}`);
     if (windowManager && windowManager.getMainWindow()) {
       const mainWindow = windowManager.getMainWindow();
-      if (mainWindow.isMinimized()) {
+      if (!mainWindow.isVisible()) {
+        log.info("[Protocol] Window is hidden, showing it");
+        mainWindow.show();
+      } else if (mainWindow.isMinimized()) {
+        log.info("[Protocol] Window is minimized, restoring it");
         mainWindow.restore();
       }
       mainWindow.focus();
+      log.info("[Protocol] Window focused successfully");
     }
   };
 
@@ -103,7 +108,11 @@ if (!gotTheLock) {
   app.on("second-instance", (event, argv) => {
     if (windowManager && windowManager.getMainWindow()) {
       const mainWindow = windowManager.getMainWindow();
-      if (mainWindow.isMinimized()) {
+      if (!mainWindow.isVisible()) {
+        log.info("[Protocol] Window is hidden, showing it");
+        mainWindow.show();
+      } else if (mainWindow.isMinimized()) {
+        log.info("[Protocol] Window is minimized, restoring it");
         mainWindow.restore();
       }
       mainWindow.focus();
