@@ -1,4 +1,4 @@
-import { app, globalShortcut } from "electron";
+import { app, globalShortcut, Notification } from "electron";
 import WindowManager from "./modules/window/windowManager.js";
 import { registerIpcHandlers } from "./modules/ipc/index.js";
 import UpdateManager from "./modules/update/updateManager.js";
@@ -6,10 +6,13 @@ import TrayManager from "./modules/window/trayManager.js";
 import storeManager from "./store.js";
 import { log } from "./modules/log/logManager.js";
 import { isMac } from "./utils/helps.js";
-import { CUSTOM_PROTOCOL_NAME } from "./constants.js";
+import { APP_USER_MODEL_ID, CUSTOM_PROTOCOL_NAME } from "./constants.js";
 import { registerProtocol } from "./modules/ipc/ipcProtocolHandlers.js";
 import { initSentry, captureException } from "./sentry.js";
 import taskManager from "./modules/task/taskManager.js";
+
+// 必须在 app.whenReady() 之前设置，否则 macOS 通知不生效
+app.setAppUserModelId(APP_USER_MODEL_ID);
 
 // 初始化日志系统
 log.initialize();
