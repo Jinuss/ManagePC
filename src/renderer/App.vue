@@ -1,7 +1,12 @@
 <template>
-  <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
+  <NConfigProvider
+    :theme="naiveTheme"
+    :locale="naiveConfig.locale"
+    :date-locale="naiveConfig.dateLocale"
+    style="height: 100%; width: 100%"
+  >
     <NDialogProvider>
-      <NNotificationProvider placement="bottom-right">
+      <NNotificationProvider>
         <NMessageProvider>
           <Content />
         </NMessageProvider>
@@ -20,6 +25,7 @@ import {
   NNotificationProvider,
 } from "naive-ui";
 import { darkTheme } from "naive-ui";
+import { zhCN, enUS } from "naive-ui";
 import { useTheme } from "./composables/useTheme";
 import { THEME_IDS } from "./constants";
 import Content from "./layout/index.vue";
@@ -38,6 +44,13 @@ const naiveTheme = computed(() => {
       : null;
   }
   return null;
+});
+
+const naiveConfig = computed(() => {
+  return {
+    locale: locale.value === "en" ? enUS : zhCN,
+    dateLocale: locale.value === "en" ? enUS.dateLocale : zhCN.dateLocale,
+  };
 });
 
 onMounted(() => {

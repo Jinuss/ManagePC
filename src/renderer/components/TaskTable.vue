@@ -135,9 +135,8 @@ const columns = [
   font-size: 4rem;
   margin-bottom: 16px;
 }
-.action-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+:deep(.action-buttons) {
+  display: flex;
   gap: 8px;
 }
 </style>

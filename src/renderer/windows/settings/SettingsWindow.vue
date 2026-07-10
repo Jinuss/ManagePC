@@ -1,5 +1,10 @@
 <template>
-  <NConfigProvider :theme="naiveTheme" style="height: 100%; width: 100%">
+  <NConfigProvider 
+    :theme="naiveTheme" 
+    :locale="naiveConfig.locale" 
+    :date-locale="naiveConfig.dateLocale"
+    style="height: 100%; width: 100%"
+  >
     <NDialogProvider>
       <NMessageProvider>
         <div class="settings-window" :platform="isMac ? 'mac' : 'win'">
@@ -54,6 +59,7 @@ import {
   NMessageProvider,
 } from "naive-ui";
 import { darkTheme } from "naive-ui";
+import { zhCN, enUS } from "naive-ui";
 import { useTheme } from "../../composables/useTheme";
 import { usePlatform } from "../../composables/usePlatform";
 import { THEME_IDS } from "../../constants";
@@ -61,7 +67,7 @@ import { useI18n } from "vue-i18n";
 import { componentMap } from "./config.js";
 import { useAppVersionStore } from "@/store/useAppVersion";
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { setHasUpdate } = useAppVersionStore();
 const { isMac } = usePlatform();
 const { theme } = useTheme();
@@ -76,6 +82,13 @@ const naiveTheme = computed(() => {
       : null;
   }
   return null;
+});
+
+const naiveConfig = computed(() => {
+  return {
+    locale: locale.value === "en" ? enUS : zhCN,
+    dateLocale: locale.value === "en" ? enUS.dateLocale : zhCN.dateLocale,
+  };
 });
 
 const activeTab = ref("common");
