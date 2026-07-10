@@ -1,7 +1,7 @@
 import { app, ipcMain } from "electron";
 import { IPC_CHANNELS } from "../../constants";
 import { broadcast } from "../../utils/helps";
-import storeManager from "../../store";
+import storeManager from "../../store/index";
 import { log } from "../log/logManager";
 
 /** 注册 IPC 事件处理Store读取函数

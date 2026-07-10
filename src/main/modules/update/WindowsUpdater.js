@@ -2,7 +2,7 @@ import { autoUpdater } from "electron-updater";
 import BaseUpdater from "./BaseUpdater.js";
 import { IPC_CHANNELS } from "../../constants.js";
 import { log } from "../log/logManager.js";
-import storeManager from "../../store";
+import storeManager from "../../store/index";
 import { addBreadcrumb } from "../../sentry.js";
 
 /** Windows 平台更新管理器

@@ -114,3 +114,5 @@ dist/
 public/
 
 out/
+*.lock
+package-lock.json

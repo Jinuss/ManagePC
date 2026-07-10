@@ -1,7 +1,7 @@
 import { app, ipcMain } from 'electron';
 import path from 'path';
 import { IPC_CHANNELS, CUSTOM_PROTOCOL_NAME } from '../../constants';
-import storeManager from '../../store';
+import storeManager from '../../store/index';
 import { log } from '../log/logManager';
 
 export function registerProtocol() {

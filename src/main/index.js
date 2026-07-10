@@ -1,9 +1,9 @@
-import { app, globalShortcut, Notification } from "electron";
+import { app, globalShortcut } from "electron";
 import WindowManager from "./modules/window/windowManager.js";
-import { registerIpcHandlers } from "./modules/ipc/index.js";
-import UpdateManager from "./modules/update/updateManager.js";
+import { registerIpcHandlers } from "./modules/ipc/index";
+import UpdateManager from "./modules/update/updateManager";
 import TrayManager from "./modules/window/trayManager.js";
-import storeManager from "./store.js";
+import storeManager from "./store/index.js";
 import { log } from "./modules/log/logManager.js";
 import { isMac } from "./utils/helps.js";
 import { APP_USER_MODEL_ID, CUSTOM_PROTOCOL_NAME } from "./constants.js";

@@ -2,7 +2,7 @@ import { app, BrowserWindow } from "electron";
 import path from "path";
 import { log } from "../log/logManager.js";
 import { isMac, getIconPath } from "../../utils/helps";
-import storeManager from "../../store";
+import storeManager from "../../store/index";
 import {
   WINDOW_DEFAULTS,
   THEME_DEFAULTS,

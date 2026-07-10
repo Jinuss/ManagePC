@@ -1,6 +1,6 @@
 import { ipcMain, globalShortcut } from "electron";
 import { IPC_CHANNELS } from "../../constants";
-import storeManager from "../../store";
+import storeManager from "../../store/index";
 
 let registeredShortcuts = {};
 
