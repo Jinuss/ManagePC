@@ -130,17 +130,18 @@ const formData = reactive({
   repeatUnit: "hours",
   enabled: true,
 });
-const scheduleTypeOptions = computed(() => [
+const scheduleTypeOptions = [
   { label: t("task.once"), value: "once" },
   { label: t("task.daily"), value: "cron" },
   { label: t("task.interval"), value: "interval" },
-]);
-const repeatUnitOptions = computed(() => [
+];
+const repeatUnitOptions = [
   { label: t("task.minutes"), value: "minutes" },
   { label: t("task.hours"), value: "hours" },
   { label: t("task.days"), value: "days" },
   { label: t("task.weeks"), value: "weeks" },
-]);
+];
+
 const cronPreview = computed(
   () =>
     `${formData.cronMinute} ${formData.cronHour} ${formData.cronDay} ${formData.cronMonth} ${formData.cronDayOfWeek}`,
@@ -187,24 +188,8 @@ function handleSubmit() {
   if (timeValue) {
     if (timeValue instanceof Date) {
       triggerTime = timeValue.toISOString();
-    } else if (typeof timeValue === 'string') {
+    } else if (typeof timeValue === "string" || typeof timeValue === "number") {
       triggerTime = new Date(timeValue).toISOString();
-    } else if (timeValue.$d && timeValue.$d instanceof Date) {
-      triggerTime = timeValue.$d.toISOString();
-    } else if (timeValue.getTime) {
-      triggerTime = new Date(timeValue.getTime()).toISOString();
-    } else if (typeof timeValue === 'object') {
-      const dateKeys = ['year', 'month', 'day', 'hour', 'minute', 'second'];
-      const hasDateParts = dateKeys.some(key => key in timeValue);
-      if (hasDateParts) {
-        const year = timeValue.year || 2024;
-        const month = (timeValue.month || 1) - 1;
-        const day = timeValue.day || 1;
-        const hour = timeValue.hour || 0;
-        const minute = timeValue.minute || 0;
-        const second = timeValue.second || 0;
-        triggerTime = new Date(year, month, day, hour, minute, second).toISOString();
-      }
     }
   }
   emit("submit", {
@@ -240,7 +225,7 @@ watch(
         repeatUnit: newVal.repeat_unit || "hours",
         enabled: newVal.enabled === 1,
       });
-      console.log('formData:', formData);
+      console.log("formData:", formData);
     }
   },
   { immediate: true },

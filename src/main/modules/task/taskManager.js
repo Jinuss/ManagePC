@@ -56,7 +56,7 @@ class TaskManager {
     }
     return schedule.scheduleJob(triggerTime, () => {
       this.executeTask(task);
-      taskDatabase.updateTask(task.id, { enabled: false });
+      taskDatabase.update(task.id, { enabled: false });
       this.scheduledJobs.delete(task.id);
     });
   }
@@ -84,7 +84,6 @@ class TaskManager {
 
     const interval = task.repeat_interval;
     const unit = task.repeat_unit;
-    const now = new Date();
 
     const rules = new schedule.RecurrenceRule();
     switch (unit) {
@@ -120,7 +119,7 @@ class TaskManager {
 
     try {
       const notification = new Notification({
-        title: '定时任务提醒',
+        title: '定时提醒',
         body: task.content,
         silent: false,
       });

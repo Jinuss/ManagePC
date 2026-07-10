@@ -15,7 +15,7 @@
 <script setup>
 import { computed, h } from "vue";
 import { useI18n } from "vue-i18n";
-import { NDataTable, NButton } from "naive-ui";
+import { NDataTable, NButton, NSwitch } from "naive-ui";
 
 const { t } = useI18n();
 
@@ -28,7 +28,7 @@ defineProps({
 
 const emit = defineEmits(["edit", "delete", "toggle"]);
 
-const columns = computed(() => [
+const columns = [
   {
     title: t("task.content"),
     key: "content",
@@ -53,7 +53,9 @@ const columns = computed(() => [
       if (row.schedule_type === "once") {
         if (row.trigger_time) {
           const date = new Date(row.trigger_time);
-          return isNaN(date.getTime()) ? row.trigger_time : date.toLocaleString();
+          return isNaN(date.getTime())
+            ? row.trigger_time
+            : date.toLocaleString();
         }
         return "-";
       } else if (row.schedule_type === "cron") {
@@ -68,7 +70,20 @@ const columns = computed(() => [
     title: t("task.status"),
     key: "enabled",
     render(row) {
-      return row.enabled ? t("task.active") : t("task.inactive");
+      const enabled = row.enabled === 1;
+      return h("div", { class: "switch-container" }, [
+        h(
+          NSwitch,
+          {
+            value: enabled,
+            onChange: (val) => emit("toggle", row.id, val),
+          },
+          {
+            checked: () => t("task.enabled"),
+            unchecked: () => t("task.disable"),
+          },
+        ),
+      ]);
     },
   },
   {
@@ -78,23 +93,28 @@ const columns = computed(() => [
       return h("div", { class: "action-buttons" }, [
         h(
           NButton,
-          { size: "small", type: "primary", onClick: () => emit("edit", row) },
+          {
+            size: "small",
+            type: "primary",
+            onClick: () => emit("edit", row),
+            text: true,
+          },
           () => t("common.edit"),
         ),
         h(
           NButton,
-          { size: "small", type: "error", onClick: () => emit("delete", row.id) },
+          {
+            size: "small",
+            type: "error",
+            onClick: () => emit("delete", row.id),
+            text: true,
+          },
           () => t("common.delete"),
-        ),
-        h(
-          NButton,
-          { size: "small", onClick: () => emit("toggle", row.id, !row.enabled) },
-          () => (row.enabled ? t("task.disable") : t("task.enable")),
         ),
       ]);
     },
   },
-]);
+];
 </script>
 <style scoped>
 .task-table-wrapper {
@@ -116,7 +136,8 @@ const columns = computed(() => [
   margin-bottom: 16px;
 }
 .action-buttons {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
 }
 </style>

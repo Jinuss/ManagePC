@@ -39,14 +39,14 @@ class TaskDatabase {
   getAll() {
     const stmt = this.db.prepare('SELECT * FROM tasks ORDER BY created_at DESC');
     const tasks = stmt.all();
-    log.info('[TaskDB] 获取所有任务，数量:', tasks.length, 'trigger_time字段示例:', tasks.length > 0 ? tasks[0].trigger_time : '无数据');
+    log.info('[TaskDB] 获取所有任务，数量:', tasks.length);
     return tasks;
   }
 
   getById(id) {
     const stmt = this.db.prepare('SELECT * FROM tasks WHERE id = ?');
     const task = stmt.get(id);
-    log.info('[TaskDB] 根据ID获取任务，ID:', id, 'trigger_time:', task ? task.trigger_time : '未找到');
+    log.info('[TaskDB] 根据ID获取任务，ID:', id, 'task:', JSON.stringify(task));
     return task;
   }
 
@@ -66,12 +66,33 @@ class TaskDatabase {
       data.enabled !== undefined ? (data.enabled ? 1 : 0) : 1
     );
     const createdTask = this.getById(info.lastInsertRowid);
-    log.info('[TaskDB] 创建成功，trigger_time:', createdTask.trigger_time);
+    log.info('[TaskDB] 创建成功，task:', JSON.stringify(createdTask));
     return createdTask;
   }
 
   update(id, data) {
-    log.info('[TaskDB] 更新任务，ID:', id, 'triggerTime:', data.triggerTime, '类型:', typeof data.triggerTime);
+    log.info('[TaskDB] 更新任务，ID:', id, 'data:', data);
+    const existingTask = this.getById(id);
+    if (!existingTask) {
+      log.warn('[TaskDB] 更新任务失败，未找到任务，ID:', id);
+      return null;
+    }
+    const mappedData = {};
+    const fieldMap = {
+      content: 'content',
+      scheduleType: 'schedule_type',
+      cronExpression: 'cron_expression',
+      triggerTime: 'trigger_time',
+      repeatInterval: 'repeat_interval',
+      repeatUnit: 'repeat_unit',
+      enabled: 'enabled',
+    };
+    for (const [key, dbField] of Object.entries(fieldMap)) {
+      if (data[key] !== undefined) {
+        mappedData[dbField] = key === 'enabled' ? (data[key] ? 1 : 0) : data[key];
+      }
+    }
+    const mergedData = { ...existingTask, ...mappedData };
     const stmt = this.db.prepare(`
       UPDATE tasks SET 
         content = ?,
@@ -85,28 +106,31 @@ class TaskDatabase {
       WHERE id = ?
     `);
     stmt.run(
-      data.content,
-      data.scheduleType || 'once',
-      data.cronExpression || null,
-      data.triggerTime || null,
-      data.repeatInterval || null,
-      data.repeatUnit || null,
-      data.enabled !== undefined ? (data.enabled ? 1 : 0) : 1,
+      mergedData.content,
+      mergedData.schedule_type,
+      mergedData.cron_expression,
+      mergedData.trigger_time,
+      mergedData.repeat_interval,
+      mergedData.repeat_unit,
+      mergedData.enabled,
       id
     );
     const updatedTask = this.getById(id);
-    log.info('[TaskDB] 更新成功，trigger_time:', updatedTask.trigger_time);
+    log.info('[TaskDB] 更新成功，task:', JSON.stringify(updatedTask));
     return updatedTask;
   }
 
   delete(id) {
     const stmt = this.db.prepare('DELETE FROM tasks WHERE id = ?');
-    return stmt.run(id).changes > 0;
+    const result = stmt.run(id).changes > 0;
+    log.info('[TaskDB] 删除任务，ID:', id,);
+    return result;
   }
 
   toggle(id, enabled) {
     const stmt = this.db.prepare('UPDATE tasks SET enabled = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-    stmt.run(enabled ? 1 : 0, id);
+    const result = stmt.run(enabled ? 1 : 0, id);
+    log.info('[TaskDB] 切换任务状态，ID:', id);
     return this.getById(id);
   }
 
