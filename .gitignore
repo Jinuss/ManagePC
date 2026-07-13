@@ -116,3 +116,5 @@ public/
 out/
 *.lock
 package-lock.json
+
+src/main/native/node_modules/

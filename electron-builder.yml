@@ -11,7 +11,11 @@ files:
 extraResources:
   - from: resources/assets/icons
     to: icons
-
+  
+  - from: src/main/native-node-gyp/build/Release
+    to: native
+    filter:
+      - "*.node"
 win:
   target:
     - nsis
