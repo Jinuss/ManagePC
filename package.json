@@ -1,6 +1,6 @@
 {
   "name": "SuperSystemMonitor",
-  "version": "1.0.48",
+  "version": "1.0.49",
   "description": "Super System Monitor",
   "main": "./out/main/index.js",
   "scripts": {
