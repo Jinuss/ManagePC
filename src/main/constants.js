@@ -139,5 +139,10 @@ export const IPC_CHANNELS = {
   GET_SCREEN_RESOLUTION: 'get-screen-resolution', // 获取当前屏幕分辨率
   GET_ALL_SCREEN_RESOLUTIONS: 'get-all-screen-resolutions', // 获取所有支持的屏幕分辨率
   SET_SCREEN_RESOLUTION: 'set-screen-resolution', // 设置屏幕分辨率
-};
 
+  // ========== 系统音量 ==========
+  GET_SPEAKER_VOLUME: 'get-speaker-volume', // 获取扬声器音量
+  SET_SPEAKER_VOLUME: 'set-speaker-volume', // 设置扬声器音量
+  GET_MICROPHONE_VOLUME: 'get-microphone-volume', // 获取麦克风音量
+  SET_MICROPHONE_VOLUME: 'set-microphone-volume', // 设置麦克风音量
+};

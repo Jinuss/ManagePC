@@ -80,6 +80,7 @@ export default {
     battery: '电池状态',
     monitor: '性能监控',
     screen: '分辨率设置',
+    audio: '音量控制',
     task: '定时任务',
     logs: '日志查看'
   },
@@ -194,7 +195,15 @@ export default {
     pixels: '像素',
     current: '当前',
     selectResolution: '选择分辨率',
-    selectResolution: '选择分辨率',
     setFailed: '设置分辨率失败：{error}'
+  },
+  audio: {
+    speakerVolume: '扬声器音量',
+    microphoneVolume: '麦克风音量',
+    mute: '静音',
+    unmute: '取消静音',
+    muted: '已静音',
+    unmuted: '未静音',
+    setFailed: '设置音量失败：{error}'
   }
 }

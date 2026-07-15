@@ -9,6 +9,7 @@ import { shortcutAPI } from './modules/ipcShortcutPreload';
 import { protocolAPI } from './modules/ipcProtocolPreload';
 import { taskAPI } from './modules/ipcTaskPreload';
 import { screenAPI } from './modules/ipcScreenPreload';
+import { audioAPI } from './modules/ipcAudioPreload';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // 系统信息
@@ -31,5 +32,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ...taskAPI,
   // 屏幕分辨率
   ...screenAPI,
+  // 音频音量
+  ...audioAPI,
 });
+
 

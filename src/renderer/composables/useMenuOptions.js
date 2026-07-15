@@ -37,6 +37,11 @@ export function useMenuOptions() {
       key: "screen",
       icon: () => h("span", { class: "menu-icon" }, "🖥️"),
     },
+    {
+      label: t("menu.audio"),
+      key: "audio",
+      icon: () => h("span", { class: "menu-icon" }, "🔊"),
+    },
   ]);
 
   const handleMenuSelect = (index) => {

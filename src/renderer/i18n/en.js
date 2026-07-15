@@ -80,6 +80,7 @@ export default {
     battery: 'Battery',
     monitor: 'Performance',
     screen: 'Screen Resolution',
+    audio: 'Volume Control',
     task: 'Scheduled Tasks',
     logs: 'Logs'
   },
@@ -195,5 +196,14 @@ export default {
     current: 'Current',
     selectResolution: 'Select resolution',
     setFailed: 'Failed to set resolution: {error}'
+  },
+  audio: {
+    speakerVolume: 'Speaker Volume',
+    microphoneVolume: 'Microphone Volume',
+    mute: 'Mute',
+    unmute: 'Unmute',
+    muted: 'Muted',
+    unmuted: 'Unmuted',
+    setFailed: 'Failed to set volume: {error}'
   }
 }

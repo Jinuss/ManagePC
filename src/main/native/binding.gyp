@@ -4,7 +4,8 @@
       "target_name": "system",
       "sources": [
         "src/addon.cc",
-        "src/screen.cc"
+        "src/screen.cc",
+        "src/audio.cc"
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")",
