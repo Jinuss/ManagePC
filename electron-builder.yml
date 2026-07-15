@@ -12,7 +12,7 @@ extraResources:
   - from: resources/assets/icons
     to: icons
   
-  - from: src/main/native-node-gyp/build/Release
+  - from: src/main/native/build/Release
     to: native
     filter:
       - "*.node"

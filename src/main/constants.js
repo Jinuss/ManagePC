@@ -134,5 +134,10 @@ export const IPC_CHANNELS = {
   TASK_UPDATE: 'task-update', // 更新任务
   TASK_DELETE: 'task-delete', // 删除任务
   TASK_TOGGLE: 'task-toggle', // 启用/禁用任务
+
+  // ========== 屏幕分辨率 ==========
+  GET_SCREEN_RESOLUTION: 'get-screen-resolution', // 获取当前屏幕分辨率
+  GET_ALL_SCREEN_RESOLUTIONS: 'get-all-screen-resolutions', // 获取所有支持的屏幕分辨率
+  SET_SCREEN_RESOLUTION: 'set-screen-resolution', // 设置屏幕分辨率
 };
 

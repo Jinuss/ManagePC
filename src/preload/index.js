@@ -8,6 +8,7 @@ import { commonAPI } from './modules/ipcCommonPreload';
 import { shortcutAPI } from './modules/ipcShortcutPreload';
 import { protocolAPI } from './modules/ipcProtocolPreload';
 import { taskAPI } from './modules/ipcTaskPreload';
+import { screenAPI } from './modules/ipcScreenPreload';
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // 系统信息
@@ -28,5 +29,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ...protocolAPI,
   // 定时任务
   ...taskAPI,
+  // 屏幕分辨率
+  ...screenAPI,
 });
 

@@ -6,6 +6,7 @@ export const componentMap = {
   disk: defineAsyncComponent(() => import("./components/DiskUsage.vue")),
   battery: defineAsyncComponent(() => import("./components/BatteryStatus.vue")),
   monitor: defineAsyncComponent(() => import("./components/PCMonitor.vue")),
+  screen: defineAsyncComponent(() => import("./components/ScreenResolution.vue")),
   task: defineAsyncComponent(() => import("./components/TaskSchedulerPage.vue")),
   logs: defineAsyncComponent(() => import("./components/LogViewer.vue")),
 };

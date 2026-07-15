@@ -22,7 +22,11 @@ export default {
     restore: '还原',
     close: '关闭',
     pin: '置顶',
-    unpin: '取消置顶'
+    unpin: '取消置顶',
+    apply: '应用',
+    active: '已激活',
+    setting: '设置中...',
+    retry: '重试'
   },
   header: {
     title: '系统监控'
@@ -75,6 +79,7 @@ export default {
     disk: '磁盘使用',
     battery: '电池状态',
     monitor: '性能监控',
+    screen: '分辨率设置',
     task: '定时任务',
     logs: '日志查看'
   },
@@ -182,5 +187,14 @@ export default {
     enableSuccess: '启用任务成功',
     disableSuccess: '禁用任务成功',
     toggleFailed: '操作任务失败'
+  },
+  screen: {
+    currentResolution: '当前分辨率',
+    availableResolutions: '可用分辨率',
+    pixels: '像素',
+    current: '当前',
+    selectResolution: '选择分辨率',
+    selectResolution: '选择分辨率',
+    setFailed: '设置分辨率失败：{error}'
   }
 }

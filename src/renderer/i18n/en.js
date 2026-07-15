@@ -22,7 +22,11 @@ export default {
     restore: 'Restore',
     close: 'Close',
     pin: 'Pin',
-    unpin: 'Unpin'
+    unpin: 'Unpin',
+    apply: 'Apply',
+    active: 'Active',
+    setting: 'Setting...',
+    retry: 'Retry'
   },
   header: {
     title: 'System Monitor'
@@ -75,6 +79,7 @@ export default {
     disk: 'Disk Usage',
     battery: 'Battery',
     monitor: 'Performance',
+    screen: 'Screen Resolution',
     task: 'Scheduled Tasks',
     logs: 'Logs'
   },
@@ -182,5 +187,13 @@ export default {
     enableSuccess: 'Task enabled successfully',
     disableSuccess: 'Task disabled successfully',
     toggleFailed: 'Failed to toggle task'
+  },
+  screen: {
+    currentResolution: 'Current Resolution',
+    availableResolutions: 'Available Resolutions',
+    pixels: 'pixels',
+    current: 'Current',
+    selectResolution: 'Select resolution',
+    setFailed: 'Failed to set resolution: {error}'
   }
 }

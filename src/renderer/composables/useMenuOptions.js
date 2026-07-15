@@ -32,6 +32,11 @@ export function useMenuOptions() {
       key: "monitor",
       icon: () => h("span", { class: "menu-icon" }, "📈"),
     },
+    {
+      label: t("menu.screen"),
+      key: "screen",
+      icon: () => h("span", { class: "menu-icon" }, "🖥️"),
+    },
   ]);
 
   const handleMenuSelect = (index) => {
