@@ -93,8 +93,13 @@ Thumbs.db
 
 # Electron build outputs
 build/
+!src/main/native/build/
+src/main/native/build/**
+!src/main/native/build/**/*.node
 dist_electron/
 release/
+!src/main/native/build/Release/
+!src/main/native/build/**/*.node
 *.dmg
 *.exe
 *.msi
