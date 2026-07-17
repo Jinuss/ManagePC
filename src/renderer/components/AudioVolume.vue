@@ -15,13 +15,14 @@
         </div>
         <div class="volume-slider-container">
           <NSlider
-            v-model:value="speakerCurrentValue"
+            :model-value="speakerCurrentValue"
             :min="0"
             :max="100"
             :step="1"
             :disabled="isSetting"
             :tooltip="false"
             class="volume-slider"
+            @update:model-value="onSpeakerVolumeUpdate"
             @change="onSpeakerVolumeChange"
           />
           <NButton
@@ -68,13 +69,14 @@
         </div>
         <div class="volume-slider-container">
           <NSlider
-            v-model:value="microphoneCurrentValue"
+            :model-value="microphoneCurrentValue"
             :min="0"
             :max="100"
             :step="1"
             :disabled="isSetting"
             :tooltip="false"
             class="volume-slider"
+            @update:model-value="onMicrophoneVolumeUpdate"
             @change="onMicrophoneVolumeChange"
           />
           <NButton
@@ -133,6 +135,7 @@ const fetchSpeakerVolume = async () => {
   try {
     speakerError.value = null;
     const result = await window.electronAPI.getSpeakerVolume();
+    console.log('[AudioVolume] getSpeakerVolume result:', result);
     if (result.success) {
       speakerCurrentValue.value = result.data.volume;
       isSpeakerMuted.value = result.data.isMuted;
@@ -145,6 +148,7 @@ const fetchSpeakerVolume = async () => {
       speakerLoaded.value = false;
     }
   } catch (err) {
+    console.error('[AudioVolume] getSpeakerVolume error:', err);
     speakerError.value = err.message;
     speakerLoaded.value = false;
   }
@@ -154,6 +158,7 @@ const fetchMicrophoneVolume = async () => {
   try {
     microphoneError.value = null;
     const result = await window.electronAPI.getMicrophoneVolume();
+    console.log('[AudioVolume] getMicrophoneVolume result:', result);
     if (result.success) {
       microphoneCurrentValue.value = result.data.volume;
       isMicrophoneMuted.value = result.data.isMuted;
@@ -166,12 +171,19 @@ const fetchMicrophoneVolume = async () => {
       microphoneLoaded.value = false;
     }
   } catch (err) {
+    console.error('[AudioVolume] getMicrophoneVolume error:', err);
     microphoneError.value = err.message;
     microphoneLoaded.value = false;
   }
 };
 
+const onSpeakerVolumeUpdate = (value) => {
+  console.log('[AudioVolume] onSpeakerVolumeUpdate:', value);
+  speakerCurrentValue.value = Math.round(value);
+};
+
 const onSpeakerVolumeChange = async (value) => {
+  console.log('[AudioVolume] onSpeakerVolumeChange:', value);
   if (isSetting.value) return;
   
   const volume = Math.round(value);
@@ -180,8 +192,8 @@ const onSpeakerVolumeChange = async (value) => {
   
   try {
     const result = await window.electronAPI.setSpeakerVolume(volume);
+    console.log('[AudioVolume] setSpeakerVolume result:', result);
     if (result.success) {
-      speakerCurrentValue.value = volume;
       isSpeakerMuted.value = volume === 0;
       if (volume > 0) {
         speakerPreviousVolume.value = volume;
@@ -191,6 +203,7 @@ const onSpeakerVolumeChange = async (value) => {
       await fetchSpeakerVolume();
     }
   } catch (err) {
+    console.error('[AudioVolume] setSpeakerVolume error:', err);
     alert(t("audio.setFailed", { error: err.message }));
     await fetchSpeakerVolume();
   } finally {
@@ -198,7 +211,13 @@ const onSpeakerVolumeChange = async (value) => {
   }
 };
 
+const onMicrophoneVolumeUpdate = (value) => {
+  console.log('[AudioVolume] onMicrophoneVolumeUpdate:', value);
+  microphoneCurrentValue.value = Math.round(value);
+};
+
 const onMicrophoneVolumeChange = async (value) => {
+  console.log('[AudioVolume] onMicrophoneVolumeChange:', value);
   if (isSetting.value) return;
   
   const volume = Math.round(value);
@@ -207,8 +226,8 @@ const onMicrophoneVolumeChange = async (value) => {
   
   try {
     const result = await window.electronAPI.setMicrophoneVolume(volume);
+    console.log('[AudioVolume] setMicrophoneVolume result:', result);
     if (result.success) {
-      microphoneCurrentValue.value = volume;
       isMicrophoneMuted.value = volume === 0;
       if (volume > 0) {
         microphonePreviousVolume.value = volume;
@@ -218,6 +237,7 @@ const onMicrophoneVolumeChange = async (value) => {
       await fetchMicrophoneVolume();
     }
   } catch (err) {
+    console.error('[AudioVolume] setMicrophoneVolume error:', err);
     alert(t("audio.setFailed", { error: err.message }));
     await fetchMicrophoneVolume();
   } finally {
@@ -226,6 +246,7 @@ const onMicrophoneVolumeChange = async (value) => {
 };
 
 const toggleSpeakerMute = async () => {
+  console.log('[AudioVolume] toggleSpeakerMute');
   if (isSetting.value) return;
   
   isSetting.value = true;
@@ -240,6 +261,7 @@ const toggleSpeakerMute = async () => {
     }
     
     const result = await window.electronAPI.setSpeakerVolume(targetVolume);
+    console.log('[AudioVolume] toggleSpeakerMute setSpeakerVolume result:', result);
     if (result.success) {
       speakerCurrentValue.value = targetVolume;
       isSpeakerMuted.value = targetVolume === 0;
@@ -247,6 +269,7 @@ const toggleSpeakerMute = async () => {
       alert(t("audio.setFailed", { error: result.error }));
     }
   } catch (err) {
+    console.error('[AudioVolume] toggleSpeakerMute error:', err);
     alert(t("audio.setFailed", { error: err.message }));
   } finally {
     isSetting.value = false;
@@ -254,6 +277,7 @@ const toggleSpeakerMute = async () => {
 };
 
 const toggleMicrophoneMute = async () => {
+  console.log('[AudioVolume] toggleMicrophoneMute');
   if (isSetting.value) return;
   
   isSetting.value = true;
@@ -268,6 +292,7 @@ const toggleMicrophoneMute = async () => {
     }
     
     const result = await window.electronAPI.setMicrophoneVolume(targetVolume);
+    console.log('[AudioVolume] toggleMicrophoneMute setMicrophoneVolume result:', result);
     if (result.success) {
       microphoneCurrentValue.value = targetVolume;
       isMicrophoneMuted.value = targetVolume === 0;
@@ -275,6 +300,7 @@ const toggleMicrophoneMute = async () => {
       alert(t("audio.setFailed", { error: result.error }));
     }
   } catch (err) {
+    console.error('[AudioVolume] toggleMicrophoneMute error:', err);
     alert(t("audio.setFailed", { error: err.message }));
   } finally {
     isSetting.value = false;
@@ -295,6 +321,7 @@ const refreshAll = async () => {
 };
 
 onMounted(() => {
+  console.log('[AudioVolume] onMounted');
   refreshAll();
 });
 </script>
