@@ -1,6 +1,13 @@
 #include <napi.h>
 #include <windows.h>
 #include <set>
+#include <thread>
+#include <atomic>
+
+static Napi::ThreadSafeFunction g_tsfn = nullptr;
+static std::atomic<bool> g_isListening(false);
+static std::thread g_listenerThread;
+static HWND g_hWnd = NULL;
 
 Napi::Object GetScreenSize(const Napi::CallbackInfo& info)
 {
@@ -99,4 +106,116 @@ Napi::Boolean SetScreenResolution(const Napi::CallbackInfo& info)
     );
 
     return Napi::Boolean::New(env, result == DISP_CHANGE_SUCCESSFUL);
+}
+
+LRESULT CALLBACK ResolutionWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg == WM_DISPLAYCHANGE)
+    {
+        int width = LOWORD(lParam);
+        int height = HIWORD(lParam);
+
+        if (g_tsfn != nullptr)
+        {
+            g_tsfn.BlockingCall(
+                [width, height](Napi::Env env, Napi::Function jsCallback) {
+                    Napi::Object result = Napi::Object::New(env);
+                    result.Set("width", width);
+                    result.Set("height", height);
+                    jsCallback.Call({ result });
+                });
+        }
+    }
+
+    return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+static void ResolutionListenerThread()
+{
+    WNDCLASS wc = {0};
+    wc.lpfnWndProc = ResolutionWindowProc;
+    wc.hInstance = GetModuleHandle(NULL);
+    wc.lpszClassName = "ResolutionMonitorClass";
+
+    RegisterClass(&wc);
+
+    g_hWnd = CreateWindowEx(
+        0,
+        "ResolutionMonitorClass",
+        "ResolutionMonitor",
+        0,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        HWND_MESSAGE,
+        NULL,
+        NULL,
+        NULL
+    );
+
+    if (g_hWnd == NULL)
+    {
+        return;
+    }
+
+    MSG msg;
+    while (GetMessage(&msg, g_hWnd, 0, 0) > 0)
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    DestroyWindow(g_hWnd);
+    g_hWnd = NULL;
+}
+
+Napi::Boolean StartResolutionNotification(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 1 || !info[0].IsFunction()) {
+        Napi::TypeError::New(env, "Expected callback function").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    if (g_isListening.load()) {
+        return Napi::Boolean::New(env, true);
+    }
+
+    Napi::Function callback = info[0].As<Napi::Function>();
+    g_tsfn = Napi::ThreadSafeFunction::New(
+        env,
+        callback,
+        "ResolutionNotification",
+        0,
+        1,
+        [](Napi::Env) {}
+    );
+
+    g_isListening.store(true);
+
+    g_listenerThread = std::thread(ResolutionListenerThread);
+
+    return Napi::Boolean::New(env, true);
+}
+
+Napi::Boolean StopResolutionNotification(const Napi::CallbackInfo& info)
+{
+    Napi::Env env = info.Env();
+
+    if (g_hWnd != NULL) {
+        PostMessage(g_hWnd, WM_QUIT, 0, 0);
+    }
+
+    if (g_listenerThread.joinable()) {
+        g_listenerThread.join();
+    }
+
+    if (g_tsfn != nullptr) {
+        g_tsfn.Release();
+        g_tsfn = nullptr;
+    }
+
+    g_isListening.store(false);
+
+    return Napi::Boolean::New(env, true);
 }

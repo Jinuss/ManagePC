@@ -27,4 +27,33 @@ export const audioAPI = {
    * @returns {Promise<Object>} - { success: boolean, error?: string }
    */
   setMicrophoneVolume: (volume) => ipcRenderer.invoke(IPC_CHANNELS.SET_MICROPHONE_VOLUME, volume),
+
+  /**
+   * 开始监听音量变化
+   * @returns {Promise<Object>} - { success: boolean, error?: string }
+   */
+  startVolumeListen: () => ipcRenderer.invoke(IPC_CHANNELS.START_VOLUME_LISTEN),
+
+  /**
+   * 停止监听音量变化
+   * @returns {Promise<Object>} - { success: boolean, error?: string }
+   */
+  stopVolumeListen: () => ipcRenderer.invoke(IPC_CHANNELS.STOP_VOLUME_LISTEN),
+
+  /**
+   * 注册音量变化事件监听器
+   * @param {Function} callback - 回调函数，接收参数 { volume: number, isMuted: boolean }
+   */
+  onVolumeChanged: (callback) => {
+    ipcRenderer.on(IPC_CHANNELS.VOLUME_CHANGED, (event, data) => {
+      callback(data);
+    });
+  },
+
+  /**
+   * 移除音量变化事件监听器
+   */
+  removeVolumeChangedListener: () => {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.VOLUME_CHANGED);
+  },
 };

@@ -1,11 +1,14 @@
 import { loadNativeModule } from "../../utils/nativeModuleLoader";
 import { log } from "../log/logManager";
+import { EventEmitter } from "events";
 
 const NATIVE_MODULE_NAME = "system";
 
-class AudioManager {
+class AudioManager extends EventEmitter {
   constructor() {
+    super();
     this.loadResult = loadNativeModule(NATIVE_MODULE_NAME);
+    this.isListening = false;
   }
 
   isNativeAvailable() {
@@ -128,6 +131,71 @@ class AudioManager {
       }
     } catch (err) {
       log.error("[AudioManager] setMicrophoneVolume failed:", err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  startVolumeListen() {
+    if (!this.isNativeAvailable()) {
+      return {
+        success: false,
+        error: this.getLoadError()?.message || "Native module not available",
+      };
+    }
+
+    if (this.isListening) {
+      return { success: true };
+    }
+
+    try {
+      const self = this;
+      const callback = (data) => {
+        log.info("[AudioManager] Volume changed:", data);
+        self.emit("volume-changed", {
+          volume: data.volume,
+          isMuted: data.isMuted,
+        });
+      };
+
+      const result = this.loadResult.module.startVolumeNotification(callback);
+      if (result) {
+        this.isListening = true;
+        log.info("[AudioManager] Volume notification started");
+        return { success: true };
+      } else {
+        log.error("[AudioManager] Failed to start volume notification");
+        return { success: false, error: "Failed to start volume notification" };
+      }
+    } catch (err) {
+      log.error("[AudioManager] startVolumeListen failed:", err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  stopVolumeListen() {
+    if (!this.isNativeAvailable()) {
+      return {
+        success: false,
+        error: this.getLoadError()?.message || "Native module not available",
+      };
+    }
+
+    if (!this.isListening) {
+      return { success: true };
+    }
+
+    try {
+      const result = this.loadResult.module.stopVolumeNotification();
+      if (result) {
+        this.isListening = false;
+        log.info("[AudioManager] Volume notification stopped");
+        return { success: true };
+      } else {
+        log.error("[AudioManager] Failed to stop volume notification");
+        return { success: false, error: "Failed to stop volume notification" };
+      }
+    } catch (err) {
+      log.error("[AudioManager] stopVolumeListen failed:", err.message);
       return { success: false, error: err.message };
     }
   }

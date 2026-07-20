@@ -1,11 +1,14 @@
 import { loadNativeModule } from "../../utils/nativeModuleLoader";
 import { log } from "../log/logManager";
+import { EventEmitter } from "events";
 
 const NATIVE_MODULE_NAME = "system";
 
-class ScreenManager {
+class ScreenManager extends EventEmitter {
   constructor() {
+    super();
     this.loadResult = loadNativeModule(NATIVE_MODULE_NAME);
+    this.isListening = false;
   }
 
   isNativeAvailable() {
@@ -95,6 +98,71 @@ class ScreenManager {
       }
     } catch (err) {
       log.error("[ScreenManager] setScreenResolution failed:", err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  startResolutionListen() {
+    if (!this.isNativeAvailable()) {
+      return {
+        success: false,
+        error: this.getLoadError()?.message || "Native module not available",
+      };
+    }
+
+    if (this.isListening) {
+      return { success: true };
+    }
+
+    try {
+      const self = this;
+      const callback = (data) => {
+        log.info("[ScreenManager] Resolution changed:", data);
+        self.emit("resolution-changed", {
+          width: data.width,
+          height: data.height,
+        });
+      };
+
+      const result = this.loadResult.module.startResolutionNotification(callback);
+      if (result) {
+        this.isListening = true;
+        log.info("[ScreenManager] Resolution notification started");
+        return { success: true };
+      } else {
+        log.error("[ScreenManager] Failed to start resolution notification");
+        return { success: false, error: "Failed to start resolution notification" };
+      }
+    } catch (err) {
+      log.error("[ScreenManager] startResolutionListen failed:", err.message);
+      return { success: false, error: err.message };
+    }
+  }
+
+  stopResolutionListen() {
+    if (!this.isNativeAvailable()) {
+      return {
+        success: false,
+        error: this.getLoadError()?.message || "Native module not available",
+      };
+    }
+
+    if (!this.isListening) {
+      return { success: true };
+    }
+
+    try {
+      const result = this.loadResult.module.stopResolutionNotification();
+      if (result) {
+        this.isListening = false;
+        log.info("[ScreenManager] Resolution notification stopped");
+        return { success: true };
+      } else {
+        log.error("[ScreenManager] Failed to stop resolution notification");
+        return { success: false, error: "Failed to stop resolution notification" };
+      }
+    } catch (err) {
+      log.error("[ScreenManager] stopResolutionListen failed:", err.message);
       return { success: false, error: err.message };
     }
   }

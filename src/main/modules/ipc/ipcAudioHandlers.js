@@ -3,7 +3,11 @@ import { IPC_CHANNELS } from "../../constants";
 import { audioManager } from "../audio/audioManager";
 import { log } from "../log/logManager";
 
-export function registerIpcAudioHandlers() {
+let volumeChangeListener = null;
+let windowManagerRef = null;
+
+export function registerIpcAudioHandlers({ windowManager } = {}) {
+  windowManagerRef = windowManager;
   ipcMain.handle(IPC_CHANNELS.GET_SPEAKER_VOLUME, () => {
     log.info("[IPC] GET_SPEAKER_VOLUME requested");
     const result = audioManager.getSpeakerVolume();
@@ -44,6 +48,55 @@ export function registerIpcAudioHandlers() {
       log.info("[IPC] SET_MICROPHONE_VOLUME success:", volume);
     } else {
       log.error("[IPC] SET_MICROPHONE_VOLUME failed:", result.error);
+    }
+    return result;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.START_VOLUME_LISTEN, () => {
+    log.info("[IPC] START_VOLUME_LISTEN requested");
+    
+    if (volumeChangeListener) {
+      log.info("[IPC] Volume listener already started");
+      return { success: true };
+    }
+
+    volumeChangeListener = (data) => {
+      if (!windowManagerRef) return;
+      const mainWindow = windowManagerRef.getMainWindow();
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send(IPC_CHANNELS.VOLUME_CHANGED, {
+          volume: data.volume,
+          isMuted: data.isMuted,
+        });
+      }
+    };
+
+    audioManager.on("volume-changed", volumeChangeListener);
+    
+    const result = audioManager.startVolumeListen();
+    if (result.success) {
+      log.info("[IPC] START_VOLUME_LISTEN success");
+    } else {
+      log.error("[IPC] START_VOLUME_LISTEN failed:", result.error);
+      audioManager.off("volume-changed", volumeChangeListener);
+      volumeChangeListener = null;
+    }
+    return result;
+  });
+
+  ipcMain.handle(IPC_CHANNELS.STOP_VOLUME_LISTEN, () => {
+    log.info("[IPC] STOP_VOLUME_LISTEN requested");
+    
+    if (volumeChangeListener) {
+      audioManager.off("volume-changed", volumeChangeListener);
+      volumeChangeListener = null;
+    }
+    
+    const result = audioManager.stopVolumeListen();
+    if (result.success) {
+      log.info("[IPC] STOP_VOLUME_LISTEN success");
+    } else {
+      log.error("[IPC] STOP_VOLUME_LISTEN failed:", result.error);
     }
     return result;
   });

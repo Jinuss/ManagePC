@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { NButton, NSelect } from "naive-ui";
 
@@ -180,8 +180,52 @@ const applyResolution = async () => {
   }
 };
 
+const startResolutionListen = async () => {
+  try {
+    const result = await window.electronAPI.startResolutionListen();
+    console.log("[ScreenResolution] startResolutionListen result:", result);
+    if (result.success) {
+      window.electronAPI.onResolutionChanged((data) => {
+        console.log("[ScreenResolution] onResolutionChanged:", data);
+        if (isSetting.value) {
+          console.log("[ScreenResolution] Skipping resolution update during setting");
+          return;
+        }
+        currentResolution.value = data;
+        if (resolutions.value.length > 0) {
+          const current = resolutions.value.find(
+            (r) => r.width === data.width && r.height === data.height
+          );
+          if (current) {
+            selectedResolution.value = JSON.stringify(current);
+          }
+        }
+      });
+    } else {
+      console.error("[ScreenResolution] startResolutionListen failed:", result.error);
+    }
+  } catch (err) {
+    console.error("[ScreenResolution] startResolutionListen error:", err);
+  }
+};
+
+const stopResolutionListen = async () => {
+  try {
+    const result = await window.electronAPI.stopResolutionListen();
+    console.log("[ScreenResolution] stopResolutionListen result:", result);
+    window.electronAPI.removeResolutionChangedListener();
+  } catch (err) {
+    console.error("[ScreenResolution] stopResolutionListen error:", err);
+  }
+};
+
 onMounted(() => {
   refreshResolutions();
+  startResolutionListen();
+});
+
+onUnmounted(() => {
+  stopResolutionListen();
 });
 </script>
 

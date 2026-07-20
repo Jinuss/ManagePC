@@ -46,10 +46,14 @@ export function registerIpcHandlers({
   registerTaskHandlers();
 
   log.info('[ipcRegister ] 注册屏幕分辨率 IPC 处理器');
-  registerIpcScreenHandlers();
+  registerIpcScreenHandlers({
+    windowManager,
+  });
 
   log.info('[ipcRegister ] 注册音频音量 IPC 处理器');
-  registerIpcAudioHandlers();
+  registerIpcAudioHandlers({
+    windowManager,
+  });
 
   log.info('[ipcRegister ] 注册更新相关 IPC 处理器');
   if (app.isPackaged) {

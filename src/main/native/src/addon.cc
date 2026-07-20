@@ -17,6 +17,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
         Napi::Function::New(env, SetScreenResolution));
 
     exports.Set(
+        "startResolutionNotification",
+        Napi::Function::New(env, StartResolutionNotification));
+
+    exports.Set(
+        "stopResolutionNotification",
+        Napi::Function::New(env, StopResolutionNotification));
+
+    exports.Set(
         "getSpeakerVolume",
         Napi::Function::New(env, GetSpeakerVolume));
 
@@ -31,6 +39,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setMicrophoneVolume",
         Napi::Function::New(env, SetMicrophoneVolume));
+
+    exports.Set(
+        "startVolumeNotification",
+        Napi::Function::New(env, StartVolumeNotification));
+
+    exports.Set(
+        "stopVolumeNotification",
+        Napi::Function::New(env, StopVolumeNotification));
 
     return exports;
 }
