@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StaticInfo should match snapshot 1`] = `
+"<div class="static-info">
+  <div class="monitor-card system-card">
+    <div class="card-header"><span class="card-icon">📊</span>
+      <h3>系统信息</h3>
+    </div>
+    <div class="card-body">
+      <div class="system-info">
+        <div class="info-row"><span class="info-label">主机名:</span><span class="info-value">DESKTOP-ABC123</span></div>
+        <div class="info-row"><span class="info-label">操作系统:</span><span class="info-value">Windows 10</span></div>
+        <div class="info-row"><span class="info-label">平台:</span><span class="info-value">win32</span></div>
+        <div class="info-row"><span class="info-label">CPU:</span><span class="info-value cpu">Intel i7-10700K</span></div>
+        <div class="info-row"><span class="info-label">核心数:</span><span class="info-value">8</span></div>
+        <div class="info-row"><span class="info-label">运行时间:</span><span class="info-value">1天 2小时 1分钟</span></div>
+        <div class="info-row"><span class="info-label">内存:</span><span class="info-value">16 GB</span></div>
+      </div>
+    </div>
+  </div>
+</div>"
+`;

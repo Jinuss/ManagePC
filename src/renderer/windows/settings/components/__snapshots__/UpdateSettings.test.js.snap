@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdateSettings should match snapshot 1`] = `
+"<div class="update-content">
+  <anonymous-stub type="primary" size="medium" loading="false" class="update-btn" disabled="false"></anonymous-stub>
+</div>"
+`;

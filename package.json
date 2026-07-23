@@ -16,7 +16,10 @@
     "postinstall": "npx @electron/rebuild 2>&1 || echo \"Electron rebuild skipped - requires Visual Studio\"",
     "prepare": "husky",
     "clean:electron-cache": "powershell -Command \"Remove-Item $env:LOCALAPPDATA\\electron-builder -Recurse -Force -ErrorAction SilentlyContinue; Remove-Item $env:LOCALAPPDATA\\electron -Recurse -Force -ErrorAction SilentlyContinue\"",
-    "clean": "powershell -Command \"if (Test-Path 'dist') { Remove-Item -Recurse -Force 'dist' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\""
+    "clean": "powershell -Command \"if (Test-Path 'dist') { Remove-Item -Recurse -Force 'dist' }; if (Test-Path 'out') { Remove-Item -Recurse -Force 'out' }\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "electron",
@@ -42,13 +45,22 @@
     "vue-i18n": "^9.14.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
     "@commitlint/cli": "^21.1.0",
     "@commitlint/config-conventional": "^21.1.0",
     "@electron/rebuild": "^4.2.0",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/test-utils": "^2.4.11",
+    "@vue/vue3-jest": "^29.2.6",
+    "babel-jest": "^29.7.0",
     "electron": "^42.5.0",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "vue-jest": "^5.0.0-alpha.10"
   }
 }

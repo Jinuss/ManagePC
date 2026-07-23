@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskSchedulerPage should match snapshot 1`] = `
+"<div class="task-scheduler-page">
+  <div class="task-header">
+    <h2>task.title</h2>
+    <!--[object Object]-->
+  </div>
+  <div class="task-table" tasks=""></div>
+  <task-dialog-stub visible="false"></task-dialog-stub>
+</div>"
+`;

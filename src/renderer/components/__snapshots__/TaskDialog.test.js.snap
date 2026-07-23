@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskDialog should match snapshot 1`] = `"<anonymous-stub show="true" preset="card" title="task.addTask" style="width: 500px;"></anonymous-stub>"`;

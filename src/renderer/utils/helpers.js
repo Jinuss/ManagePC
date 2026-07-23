@@ -5,7 +5,7 @@ export const formatUptime = (seconds) => {
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   
-  if (days > 0) return `${days}天 ${hours}小时`
+  if (days > 0) return `${days}天 ${hours}小时 ${minutes}分钟`
   if (hours > 0) return `${hours}小时 ${minutes}分钟`
   return `${minutes}分钟`
 }

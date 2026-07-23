@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LogViewer should match snapshot with empty state 1`] = `
+"<div class="log-viewer">
+  <div class="log-header">
+    <div class="log-info"><span class="log-mode-badge prod">PROD</span><span class="log-path" title="C:\\logs\\app.log">C:\\logs\\app.log</span></div>
+    <div class="log-actions"><button size="tiny" loading="false">刷新</button><button size="tiny" type="submit">清空</button></div>
+  </div>
+  <div class="log-stats"><span>行数: 0</span><span>大小: 0 B</span><span>限制显示最近500条</span></div>
+  <div class="log-content">
+    <div class="log-empty">暂无日志</div>
+  </div>
+</div>"
+`;
+
+exports[`LogViewer should match snapshot with logs 1`] = `
+"<div class="log-viewer">
+  <div class="log-header">
+    <div class="log-info"><span class="log-mode-badge prod">PROD</span><span class="log-path" title="C:\\logs\\app.log">C:\\logs\\app.log</span></div>
+    <div class="log-actions"><button size="tiny" loading="false">刷新</button><button size="tiny" type="submit">清空</button></div>
+  </div>
+  <div class="log-stats"><span>行数: 2</span><span>大小: 1.00 KB</span><span>限制显示最近500条</span></div>
+  <div class="log-content">
+    <div class="log-line info"><span class="log-index">1</span><span class="log-time">07/23/2026 16:03:14</span><span class="log-level info">[INFO]</span><span class="log-message">Application started</span></div>
+    <div class="log-line warn"><span class="log-index">2</span><span class="log-time">07/23/2026 16:03:14</span><span class="log-level warn">[WARN]</span><span class="log-message">Low memory warning</span></div>
+    <!--v-if-->
+  </div>
+</div>"
+`;

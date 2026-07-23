@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskTable should match snapshot 1`] = `
+"<div class="task-table-wrapper">
+  <div class="empty-state"><span class="empty-icon">📅</span>
+    <p>task.noTasks</p>
+  </div>
+</div>"
+`;

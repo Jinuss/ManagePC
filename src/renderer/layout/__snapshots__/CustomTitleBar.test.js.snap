@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CustomTitleBar should match snapshot 1`] = `
+"<div class="custom-titlebar">
+  <div class="titlebar-left">
+    <div class="app-icon">⚙️</div><span class="app-title">System Monitor</span>
+  </div>
+  <div class="titlebar-right">
+    <div class="window-controls"><button class="control-btn pin-btn" title="Pin"><span class="icon">📌</span></button><button class="control-btn minimize-btn" title="Minimize"><span class="icon">−</span></button><button class="control-btn maximize-btn" title="Maximize"><span class="icon">□</span></button><button class="control-btn close-btn" title="Close"><span class="icon">✕</span></button></div>
+  </div>
+</div>"
+`;

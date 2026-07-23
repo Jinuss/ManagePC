@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DiskUsage should match snapshot 1`] = `
+"<div class="disk-usage">
+  <div class="header">
+    <h2 class="section-title">💾 磁盘使用</h2><button class="refresh-btn">🔄 刷新</button>
+  </div>
+  <div class="disk-list">
+    <div class="disk-card">
+      <div class="disk-header"><span class="disk-name">C:</span><span class="status normal">50.0% </span></div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 50%;"></div>
+      </div>
+      <div class="disk-info">
+        <div class="info-item"><span class="label">总容量:</span><span class="value">500 GB</span></div>
+        <div class="info-item"><span class="label">已用:</span><span class="value used">250 GB</span></div>
+        <div class="info-item"><span class="label">可用:</span><span class="value free">250 GB</span></div>
+      </div>
+    </div>
+    <div class="disk-card">
+      <div class="disk-header"><span class="disk-name">D:</span><span class="status warning">85.0% </span></div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 85%;"></div>
+      </div>
+      <div class="disk-info">
+        <div class="info-item"><span class="label">总容量:</span><span class="value">1 TB</span></div>
+        <div class="info-item"><span class="label">已用:</span><span class="value used">850 GB</span></div>
+        <div class="info-item"><span class="label">可用:</span><span class="value free">150 GB</span></div>
+      </div>
+    </div>
+  </div>
+</div>"
+`;

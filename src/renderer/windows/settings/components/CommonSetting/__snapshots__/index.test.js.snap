@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CommonSetting should match snapshot 1`] = `"<space-stub justify="start" inline="false" vertical="true" reverse="false" wrapitem="true" wrap="true"></space-stub>"`;

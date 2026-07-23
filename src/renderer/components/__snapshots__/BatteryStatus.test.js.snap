@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BatteryStatus should match snapshot 1`] = `
+"<div class="battery-status">
+  <div class="monitor-card">
+    <div class="card-header"><span class="card-icon">🔋</span>
+      <h3>电池状态</h3>
+    </div>
+    <div class="card-body">
+      <div class="battery-main">
+        <div class="battery-icon-container">
+          <div class="battery-icon battery-high">
+            <div class="battery-level" style="width: 80%;"></div>
+          </div><span class="battery-percent">80%</span>
+        </div>
+        <div class="battery-status-text"><span class="status-badge discharging">放电中</span></div>
+      </div>
+      <div class="battery-details">
+        <div class="detail-row"><span class="detail-label">电压:</span><span class="detail-value">12.5V</span></div>
+        <div class="detail-row"><span class="detail-label">当前容量:</span><span class="detail-value">4000 mAh</span></div>
+        <div class="detail-row"><span class="detail-label">最大容量:</span><span class="detail-value">4500 mAh</span></div>
+        <div class="detail-row"><span class="detail-label">设计容量:</span><span class="detail-value">5000 mAh</span></div>
+        <div class="detail-row"><span class="detail-label">健康度:</span><span class="detail-value health-poor">90.0%</span></div>
+      </div>
+    </div>
+  </div>
+</div>"
+`;

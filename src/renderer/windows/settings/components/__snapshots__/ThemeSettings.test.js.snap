@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ThemeSettings should match snapshot 1`] = `
+"<div class="settings-section">
+  <div class="theme-options">
+    <button-stub size="medium" text="false" block="false" loading="false" disabled="false" circle="false" ghost="false" round="false" secondary="false" tertiary="false" quaternary="false" strong="false" focusable="true" keyboard="true" tag="button" type="default" dashed="false" iconplacement="left" attrtype="button" bordered="true" nativefocusbehavior="true" class="theme-option-btn"></button-stub>
+    <button-stub size="medium" text="false" block="false" loading="false" disabled="false" circle="false" ghost="false" round="false" secondary="false" tertiary="false" quaternary="false" strong="false" focusable="true" keyboard="true" tag="button" type="default" dashed="false" iconplacement="left" attrtype="button" bordered="true" nativefocusbehavior="true" class="theme-option-btn"></button-stub>
+    <button-stub size="medium" text="false" block="false" loading="false" disabled="false" circle="false" ghost="false" round="false" secondary="false" tertiary="false" quaternary="false" strong="false" focusable="true" keyboard="true" tag="button" type="default" dashed="false" iconplacement="left" attrtype="button" bordered="true" nativefocusbehavior="true" class="theme-option-btn"></button-stub>
+  </div>
+</div>"
+`;

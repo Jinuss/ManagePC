@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Layout should match snapshot 1`] = `
+"<div class="app-container" platform="win">
+  <div class="custom-titlebar"></div>
+  <div class="app-body">
+    <div class="fixed-sidebar">
+      <div class="fixed-sidebar-top">
+        <div class="fixed-sidebar-menu">
+          <tooltip-stub defaultshow="false" showarrow="true" trigger="hover" delay="100" duration="100" raw="false" placement="right" arrowpointtocenter="false" disabled="false" displaydirective="if" flip="true" animated="true" overlap="false" keepaliveonhover="true" scrollable="false" internaldeactivateimmediately="false" internalsynctargetwithparent="false" internalinheritedeventhandlers="" internaltrapfocus="false" internalextraclass=""></tooltip-stub>
+        </div>
+        <div class="fixed-sidebar-menu">
+          <tooltip-stub defaultshow="false" showarrow="true" trigger="hover" delay="100" duration="100" raw="false" placement="right" arrowpointtocenter="false" disabled="false" displaydirective="if" flip="true" animated="true" overlap="false" keepaliveonhover="true" scrollable="false" internaldeactivateimmediately="false" internalsynctargetwithparent="false" internalinheritedeventhandlers="" internaltrapfocus="false" internalextraclass=""></tooltip-stub>
+        </div>
+      </div>
+      <div class="fixed-sidebar-bottom">
+        <div class="settings-section">
+          <tooltip-stub defaultshow="false" showarrow="true" trigger="hover" delay="100" duration="100" raw="false" placement="right" arrowpointtocenter="false" disabled="false" displaydirective="if" flip="true" animated="true" overlap="false" keepaliveonhover="true" scrollable="false" internaldeactivateimmediately="false" internalsynctargetwithparent="false" internalinheritedeventhandlers="" internaltrapfocus="false" internalextraclass=""></tooltip-stub>
+        </div>
+        <div class="settings-section">
+          <tooltip-stub defaultshow="false" showarrow="true" trigger="hover" delay="100" duration="100" raw="false" placement="right" arrowpointtocenter="false" disabled="false" displaydirective="if" flip="true" animated="true" overlap="false" keepaliveonhover="true" scrollable="false" internaldeactivateimmediately="false" internalsynctargetwithparent="false" internalinheritedeventhandlers="" internaltrapfocus="false" internalextraclass=""></tooltip-stub>
+        </div>
+      </div>
+    </div>
+    <aside class="sidebar">
+      <menu-stub options="" collapsedwidth="48" iconsize="20" collapsediconsize="24" indent="32" labelfield="label" keyfield="key" childrenfield="children" disabledfield="disabled" defaultexpandall="false" mode="vertical" disabled="false" show="true" inverted="false" accordion="false" dropdownplacement="bottom" responsive="false" class="sidebar-menu" value="[object Object]"></menu-stub>
+    </aside>
+    <main class="main-content">
+      <div class="content-panel">
+        <keep-alive-stub include="PCMonitor"></keep-alive-stub>
+      </div>
+    </main>
+  </div>
+</div>"
+`;

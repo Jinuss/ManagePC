@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AboutSettings should match snapshot 1`] = `
+"<div class="settings-section">
+  <div class="about-content">
+    <div class="about-item"><span class="about-label">settings.version:</span><span class="about-value">1.0.50</span></div>
+    <update-settings-stub></update-settings-stub>
+  </div>
+</div>"
+`;

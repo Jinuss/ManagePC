@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ShortcutSettings should match snapshot 1`] = `
+"<div class="settings-section">
+  <div class="shortcut-item"><span class="shortcut-label">settings.showWindowShortcut</span>
+    <div class="shortcut-actions">
+      <div class="shortcut-input"><span>Ctrl+Shift+A</span></div>
+      <button-stub size="small" text="true" block="false" loading="false" disabled="false" circle="false" ghost="false" round="false" secondary="false" tertiary="false" quaternary="false" strong="false" focusable="true" keyboard="true" tag="button" type="default" dashed="false" iconplacement="left" attrtype="button" bordered="true" nativefocusbehavior="true"></button-stub>
+    </div>
+  </div>
+</div>"
+`;

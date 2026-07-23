@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TrendChart should match snapshot with multiple series 1`] = `
+"<div class="trend-chart">
+  <div class="chart-header"><span class="chart-icon">🌐</span><span class="chart-title">网络</span>
+    <div class="chart-values"><span class="value-item"><span class="value-label">接收</span><span class="value-num" style="color: rgb(40, 167, 69);">150.0 KB/s</span></span><span class="value-item"><span class="value-label">发送</span><span class="value-num" style="color: rgb(23, 162, 184);">75.0 KB/s</span></span></div>
+  </div>
+  <div class="chart-container">
+    <!---->
+  </div>
+</div>"
+`;
+
+exports[`TrendChart should match snapshot with single series 1`] = `
+"<div class="trend-chart">
+  <div class="chart-header"><span class="chart-icon">🖥️</span><span class="chart-title">CPU</span><span class="chart-value">50.0%</span></div>
+  <div class="chart-container">
+    <!---->
+  </div>
+</div>"
+`;

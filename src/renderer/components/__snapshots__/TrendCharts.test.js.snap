@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TrendCharts should match snapshot 1`] = `
+"<div class="trend-charts">
+  <div class="trend-chart"></div>
+  <div class="trend-chart"></div>
+  <div class="trend-chart"></div>
+</div>"
+`;

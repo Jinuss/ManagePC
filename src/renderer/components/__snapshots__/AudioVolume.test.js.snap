@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AudioVolume should match snapshot 1`] = `
+"<div class="audio-volume-container">
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">🔊</span> 扬声器音量</h2>
+    </div>
+    <div class="volume-card">
+      <div class="volume-display"><span class="volume-icon">🔊</span><span class="volume-value">75%</span></div>
+      <div class="volume-slider-container"><input type="range" min="0" max="100" step="1" tooltip="false" class="volume-slider" value="75"><button size="small" type="submit" class="mute-btn">静音</button></div>
+      <div class="volume-status"><span>audio.unmuted</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">🎤</span> 麦克风音量</h2>
+    </div>
+    <div class="volume-card">
+      <div class="volume-display"><span class="volume-icon">🎤</span><span class="volume-value">50%</span></div>
+      <div class="volume-slider-container"><input type="range" min="0" max="100" step="1" tooltip="false" class="volume-slider" value="50"><button size="small" type="submit" class="mute-btn">静音</button></div>
+      <div class="volume-status"><span>audio.unmuted</span></div>
+    </div>
+  </div>
+</div>"
+`;

@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScreenResolution should match snapshot 1`] = `
+"<div class="screen-resolution-container">
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">🖥️</span> 当前分辨率</h2>
+    </div>
+    <div class="current-resolution-card">
+      <div class="resolution-display"><span class="resolution-value">1920</span><span class="separator">×</span><span class="resolution-value">1080</span></div>
+      <div class="resolution-label">像素</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title"><span class="icon">📐</span> 可用分辨率</h2><button class="n-button" size="small" type="submit">刷新</button>
+    </div>
+    <div class="select-container">
+      <div class="n-select resolution-select" options="[object Object],[object Object]" disabled="false" placeholder="选择分辨率" value="{&quot;width&quot;:1920,&quot;height&quot;:1080}"></div><button class="n-button apply-btn" size="medium" type="submit">应用</button>
+    </div>
+  </div>
+</div>"
+`;
